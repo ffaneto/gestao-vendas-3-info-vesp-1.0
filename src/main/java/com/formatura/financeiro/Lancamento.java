@@ -18,6 +18,14 @@ public class Lancamento {
     private LocalTime horaLancamento;
 
     public Lancamento() {} 
+    
+    public Lancamento(String descricao, BigDecimal valor, String tipo, LocalDate data) {
+        this.descricao = descricao;
+        this.valor = valor;
+        this.tipo = tipo;
+        this.dataLancamento = (data != null) ? data : LocalDate.now();
+        this.horaLancamento = LocalTime.now();
+    }
 
     public Long getId() { 
     	return id; 

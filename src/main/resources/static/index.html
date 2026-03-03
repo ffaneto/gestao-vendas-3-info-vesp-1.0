@@ -2,517 +2,529 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Financeiro 3º Info</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --bg: #050505;
-            --card: #111;
-            --border: #222;
-            --text: #e0e0e0;
-            --accent-green: #00e676; 
-            --accent-red: #ff1744;   
-            --accent-purple: #d500f9;
-            --accent-blue: #2979ff;
+            --card-bg: rgba(20, 20, 20, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #e4e4e7;
+            --green: #00e676; 
+            --red: #ff1744; 
+            --blue: #2979ff; 
+            --purple: #d500f9;
         }
 
-        * { box-sizing: border-box; transition: all 0.2s ease; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-		
-		body::before {
-		            content: "";
-		            position: fixed;
-		            top: 0;
-		            left: 0;
-		            width: 100%;
-		            height: 100%;
-		            
-		          
-		            background-image: url('logo.png');
-		            
-		            
-		            background-position: center;
-		            background-repeat: no-repeat;
-		            
-		            
-		            background-size: 35%; 
-		            
-		   
-		            opacity: 0.1; 
-		            
-		            z-index: -1;
-		            pointer-events: none; 
-		        }
-
-        .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; transform: translateY(10px); }
-        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
-
-        header { text-align: center; margin: 30px 0; }
-        h1 { font-weight: 300; letter-spacing: 3px; color: #fff; margin: 0; text-transform: uppercase; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
         
+        body { 
+            background-color: var(--bg); color: var(--text); margin: 0; padding: 0; 
+            min-height: 100vh; display: flex; flex-direction: column; 
+            position: relative;
+        }
+
+        /* --- REMOVE SETINHAS DOS INPUTS NUMBER --- */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* --- LOGO DE FUNDO (MARCA D'ÁGUA) --- */
+        body::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('logo.png'); /* Certifique-se que logo.png está na pasta */
+            background-position: center; background-repeat: no-repeat; background-size: 60%;
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- TELA DE LOGIN (DIVIDIDA) --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex;
+        }
+        
+        .split-side {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.3s; text-align: center; border: 1px solid #111; position: relative;
+        }
+        
+        .split-side:hover { background: #111; }
+        .split-side i { font-size: 3.5rem; margin-bottom: 25px; }
+        .split-title { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; }
+
+        /* Formulário de Senha Flutuante */
+        #form-login-container {
+            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #18181b; border: 1px solid #333; padding: 35px; border-radius: 20px;
+            width: 90%; max-width: 350px; box-shadow: 0 25px 60px rgba(0,0,0,0.9); z-index: 10000;
+        }
+
+        /* --- SISTEMA PRINCIPAL --- */
+        .app-container { max-width: 1200px; margin: 0 auto; padding: 25px; width: 100%; display: none; }
+        
+        header { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; 
+            border-bottom: 1px solid var(--border); padding-bottom: 25px;
+        }
+
         .main-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px; margin-bottom: 25px;
         }
 
         .card {
-            background: rgba(20, 20, 20, 0.65);
-			backdrop-filter: blur(10px);
-			-webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-			box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-            border-radius: 20px;
-            padding: 30px;
-            position: relative;
+            background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border); border-radius: 24px; padding: 30px; position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
-        .card:hover { 
-			border-color: rgba(255, 255, 255, 0.3);
-			background: rgba(25, 25, 25, 0.75); 
-		}
-
-        .big-number { font-size: 3rem; font-weight: 700; margin: 10px 0; letter-spacing: -1px; }
-        .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #666; font-weight: 600; }
-
-        .txt-verde { color: var(--accent-green); }
-        .txt-roxo { color: var(--accent-purple); }
-        .txt-vermelho { color: var(--accent-red); }
+        
+        .big-number { font-size: 3rem; font-weight: 800; margin: 10px 0; letter-spacing: -1.5px; }
+        .label { font-size: 0.8rem; text-transform: uppercase; color: #888; font-weight: 600; letter-spacing: 1.5px; }
 
         /* Gráfico */
-        .chart-container { position: relative; height: 250px; width: 100%; }
+        .chart-container { position: relative; height: 280px; width: 100%; margin-top: 20px; }
 
-        /* Inputs */
+        /* Inputs e Botões */
         .input-group {
-            background: #1a1a1a;
-            border-radius: 12px;
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid transparent;
-            cursor: text;
+            background: rgba(255,255,255,0.04); border-radius: 14px; padding: 12px; margin-bottom: 15px;
+            border: 1px solid transparent; transition: 0.2s; display: flex; flex-direction: column; gap: 8px;
         }
-        .input-group:hover { background: #222; }
-        .input-group:focus-within { border-color: var(--accent-blue); background: #222; }
+        .input-group:focus-within { border-color: var(--blue); background: rgba(255,255,255,0.07); }
+        
+        .input-row { display: flex; gap: 12px; align-items: center; }
+        
+        input[type="number"], input[type="text"], input[type="password"] {
+            background: transparent; border: none; color: #fff; font-size: 1.1rem; width: 100%;
+            padding: 10px; font-weight: 600;
+        }
+        input::placeholder { color: #555; }
 
-        input {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            width: 100%;
-            outline: none;
-            text-align: center; 
-            padding: 5px;
-            font-weight: bold;
-            -moz-appearance: textfield; 
+        input[type="date"] {
+            background: transparent; border: none; color: #777; font-size: 0.8rem; 
+            font-family: 'Inter'; width: 100%; text-align: right; cursor: pointer;
         }
-        
-        input::-webkit-outer-spin-button, 
-        input::-webkit-inner-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-        
-        /* Estilo */
-        ::placeholder { 
-            color: rgba(255, 255, 255, 0.25); 
-            font-weight: 700; 
-            font-family: 'Inter', sans-serif;
-            opacity: 1; 
-            font-size: 0.9rem;
-        }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.4); cursor: pointer; }
 
         button {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-left: 10px;
-            white-space: nowrap;
+            border: none; padding: 14px 20px; border-radius: 10px; font-weight: 700; cursor: pointer;
+            text-transform: uppercase; font-size: 0.85rem; transition: 0.2s; white-space: nowrap;
         }
-        
-        .btn-verde { background: rgba(0, 230, 118, 0.1); color: var(--accent-green); border: 1px solid var(--accent-green); }
-        .btn-verde:hover { background: var(--accent-green); color: #000; }
+        button:active { transform: scale(0.96); }
 
-        .btn-vermelho { background: rgba(255, 23, 68, 0.1); color: var(--accent-red); border: 1px solid var(--accent-red); }
-        .btn-vermelho:hover { background: var(--accent-red); color: #fff; }
+        .btn-verde { background: rgba(0, 230, 118, 0.18); color: var(--green); border: 1px solid var(--green); }
+        .btn-verde:hover { background: var(--green); color: #000; }
         
-        .btn-danger-zone {
-            margin-top: 50px;
-            background: transparent;
-            color: #444;
-            font-size: 0.8rem;
-            border: 1px solid #333;
+        .btn-vermelho { background: rgba(255, 23, 68, 0.18); color: var(--red); border: 1px solid var(--red); }
+        .btn-vermelho:hover { background: var(--red); color: #fff; }
+
+        .btn-login { width: 100%; background: var(--blue); color: white; padding: 15px; margin-top: 15px; font-size: 1rem; }
+
+        .txt-verde { color: var(--green); }
+        .txt-vermelho { color: var(--red); }
+        .txt-roxo { color: var(--purple); }
+        
+        .admin-only { display: none; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 20px; }
+        td { padding: 15px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #ccc; }
+        tr:last-child td { border: none; }
+
+        @media (max-width: 768px) {
+            #login-overlay { flex-direction: column; }
+            .split-side { border-bottom: 1px solid #222; }
+            .big-number { font-size: 2.2rem; }
+            .chart-container { height: 220px; }
         }
-        .btn-danger-zone:hover { color: red; border-color: red; }
-
-        h2 { font-size: 1rem; color: #fff; border-left: 4px solid var(--accent-blue); padding-left: 15px; margin-bottom: 25px; text-transform: uppercase; }
-
-        .history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-        .history-table td { padding: 15px 5px; border-bottom: 1px solid #222; color: #aaa; }
     </style>
 </head>
 <body>
 
-<header class="fade-in">
-    <h1>Financeiro 3º Info</h1>
-    <p style="color: #444; font-size: 0.8rem; margin-top: 5px;">Painel de Gestão</p>
-</header>
-
-<div class="main-grid fade-in">
+<div id="login-overlay">
+    <div class="split-side" onclick="entrarComo('ESTUDANTE')">
+        <i class="fas fa-user-graduate" style="color: var(--blue)"></i>
+        <div class="split-title">Estudante</div>
+        <div style="color:#555; font-size:0.85rem; margin-top:10px;">Visualizar Transparência</div>
+    </div>
     
-    <div class="card">
-        <div class="label">Saldo Disponível (Nubank + Caixa)</div>
-        <div class="big-number txt-verde" id="saldo">R$ 0,00</div>
-        
-        <div style="margin-top: 25px;">
-            <div class="label">Lucro Açaí</div>
-            <div class="txt-roxo" style="font-size: 1.5rem; font-weight: bold;" id="acai">R$ 0,00</div>
-        </div>
-        
-        <hr style="border-color: #222; margin: 25px 0;">
-        
-        <div class="input-group" onclick="focarInput(this)">
-            <span style="font-size: 0.8rem; color: #9c27b0; white-space: nowrap;"><i class="fas fa-university"></i> Add Saldo</span>
-            <div style="display:flex; width: 100%; justify-content: flex-end;">
-                <input type="number" id="valor-nubank" placeholder="Valor R$">
-                <button class="btn-verde" style="border:none; padding: 5px 10px;" onclick="lancarSaldoInicial(event)">+</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="label" style="text-align: center; margin-bottom: 15px;">Projeção</div>
-        <div class="chart-container">
-            <canvas id="graficoProjecao"></canvas>
-        </div>
-    </div>
-
-</div>
-
-<div class="main-grid fade-in" style="margin-top: 20px; animation-delay: 0.2s;">
-
-    <div class="card">
-        <h2><i class="fas fa-arrow-up" style="color: var(--accent-green)"></i> Entrada (Vendas)</h2>
-
-        <div class="input-group" onclick="focarInput(this)">
-            <span style="color: #fff; white-space: nowrap;">Trufa <small style="color:#666">(R$ 2,50)</small></span>
-            <div style="display:flex; width: 100%;">
-                <input type="number" id="qtd-trufa" placeholder="Quantidade">
-                <button class="btn-verde" onclick="venderItem(event, 'TRUFA', 2.50, 'qtd-trufa')">OK</button>
-            </div>
-        </div>
-
-        <div class="input-group" onclick="focarInput(this)">
-            <span style="color: #fff; white-space: nowrap;">Bolo <small style="color:#666">(R$ 3,50)</small></span>
-            <div style="display:flex; width: 100%;">
-                <input type="number" id="qtd-bolo" placeholder="Quantidade">
-                <button class="btn-verde" onclick="venderItem(event, 'BOLO', 3.50, 'qtd-bolo')">OK</button>
-            </div>
-        </div>
-
-        <div class="input-group" style="border: 1px solid #4a148c;" onclick="focarInput(this)">
-            <span style="color: var(--accent-purple); white-space: nowrap;">Açaí <small>(Livre)</small></span>
-            <div style="display:flex; width: 100%;">
-                <input type="number" id="valor-acai" placeholder="Valor R$">
-                <button class="btn-verde" style="background: var(--accent-purple); color: #fff;" onclick="lancarAcai(event)">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2><i class="fas fa-arrow-down" style="color: var(--accent-red)"></i> Reposição (Estoque)</h2>
-        <div class="input-group" style="border-left: 2px solid var(--accent-red)" onclick="focarInput(this)">
-            <div>
-                <span style="display:block; font-size:0.9rem">Trufas (Compra)</span>
-                <small style="color:#555">R$ 1,50/un</small>
-            </div>
-            <div style="display:flex; width: 100%;">
-                <input type="number" id="rep-qtd-trufa" placeholder="Quantidade">
-                <button class="btn-vermelho" onclick="reporEstoqueAuto(event, 'TRUFA', 'rep-qtd-trufa')">-</button>
-            </div>
-        </div>
-
-        <div class="input-group" style="border-left: 2px solid var(--accent-red)" onclick="focarInput(this)">
-            <div>
-                <span style="display:block; font-size:0.9rem">Bolos (Compra)</span>
-                <small style="color:#555">R$ 2,50/un</small>
-            </div>
-            <div style="display:flex; width: 100%;">
-                <input type="number" id="rep-qtd-bolo" placeholder="Quantidade">
-                <button class="btn-vermelho" onclick="reporEstoqueAuto(event, 'BOLO', 'rep-qtd-bolo')">-</button>
-            </div>
-        </div>
-
-        <div class="input-group" style="border-left: 2px solid var(--accent-red)" onclick="focarInput(this)">
-            <span style="font-size: 0.9rem; white-space: nowrap;">Gasto Açaí</span>
-            <div style="display:flex; width: 100%;">
-                <input type="number" id="custo-acai" placeholder="Valor R$">
-                <button class="btn-vermelho" onclick="gastarGenerico(event, 'ACAI_COMP', 'custo-acai', 'Comp. Açaí')">-</button>
-            </div>
-        </div>
+    <div class="split-side" style="background: #080808;" onclick="mostrarFormLogin()">
+        <i class="fas fa-user-shield txt-roxo"></i>
+        <div class="split-title">Comissão</div>
+        <div style="color:#555; font-size:0.85rem; margin-top:10px;">Gestão do Caixa</div>
     </div>
 </div>
 
-<div class="main-grid fade-in" style="margin-top: 20px; animation-delay: 0.4s;">
-    <div class="card" style="grid-column: 1 / -1;">
-        <div class="label">Histórico de Transações</div>
-        <table class="history-table">
-            <tbody id="lista-historico"></tbody>
-        </table>
+<div id="form-login-container">
+    <h3 style="text-align: center; margin-top: 0; font-weight: 800; letter-spacing: 1px;">Acesso Restrito</h3>
+    <div class="input-group">
+        <input type="text" id="login-user" placeholder="Usuário (admin)">
+    </div>
+    <div class="input-group">
+        <input type="password" id="login-pass" placeholder="Senha" onkeydown="verificarEnter(event)">
+    </div>
+    <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+    <button style="background:transparent; color:#666; width:100%; margin-top:15px; font-size: 0.8rem;" onclick="cancelarLogin()">Cancelar</button>
+</div>
+
+<div class="app-container" id="app">
+    <header>
+        <div>
+            <h1 style="margin:0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 300;">Financeiro <span style="font-weight: 800;" class="txt-roxo">3º Info</span></h1>
+            <span id="badge-user" style="font-size: 0.75rem; background: #222; padding: 4px 10px; border-radius: 6px; color: #aaa; font-weight: 600;">Visitante</span>
+        </div>
+        <button onclick="sair()" style="background: rgba(255,255,255,0.08); color: #fff; padding: 12px 18px; width: auto;"><i class="fas fa-power-off"></i></button>
+    </header>
+
+    <div class="main-grid">
+        <div class="card">
+            <div class="label">Caixa Disponível</div>
+            <div class="big-number txt-verde" id="saldo">R$ 0,00</div>
+            
+            <div style="margin-top: 20px;">
+                <div class="label">Lucro Açaí</div>
+                <div class="txt-roxo" style="font-weight: 800; font-size: 1.4rem;" id="lucro-acai">R$ 0,00</div>
+            </div>
+
+            <div class="admin-only" style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <div class="input-group">
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                        <span class="label" style="color:#aaa">Adicionar Saldo</span>
+                        <input type="date" id="data-aporte">
+                    </div>
+                    <div class="input-row">
+                        <input type="number" id="valor-aporte" placeholder="R$ Valor">
+                        <button class="btn-verde" style="width: auto; padding: 12px;" onclick="lancarGenerico('SALDO_INICIAL', 'valor-aporte', 'Aporte Inicial', 'data-aporte')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="label" style="text-align: center;">Projeção</div>
+            <div class="chart-container">
+                <canvas id="graficoEvolucao"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-grid admin-only">
+        <div class="card">
+            <h3 class="txt-verde" style="margin-top:0; font-size:1.1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                <i class="fas fa-cash-register"></i> Registrar Vendas
+            </h3>
+            
+            <div class="input-group">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                    <span style="font-size:1rem; font-weight: 600;">Trufa <small style="color:#666">(R$ 2,50)</small></span>
+                    <input type="date" id="data-trufa">
+                </div>
+                <div class="input-row">
+                    <input type="number" id="qtd-trufa" placeholder="Quantidade">
+                    <button class="btn-verde" onclick="venderQtd('TRUFA', 2.50, 'qtd-trufa', 'data-trufa')">Vender</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                    <span style="font-size:1rem; font-weight: 600;">Bolo <small style="color:#666">(R$ 3,50)</small></span>
+                    <input type="date" id="data-bolo">
+                </div>
+                <div class="input-row">
+                    <input type="number" id="qtd-bolo" placeholder="Quantidade">
+                    <button class="btn-verde" onclick="venderQtd('BOLO', 3.50, 'qtd-bolo', 'data-bolo')">Vender</button>
+                </div>
+            </div>
+
+            <div class="input-group" style="border: 1px solid rgba(213, 0, 249, 0.3);">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                    <span class="txt-roxo" style="font-size:1rem; font-weight: 600;">Venda Açaí / Outros</span>
+                    <input type="date" id="data-acai">
+                </div>
+                <div class="input-row">
+                    <input type="number" id="valor-acai" placeholder="R$ Valor Livre">
+                    <button class="btn-verde" style="border-color:var(--purple); color:var(--purple)" onclick="lancarGenerico('ACAI', 'valor-acai', 'Venda Açaí', 'data-acai')">Vender</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="txt-vermelho" style="margin-top:0; font-size:1.1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                <i class="fas fa-shopping-cart"></i> Registrar Gastos
+            </h3>
+
+            <div class="input-group" style="border-left: 4px solid var(--red)">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                    <span style="font-size:1rem; font-weight: 600;">Comprar Trufas <small style="color:#666">(Custo R$ 1,50)</small></span>
+                    <input type="date" id="data-rep-trufa">
+                </div>
+                <div class="input-row">
+                    <input type="number" id="rep-trufa" placeholder="Qtd Comprada">
+                    <button class="btn-vermelho" onclick="gastarQtd('TRUFA', 1.50, 'rep-trufa', 'data-rep-trufa')">Lançar Custo</button>
+                </div>
+            </div>
+
+            <div class="input-group" style="border-left: 4px solid var(--red)">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                    <span style="font-size:1rem; font-weight: 600;">Comprar Bolos <small style="color:#666">(Custo R$ 2,50)</small></span>
+                    <input type="date" id="data-rep-bolo">
+                </div>
+                <div class="input-row">
+                    <input type="number" id="rep-bolo" placeholder="Qtd Comprada">
+                    <button class="btn-vermelho" onclick="gastarQtd('BOLO', 2.50, 'rep-bolo', 'data-rep-bolo')">Lançar Custo</button>
+                </div>
+            </div>
+
+            <div class="input-group" style="border-left: 4px solid var(--red)">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                    <span style="font-size:1rem; font-weight: 600;">Outras Despesas</span>
+                    <input type="date" id="data-outros">
+                </div>
+                <input type="text" id="desc-outros" placeholder="Descrição (ex: Guardanapo, Gás)" style="background:rgba(0,0,0,0.3); border:none; padding:8px; color:#fff; border-radius:6px; margin:5px 0;">
+                <div class="input-row">
+                    <input type="number" id="valor-outros" placeholder="R$ Valor Gasto">
+                    <button class="btn-vermelho" onclick="lancarGastoGenerico()">Lançar Gasto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 10px;">
+        <div class="label">Últimas Movimentações (Transparência)</div>
+        <div style="overflow-x: auto;">
+            <table id="tabela-historico"></table>
+        </div>
+    </div>
+
+    <div class="admin-only" style="text-align: center; margin-top: 50px; margin-bottom: 30px;">
+        <button onclick="limparTudo()" style="background: transparent; border: 1px solid #333; color: #555; padding: 10px 30px; font-size: 0.8rem;">
+            <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> ZERAR SISTEMA (CUIDADO)
+        </button>
     </div>
 </div>
-
-<div class="fade-in" style="margin-bottom: 50px; text-align: center;">
-    <button class="btn-danger-zone" onclick="resetarSistema()">
-        <i class="fas fa-trash"></i> ZERAR BANCO DE DADOS (TESTES)
-    </button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     const API = "http://localhost:8080/api";
-    let myChart = null;
+    let chartInstance = null;
 
-    // Custos Unitários
-    const CUSTO_UNITARIO_TRUFA = 1.50; 
-    const CUSTO_UNITARIO_BOLO = 2.50;  
+    window.onload = () => {
+        const hoje = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(el => el.value = hoje);
+    };
 
-    // Função Auxiliar Ux
-    function focarInput(div) {
-        const input = div.querySelector('input');
-        if (input) input.focus();
+    function mostrarFormLogin() {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('form-login-container').style.display = 'block';
+        document.getElementById('login-user').focus();
+    }
+    
+    function cancelarLogin() {
+        document.getElementById('form-login-container').style.display = 'none';
+        document.getElementById('login-overlay').style.display = 'flex';
     }
 
-    // Carregar os Dados
+    function verificarEnter(event) {
+        if (event.key === 'Enter') fazerLogin();
+    }
+
+    function entrarComo(tipo) {
+        if(tipo === 'ESTUDANTE') iniciarSistema(false);
+    }
+
+    async function fazerLogin() {
+        const u = document.getElementById('login-user').value;
+        const p = document.getElementById('login-pass').value;
+
+        try {
+            const res = await fetch(API + '/login', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user: u, pass: p})
+            });
+            const auth = await res.json();
+            
+            if(auth) {
+                iniciarSistema(true);
+            } else {
+                Swal.fire({icon:'error', title:'Acesso Negado', text:'Senha incorreta', background:'#222', color:'#fff'});
+            }
+        } catch(e) {
+            Swal.fire({icon:'error', title:'Erro Servidor', text:'Backend está rodando?', background:'#222', color:'#fff'});
+        }
+    }
+
+    function iniciarSistema(isAdmin) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('form-login-container').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+
+        const badge = document.getElementById('badge-user');
+        if(isAdmin) {
+            badge.innerHTML = '<i class="fas fa-crown" style="color:#00e676; margin-right:5px;"></i> COMISSÃO (ADMIN)';
+            badge.style.color = '#fff';
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+        } else {
+            badge.innerText = "ESTUDANTE (VISUALIZAÇÃO)";
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+        }
+        carregarDados();
+    }
+
+    function sair() { location.reload(); }
+
     async function carregarDados() {
         try {
-            const res = await fetch(`${API}/dados`);
+            const res = await fetch(API + '/dados');
             const data = await res.json();
-            
-            document.getElementById("saldo").innerText = formatarMoeda(data.saldoTotal);
-            document.getElementById("acai").innerText = formatarMoeda(data.lucroAcai);
-
-            const lista = document.getElementById("lista-historico");
-            lista.innerHTML = "";
-            
-            // Lógica do Gráfico
-            let crescimentoEstimadoMensal = 0;
-            
-            // Filtra transações operacionais
-            const transacoesOperacionais = data.historico.filter(t => t.tipo !== 'SALDO_INICIAL');
-
-            if (transacoesOperacionais.length > 0) {
-                let lucroAcumuladoOperacional = 0;
-                transacoesOperacionais.forEach(t => lucroAcumuladoOperacional += t.valor);
-                
-                const mediaPorTransacao = lucroAcumuladoOperacional / transacoesOperacionais.length;
-                
-                // Estimativa: 20 vendas no mês
-                crescimentoEstimadoMensal = mediaPorTransacao * 20; 
-            }
-
-            const historicoInvertido = [...data.historico].reverse();
-
-            historicoInvertido.forEach(i => {
-                const isLucro = i.valor >= 0;
-                const cor = isLucro ? "txt-verde" : "txt-vermelho";
-                const icone = isLucro ? "fa-arrow-up" : "fa-arrow-down";
-                
-                lista.innerHTML += `<tr>
-                    <td><i class="fas ${icone} ${cor}" style="margin-right:15px; opacity:0.5"></i> ${i.descricao}</td>
-                    <td style="text-align:right; color:#555; font-size:0.75rem">${i.dataLancamento || 'Hoje'}</td>
-                    <td class="${cor}" style="text-align:right; font-weight:600">${formatarMoeda(i.valor)}</td>
-                </tr>`;
-            });
-
-            atualizarGraficoProjecao(data.saldoTotal, crescimentoEstimadoMensal);
-        } catch (e) { console.error(e); }
+            document.getElementById('saldo').innerText = fmtMoeda(data.saldoTotal);
+            document.getElementById('lucro-acai').innerText = fmtMoeda(data.lucroAcai);
+            renderizarHistorico(data.historico);
+            renderizarGraficoElaborado(data.historico);
+        } catch(e) { console.error("Erro dados", e); }
     }
 
-    // Gráfico
-    function atualizarGraficoProjecao(saldoAtual, crescimentoMensal) {
-        const ctx = document.getElementById('graficoProjecao').getContext('2d');
-        
-        const labels = [];
-        const dados = [];
-        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        
-        const hoje = new Date();
-        const mesAtualIndex = hoje.getMonth();
-
-        let saldoAcumulado = saldoAtual;
-
-        for (let i = mesAtualIndex; i <= 11; i++) {
-            labels.push(meses[i]);
-            dados.push(saldoAcumulado);
-            
-            if (saldoAtual > 0) {
-                saldoAcumulado += crescimentoMensal;
+    function renderizarHistorico(lista) {
+        const tb = document.getElementById('tabela-historico');
+        tb.innerHTML = '';
+        [...lista].reverse().slice(0, 20).forEach(i => {
+            const isPos = i.valor >= 0;
+            const cor = isPos ? 'txt-verde' : 'txt-vermelho';
+            const ico = isPos ? 'fa-arrow-up' : 'fa-arrow-down';
+            let dataV = "Hoje";
+            if(i.dataLancamento) {
+                const p = i.dataLancamento.split('-');
+                dataV = `${p[2]}/${p[1]}`;
             }
-        }
+            tb.innerHTML += `<tr><td style="width:40px;text-align:center"><i class="fas ${ico} ${cor}"></i></td><td style="font-weight:600;color:#fff">${i.descricao}</td><td style="text-align:right;opacity:0.6">${dataV}</td><td style="text-align:right;font-weight:800;font-size:1rem" class="${cor}">${fmtMoeda(i.valor)}</td></tr>`;
+        });
+    }
 
-        if(myChart) myChart.destroy();
-        
-        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(0, 230, 118, 0.5)');
-        gradient.addColorStop(1, 'rgba(0, 230, 118, 0)');
+    function renderizarGraficoElaborado(historico) {
+        const ctx = document.getElementById('graficoEvolucao').getContext('2d');
+        historico.sort((a,b) => (a.dataLancamento < b.dataLancamento ? -1 : 1));
 
-        myChart = new Chart(ctx, {
-            type: 'bar',
+        // ALTERAÇÃO AQUI: Começa sempre com 'Início' e '0' para garantir que forme uma linha
+        const labels = ['Início'];
+        const dadosSaldo = [0];
+        let saldoAcumulado = 0;
+
+        historico.forEach(l => {
+            saldoAcumulado += l.valor;
+            let dL = "";
+            if(l.dataLancamento) { const p = l.dataLancamento.split('-'); dL = `${p[2]}/${p[1]}`; }
+            
+            if (labels.length > 0 && labels[labels.length - 1] === dL) {
+                dadosSaldo[dadosSaldo.length - 1] = saldoAcumulado;
+            } else {
+                labels.push(dL);
+                dadosSaldo.push(saldoAcumulado);
+            }
+        });
+
+        if(chartInstance) chartInstance.destroy();
+        const gradiente = ctx.createLinearGradient(0, 0, 0, 300);
+        gradiente.addColorStop(0, 'rgba(0, 230, 118, 0.3)');
+        gradiente.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
             data: {
-                labels: labels,
+                labels: labels.slice(-15),
                 datasets: [{
-                    label: 'Projeção de Caixa',
-                    data: dados,
-                    backgroundColor: gradient,
-                    borderColor: '#00e676',
-                    borderWidth: 1,
-                    borderRadius: 4
+                    data: dadosSaldo.slice(-15),
+                    borderColor: '#00e676', borderWidth: 3, pointBackgroundColor: '#fff',
+                    pointBorderColor: '#00e676', pointRadius: 4, fill: true, backgroundColor: gradiente, tension: 0.3
                 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: '#222' }, ticks: { color: '#666' } },
-                    x: { grid: { display: false }, ticks: { color: '#888' } }
-                },
-                plugins: { legend: { display: false } }
+                    x: { grid: { display: false }, ticks: { color: '#888' } },
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', callback: v => 'R$ ' + v } }
+                }
             }
         });
     }
 
-    // Reposição Automática
-    async function reporEstoqueAuto(e, tipo, idQtd) {
-        e.stopPropagation(); 
-        const input = document.getElementById(idQtd);
-        const qtd = input.value;
-        
-        if (!qtd || qtd <= 0) return erro("Digite a quantidade comprada!");
-
-        let custoUnitario = (tipo === 'TRUFA') ? CUSTO_UNITARIO_TRUFA : CUSTO_UNITARIO_BOLO;
-        let totalGasto = qtd * custoUnitario;
-
-        confirmar(
-            "Confirmar Reposição?", 
-            `Comprando <b>${qtd} un</b> de ${tipo}.<br>
-             Custo Unitário: R$ ${custoUnitario.toFixed(2)}<br>
-             <span style="color:#ff1744; font-size:1.2rem">Total a descontar: -${formatarMoeda(totalGasto)}</span>`, 
-            () => {
-                enviar(tipo, -Math.abs(totalGasto), `Compra: ${qtd}un ${tipo} (Auto)`);
-                input.value = "";
-            }
-        );
-    }
-
-    // Resetar
-    async function resetarSistema() {
-        const passo1 = await Swal.fire({
-            title: 'TEM CERTEZA?', text: "Vai apagar TUDO. Isso é para testes!", icon: 'warning',
-            background: '#000', color: '#fff', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sim'
+    async function enviarLancamento(payload) {
+        await fetch(API + '/lancamento', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
         });
-
-        if (passo1.isConfirmed) {
-            const passo2 = await Swal.fire({
-                title: 'Confirmar Exclusão', text: "O saldo irá para ZERO.", icon: 'error',
-                background: '#000', color: '#fff', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'APAGAR AGORA'
-            });
-
-            if (passo2.isConfirmed) {
-                await fetch(`${API}/limpar`, { method: "DELETE" });
-                Swal.fire({title:'Sistema Zerado!', icon:'success', timer:1500, showConfirmButton:false, background:'#000', color:'#fff'});
-                carregarDados();
-            }
-        }
-    }
-
-    // Ações
-    async function venderItem(e, tipo, preco, idQtd) {
-        e.stopPropagation();
-        const input = document.getElementById(idQtd);
-        const qtd = input.value;
-        if (!qtd || qtd <= 0) return erro("Qtd inválida!");
-        const total = qtd * preco;
-        enviar(tipo, total, `Venda: ${qtd} ${tipo}`);
-        input.value = "";
-    }
-
-    async function lancarAcai(e) {
-        e.stopPropagation();
-        const input = document.getElementById("valor-acai");
-        const val = input.value;
-        if (!val) return erro("Valor inválido!");
-        enviar('ACAI', val, "Venda Açaí");
-        input.value = "";
-    }
-
-    async function gastarGenerico(e, tipo, idValor, desc) {
-        e.stopPropagation();
-        const input = document.getElementById(idValor);
-        const val = input.value;
-        if (!val) return erro("Valor inválido!");
-        confirmar("Gasto Extra", `Saída de ${formatarMoeda(val)}?`, () => {
-            enviar(tipo, -Math.abs(val), desc);
-            input.value = "";
-        });
-    }
-
-    async function lancarSaldoInicial(e) {
-        e.stopPropagation();
-        const input = document.getElementById("valor-nubank");
-        const val = input.value;
-        if (!val) return erro("Valor inválido!");
-        enviar('SALDO_INICIAL', val, "Aporte Nubank");
-        input.value = "";
-    }
-
-    // --- UTILS ---
-    async function enviar(tipo, valor, descricao) {
-        await fetch(`${API}/lancamento`, {
-            method: "POST", headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({tipo, valor, descricao})
-        });
-        const toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background:'#111', color:'#fff'});
+        const toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background:'#222', color:'#fff'});
         toast.fire({icon: 'success', title: 'Salvo!'});
         carregarDados();
     }
 
-    function confirmar(titulo, html, callback) {
-        Swal.fire({
-            title: titulo, html: html, icon: 'question',
-            background: '#111', color: '#fff',
-            showCancelButton: true, confirmButtonColor: '#00e676', cancelButtonColor: '#d33',
-            confirmButtonText: 'Confirmar'
-        }).then((result) => { if (result.isConfirmed) callback(); });
+    function venderQtd(tipo, preco, idQtd, idData) {
+        const qtd = document.getElementById(idQtd).value;
+        const data = document.getElementById(idData).value;
+        if(!qtd || qtd <= 0) return erro("Qtd inválida");
+        enviarLancamento({ tipo, descricao: `Venda ${qtd}x ${tipo}`, valor: (qtd * preco), data: data });
+        document.getElementById(idQtd).value = '';
     }
 
-    function erro(msg) { Swal.fire({icon: 'warning', title: 'Ops', text: msg, background:'#111', color:'#fff'}); }
-    function formatarMoeda(v) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(v); }
+    function lancarGenerico(tipo, idValor, desc, idData) {
+        const val = document.getElementById(idValor).value;
+        const data = document.getElementById(idData).value;
+        if(!val || val <= 0) return erro("Valor inválido");
+        enviarLancamento({ tipo, descricao: desc, valor: val, data: data });
+        document.getElementById(idValor).value = '';
+    }
 
-    carregarDados();
+    function gastarQtd(tipo, custo, idQtd, idData) {
+        const qtd = document.getElementById(idQtd).value;
+        const data = document.getElementById(idData).value;
+        if(!qtd || qtd <= 0) return erro("Qtd inválida");
+        const total = qtd * custo;
+
+        Swal.fire({
+            title: 'Confirmar Custo?', 
+            html: `Gastar <b>${fmtMoeda(total)}</b> em reposição?`,
+            icon: 'question', background: '#111', color:'#fff', 
+            showCancelButton:true, confirmButtonColor: '#ff1744', confirmButtonText: 'Lançar'
+        }).then((res) => {
+            if(res.isConfirmed) {
+                enviarLancamento({ tipo: tipo+'_COMP', descricao: `Compra Estoque: ${qtd}x ${tipo}`, valor: -total, data: data });
+                document.getElementById(idQtd).value = '';
+            }
+        });
+    }
+
+    function lancarGastoGenerico() {
+        const val = document.getElementById('valor-outros').value;
+        const desc = document.getElementById('desc-outros').value || 'Despesa';
+        const data = document.getElementById('data-outros').value;
+        if(!val || val <= 0) return erro("Valor inválido");
+        enviarLancamento({ tipo: 'OUTROS', descricao: desc, valor: -val, data: data });
+        document.getElementById('valor-outros').value = '';
+        document.getElementById('desc-outros').value = '';
+    }
+
+    async function limparTudo() {
+        const r1 = await Swal.fire({title:'TEM CERTEZA?', text:'Vai apagar tudo!', icon:'warning', showCancelButton:true, background:'#111', color:'#fff', confirmButtonColor:'#d33'});
+        if(r1.isConfirmed) {
+            await fetch(API + '/limpar', { method: 'DELETE' });
+            carregarDados();
+        }
+    }
+
+    function fmtMoeda(val) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(val); }
+    function erro(msg) { Swal.fire({icon:'warning', title:'Ops', text:msg, background:'#222', color:'#fff', toast:true, position:'top-end', showConfirmButton:false, timer:2000}); }
+
 </script>
-
 </body>
 </html>
