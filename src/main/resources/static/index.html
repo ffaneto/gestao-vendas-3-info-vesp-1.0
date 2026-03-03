@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro 3º Info</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #050505;
+            --card: #111;
+            --border: #222;
+            --text: #e0e0e0;
+            --accent-green: #00e676; 
+            --accent-red: #ff1744;   
+            --accent-purple: #d500f9;
+            --accent-blue: #2979ff;
+        }
+
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; transform: translateY(10px); }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+        header { text-align: center; margin: 30px 0; }
+        h1 { font-weight: 300; letter-spacing: 3px; color: #fff; margin: 0; text-transform: uppercase; }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+        }
+        .card:hover { border-color: #444; }
+
+        .big-number { font-size: 3rem; font-weight: 700; margin: 10px 0; letter-spacing: -1px; }
+        .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #666; font-weight: 600; }
+
+        .txt-verde { color: var(--accent-green); }
+        .txt-roxo { color: var(--accent-purple); }
+        .txt-vermelho { color: var(--accent-red); }
+
+        /* Gráfico */
+        .chart-container { position: relative; height: 250px; width: 100%; }
+
+        /* Inputs */
+        .input-group {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid transparent;
+            cursor: text;
+        }
+        .input-group:hover { background: #222; }
+        .input-group:focus-within { border-color: var(--accent-blue); background: #222; }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+            text-align: center; 
+            padding: 5px;
+            font-weight: bold;
+            -moz-appearance: textfield; 
+        }
+        
+        input::-webkit-outer-spin-button, 
+        input::-webkit-inner-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        
+        /* Estilo */
+        ::placeholder { 
+            color: rgba(255, 255, 255, 0.25); 
+            font-weight: 700; 
+            font-family: 'Inter', sans-serif;
+            opacity: 1; 
+            font-size: 0.9rem;
+        }
+
+        button {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+        
+        .btn-verde { background: rgba(0, 230, 118, 0.1); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .btn-verde:hover { background: var(--accent-green); color: #000; }
+
+        .btn-vermelho { background: rgba(255, 23, 68, 0.1); color: var(--accent-red); border: 1px solid var(--accent-red); }
+        .btn-vermelho:hover { background: var(--accent-red); color: #fff; }
+        
+        .btn-danger-zone {
+            margin-top: 50px;
+            background: transparent;
+            color: #444;
+            font-size: 0.8rem;
+            border: 1px solid #333;
+        }
+        .btn-danger-zone:hover { color: red; border-color: red; }
+
+        h2 { font-size: 1rem; color: #fff; border-left: 4px solid var(--accent-blue); padding-left: 15px; margin-bottom: 25px; text-transform: uppercase; }
+
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
+        .history-table td { padding: 15px 5px; border-bottom: 1px solid #222; color: #aaa; }
+    </style>
+</head>
+<body>
+
+<header class="fade-in">
+    <h1>Financeiro 3º Info</h1>
+    <p style="color: #444; font-size: 0.8rem; margin-top: 5px;">Painel de Gestão</p>
+</header>
+
+<div class="main-grid fade-in">
+    
+    <div class="card">
+        <div class="label">Saldo Disponível (Nubank + Caixa)</div>
+        <div class="big-number txt-verde" id="saldo">R$ 0,00</div>
+        
+        <div style="margin-top: 25px;">
+            <div class="label">Lucro Açaí</div>
+            <div class="txt-roxo" style="font-size: 1.5rem; font-weight: bold;" id="acai">R$ 0,00</div>
+        </div>
+        
+        <hr style="border-color: #222; margin: 25px 0;">
+        
+        <div class="input-group" onclick="focarInput(this)">
+            <span style="font-size: 0.8rem; color: #9c27b0; white-space: nowrap;"><i class="fas fa-university"></i> Add Saldo</span>
+            <div style="display:flex; width: 100%; justify-content: flex-end;">
+                <input type="number" id="valor-nubank" placeholder="Valor R$">
+                <button class="btn-verde" style="border:none; padding: 5px 10px;" onclick="lancarSaldoInicial(event)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="label" style="text-align: center; margin-bottom: 15px;">Projeção</div>
+        <div class="chart-container">
+            <canvas id="graficoProjecao"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<div class="main-grid fade-in" style="margin-top: 20px; animation-delay: 0.2s;">
+
+    <div class="card">
+        <h2><i class="fas fa-arrow-up" style="color: var(--accent-green)"></i> Entrada (Vendas)</h2>
+
+        <div class="input-group" onclick="focarInput(this)">
+            <span style="color: #fff; white-space: nowrap;">Trufa <small style="color:#666">(R$ 2,50)</small></span>
+            <div style="display:flex; width: 100%;">
+                <input type="number" id="qtd-trufa" placeholder="Quantidade">
+                <button class="btn-verde" onclick="venderItem(event, 'TRUFA', 2.50, 'qtd-trufa')">OK</button>
+            </div>
+        </div>
+
+        <div class="input-group" onclick="focarInput(this)">
+            <span style="color: #fff; white-space: nowrap;">Bolo <small style="color:#666">(R$ 3,50)</small></span>
+            <div style="display:flex; width: 100%;">
+                <input type="number" id="qtd-bolo" placeholder="Quantidade">
+                <button class="btn-verde" onclick="venderItem(event, 'BOLO', 3.50, 'qtd-bolo')">OK</button>
+            </div>
+        </div>
+
+        <div class="input-group" style="border: 1px solid #4a148c;" onclick="focarInput(this)">
+            <span style="color: var(--accent-purple); white-space: nowrap;">Açaí <small>(Livre)</small></span>
+            <div style="display:flex; width: 100%;">
+                <input type="number" id="valor-acai" placeholder="Valor R$">
+                <button class="btn-verde" style="background: var(--accent-purple); color: #fff;" onclick="lancarAcai(event)">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-arrow-down" style="color: var(--accent-red)"></i> Reposição (Estoque)</h2>
+        <div class="input-group" style="border-left: 2px solid var(--accent-red)" onclick="focarInput(this)">
+            <div>
+                <span style="display:block; font-size:0.9rem">Trufas (Compra)</span>
+                <small style="color:#555">R$ 1,50/un</small>
+            </div>
+            <div style="display:flex; width: 100%;">
+                <input type="number" id="rep-qtd-trufa" placeholder="Quantidade">
+                <button class="btn-vermelho" onclick="reporEstoqueAuto(event, 'TRUFA', 'rep-qtd-trufa')">-</button>
+            </div>
+        </div>
+
+        <div class="input-group" style="border-left: 2px solid var(--accent-red)" onclick="focarInput(this)">
+            <div>
+                <span style="display:block; font-size:0.9rem">Bolos (Compra)</span>
+                <small style="color:#555">R$ 2,50/un</small>
+            </div>
+            <div style="display:flex; width: 100%;">
+                <input type="number" id="rep-qtd-bolo" placeholder="Quantidade">
+                <button class="btn-vermelho" onclick="reporEstoqueAuto(event, 'BOLO', 'rep-qtd-bolo')">-</button>
+            </div>
+        </div>
+
+        <div class="input-group" style="border-left: 2px solid var(--accent-red)" onclick="focarInput(this)">
+            <span style="font-size: 0.9rem; white-space: nowrap;">Gasto Açaí</span>
+            <div style="display:flex; width: 100%;">
+                <input type="number" id="custo-acai" placeholder="Valor R$">
+                <button class="btn-vermelho" onclick="gastarGenerico(event, 'ACAI_COMP', 'custo-acai', 'Comp. Açaí')">-</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-grid fade-in" style="margin-top: 20px; animation-delay: 0.4s;">
+    <div class="card" style="grid-column: 1 / -1;">
+        <div class="label">Histórico de Transações</div>
+        <table class="history-table">
+            <tbody id="lista-historico"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="fade-in" style="margin-bottom: 50px; text-align: center;">
+    <button class="btn-danger-zone" onclick="resetarSistema()">
+        <i class="fas fa-trash"></i> ZERAR BANCO DE DADOS (TESTES)
+    </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const API = "http://localhost:8080/api";
+    let myChart = null;
+
+    // Custos Unitários
+    const CUSTO_UNITARIO_TRUFA = 1.50; 
+    const CUSTO_UNITARIO_BOLO = 2.50;  
+
+    // Função Auxiliar Ux
+    function focarInput(div) {
+        const input = div.querySelector('input');
+        if (input) input.focus();
+    }
+
+    // Carregar os Dados
+    async function carregarDados() {
+        try {
+            const res = await fetch(`${API}/dados`);
+            const data = await res.json();
+            
+            document.getElementById("saldo").innerText = formatarMoeda(data.saldoTotal);
+            document.getElementById("acai").innerText = formatarMoeda(data.lucroAcai);
+
+            const lista = document.getElementById("lista-historico");
+            lista.innerHTML = "";
+            
+            // Lógica do Gráfico
+            let crescimentoEstimadoMensal = 0;
+            
+            // Filtra transações operacionais
+            const transacoesOperacionais = data.historico.filter(t => t.tipo !== 'SALDO_INICIAL');
+
+            if (transacoesOperacionais.length > 0) {
+                let lucroAcumuladoOperacional = 0;
+                transacoesOperacionais.forEach(t => lucroAcumuladoOperacional += t.valor);
+                
+                const mediaPorTransacao = lucroAcumuladoOperacional / transacoesOperacionais.length;
+                
+                // Estimativa: 20 vendas no mês
+                crescimentoEstimadoMensal = mediaPorTransacao * 20; 
+            }
+
+            const historicoInvertido = [...data.historico].reverse();
+
+            historicoInvertido.forEach(i => {
+                const isLucro = i.valor >= 0;
+                const cor = isLucro ? "txt-verde" : "txt-vermelho";
+                const icone = isLucro ? "fa-arrow-up" : "fa-arrow-down";
+                
+                lista.innerHTML += `<tr>
+                    <td><i class="fas ${icone} ${cor}" style="margin-right:15px; opacity:0.5"></i> ${i.descricao}</td>
+                    <td style="text-align:right; color:#555; font-size:0.75rem">${i.dataLancamento || 'Hoje'}</td>
+                    <td class="${cor}" style="text-align:right; font-weight:600">${formatarMoeda(i.valor)}</td>
+                </tr>`;
+            });
+
+            atualizarGraficoProjecao(data.saldoTotal, crescimentoEstimadoMensal);
+        } catch (e) { console.error(e); }
+    }
+
+    // Gráfico
+    function atualizarGraficoProjecao(saldoAtual, crescimentoMensal) {
+        const ctx = document.getElementById('graficoProjecao').getContext('2d');
+        
+        const labels = [];
+        const dados = [];
+        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        
+        const hoje = new Date();
+        const mesAtualIndex = hoje.getMonth();
+
+        let saldoAcumulado = saldoAtual;
+
+        for (let i = mesAtualIndex; i <= 11; i++) {
+            labels.push(meses[i]);
+            dados.push(saldoAcumulado);
+            
+            if (saldoAtual > 0) {
+                saldoAcumulado += crescimentoMensal;
+            }
+        }
+
+        if(myChart) myChart.destroy();
+        
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(0, 230, 118, 0.5)');
+        gradient.addColorStop(1, 'rgba(0, 230, 118, 0)');
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Projeção de Caixa',
+                    data: dados,
+                    backgroundColor: gradient,
+                    borderColor: '#00e676',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#222' }, ticks: { color: '#666' } },
+                    x: { grid: { display: false }, ticks: { color: '#888' } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // Reposição Automática
+    async function reporEstoqueAuto(e, tipo, idQtd) {
+        e.stopPropagation(); 
+        const input = document.getElementById(idQtd);
+        const qtd = input.value;
+        
+        if (!qtd || qtd <= 0) return erro("Digite a quantidade comprada!");
+
+        let custoUnitario = (tipo === 'TRUFA') ? CUSTO_UNITARIO_TRUFA : CUSTO_UNITARIO_BOLO;
+        let totalGasto = qtd * custoUnitario;
+
+        confirmar(
+            "Confirmar Reposição?", 
+            `Comprando <b>${qtd} un</b> de ${tipo}.<br>
+             Custo Unitário: R$ ${custoUnitario.toFixed(2)}<br>
+             <span style="color:#ff1744; font-size:1.2rem">Total a descontar: -${formatarMoeda(totalGasto)}</span>`, 
+            () => {
+                enviar(tipo, -Math.abs(totalGasto), `Compra: ${qtd}un ${tipo} (Auto)`);
+                input.value = "";
+            }
+        );
+    }
+
+    // Resetar
+    async function resetarSistema() {
+        const passo1 = await Swal.fire({
+            title: 'TEM CERTEZA?', text: "Vai apagar TUDO. Isso é para testes!", icon: 'warning',
+            background: '#000', color: '#fff', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sim'
+        });
+
+        if (passo1.isConfirmed) {
+            const passo2 = await Swal.fire({
+                title: 'Confirmar Exclusão', text: "O saldo irá para ZERO.", icon: 'error',
+                background: '#000', color: '#fff', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'APAGAR AGORA'
+            });
+
+            if (passo2.isConfirmed) {
+                await fetch(`${API}/limpar`, { method: "DELETE" });
+                Swal.fire({title:'Sistema Zerado!', icon:'success', timer:1500, showConfirmButton:false, background:'#000', color:'#fff'});
+                carregarDados();
+            }
+        }
+    }
+
+    // Ações
+    async function venderItem(e, tipo, preco, idQtd) {
+        e.stopPropagation();
+        const input = document.getElementById(idQtd);
+        const qtd = input.value;
+        if (!qtd || qtd <= 0) return erro("Qtd inválida!");
+        const total = qtd * preco;
+        enviar(tipo, total, `Venda: ${qtd} ${tipo}`);
+        input.value = "";
+    }
+
+    async function lancarAcai(e) {
+        e.stopPropagation();
+        const input = document.getElementById("valor-acai");
+        const val = input.value;
+        if (!val) return erro("Valor inválido!");
+        enviar('ACAI', val, "Venda Açaí");
+        input.value = "";
+    }
+
+    async function gastarGenerico(e, tipo, idValor, desc) {
+        e.stopPropagation();
+        const input = document.getElementById(idValor);
+        const val = input.value;
+        if (!val) return erro("Valor inválido!");
+        confirmar("Gasto Extra", `Saída de ${formatarMoeda(val)}?`, () => {
+            enviar(tipo, -Math.abs(val), desc);
+            input.value = "";
+        });
+    }
+
+    async function lancarSaldoInicial(e) {
+        e.stopPropagation();
+        const input = document.getElementById("valor-nubank");
+        const val = input.value;
+        if (!val) return erro("Valor inválido!");
+        enviar('SALDO_INICIAL', val, "Aporte Nubank");
+        input.value = "";
+    }
+
+    // --- UTILS ---
+    async function enviar(tipo, valor, descricao) {
+        await fetch(`${API}/lancamento`, {
+            method: "POST", headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({tipo, valor, descricao})
+        });
+        const toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background:'#111', color:'#fff'});
+        toast.fire({icon: 'success', title: 'Salvo!'});
+        carregarDados();
+    }
+
+    function confirmar(titulo, html, callback) {
+        Swal.fire({
+            title: titulo, html: html, icon: 'question',
+            background: '#111', color: '#fff',
+            showCancelButton: true, confirmButtonColor: '#00e676', cancelButtonColor: '#d33',
+            confirmButtonText: 'Confirmar'
+        }).then((result) => { if (result.isConfirmed) callback(); });
+    }
+
+    function erro(msg) { Swal.fire({icon: 'warning', title: 'Ops', text: msg, background:'#111', color:'#fff'}); }
+    function formatarMoeda(v) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(v); }
+
+    carregarDados();
+</script>
+
+</body>
+</html>
