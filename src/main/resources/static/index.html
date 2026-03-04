@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Financeiro 3º Info</title>
+    <title>Financeiro Local (v3.0)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* --- ESTILO VISUAL MODERNO --- */
         :root {
             --bg: #050505;
             --card-bg: rgba(20, 20, 20, 0.7);
@@ -31,28 +32,17 @@
             position: relative;
         }
 
-        /* --- REMOVE SETINHAS DOS INPUTS NUMBER --- */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
 
-        /* --- LOGO DE FUNDO (MARCA D'ÁGUA) --- */
         body::before {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('logo.png'); /* Certifique-se que logo.png está na pasta */
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('logo.png'); 
             background-position: center; background-repeat: no-repeat; background-size: 60%;
-            opacity: 0.05;
-            z-index: -1;
-            pointer-events: none;
+            opacity: 0.05; z-index: -1; pointer-events: none;
         }
 
-        /* --- TELA DE LOGIN (DIVIDIDA) --- */
+        /* --- LOGIN --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex;
@@ -67,14 +57,17 @@
         .split-side i { font-size: 3.5rem; margin-bottom: 25px; }
         .split-title { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; }
 
-        /* Formulário de Senha Flutuante */
         #form-login-container {
             display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: #18181b; border: 1px solid #333; padding: 35px; border-radius: 20px;
             width: 90%; max-width: 350px; box-shadow: 0 25px 60px rgba(0,0,0,0.9); z-index: 10000;
         }
 
-        /* --- SISTEMA PRINCIPAL --- */
+        /* CORREÇÃO DO POPUP */
+        .swal2-container { z-index: 99999 !important; }
+        .swal2-backdrop-show { z-index: 99998 !important; }
+
+        /* --- SISTEMA --- */
         .app-container { max-width: 1200px; margin: 0 auto; padding: 25px; width: 100%; display: none; }
         
         header { 
@@ -96,10 +89,8 @@
         .big-number { font-size: 3rem; font-weight: 800; margin: 10px 0; letter-spacing: -1.5px; }
         .label { font-size: 0.8rem; text-transform: uppercase; color: #888; font-weight: 600; letter-spacing: 1.5px; }
 
-        /* Gráfico */
         .chart-container { position: relative; height: 280px; width: 100%; margin-top: 20px; }
 
-        /* Inputs e Botões */
         .input-group {
             background: rgba(255,255,255,0.04); border-radius: 14px; padding: 12px; margin-bottom: 15px;
             border: 1px solid transparent; transition: 0.2s; display: flex; flex-direction: column; gap: 8px;
@@ -108,16 +99,8 @@
         
         .input-row { display: flex; gap: 12px; align-items: center; }
         
-        input[type="number"], input[type="text"], input[type="password"] {
-            background: transparent; border: none; color: #fff; font-size: 1.1rem; width: 100%;
-            padding: 10px; font-weight: 600;
-        }
-        input::placeholder { color: #555; }
-
-        input[type="date"] {
-            background: transparent; border: none; color: #777; font-size: 0.8rem; 
-            font-family: 'Inter'; width: 100%; text-align: right; cursor: pointer;
-        }
+        input { background: transparent; border: none; color: #fff; font-size: 1.1rem; width: 100%; padding: 10px; font-weight: 600; }
+        input[type="date"] { font-size: 0.8rem; text-align: right; cursor: pointer; color: #777; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.4); cursor: pointer; }
 
         button {
@@ -127,11 +110,7 @@
         button:active { transform: scale(0.96); }
 
         .btn-verde { background: rgba(0, 230, 118, 0.18); color: var(--green); border: 1px solid var(--green); }
-        .btn-verde:hover { background: var(--green); color: #000; }
-        
         .btn-vermelho { background: rgba(255, 23, 68, 0.18); color: var(--red); border: 1px solid var(--red); }
-        .btn-vermelho:hover { background: var(--red); color: #fff; }
-
         .btn-login { width: 100%; background: var(--blue); color: white; padding: 15px; margin-top: 15px; font-size: 1rem; }
 
         .txt-verde { color: var(--green); }
@@ -169,7 +148,7 @@
 </div>
 
 <div id="form-login-container">
-    <h3 style="text-align: center; margin-top: 0; font-weight: 800; letter-spacing: 1px;">Acesso Restrito</h3>
+    <h3 style="text-align: center; margin-top: 0; font-weight: 800; letter-spacing: 1px;">Acesso Local</h3>
     <div class="input-group">
         <input type="text" id="login-user" placeholder="Usuário (admin)">
     </div>
@@ -303,7 +282,7 @@
     </div>
 
     <div class="card" style="margin-top: 10px;">
-        <div class="label">Últimas Movimentações (Transparência)</div>
+        <div class="label">Últimas Movimentações</div>
         <div style="overflow-x: auto;">
             <table id="tabela-historico"></table>
         </div>
@@ -311,20 +290,42 @@
 
     <div class="admin-only" style="text-align: center; margin-top: 50px; margin-bottom: 30px;">
         <button onclick="limparTudo()" style="background: transparent; border: 1px solid #333; color: #555; padding: 10px 30px; font-size: 0.8rem;">
-            <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> ZERAR SISTEMA (CUIDADO)
+            <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> ZERAR DADOS LOCAIS
         </button>
     </div>
 </div>
 
 <script>
-    const API = "http://localhost:8080/api";
+    // --- LÓGICA 100% LOCAL (SEM SERVIDOR) --- //
+    // Os dados ficam salvos no navegador do seu celular/PC
+
     let chartInstance = null;
+    const DB_KEY = "financeiro_3info_db";
 
     window.onload = () => {
+        // Preenche datas com hoje
         const hoje = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(el => el.value = hoje);
+        
+        // Verifica se já estava logado
+        const usuarioLogado = localStorage.getItem("usuario_logado");
+        if(usuarioLogado === "ADMIN") iniciarSistema(true);
+        else if(usuarioLogado === "ESTUDANTE") iniciarSistema(false);
     };
 
+    // --- BANCO DE DADOS LOCAL ---
+    function getDB() {
+        const db = localStorage.getItem(DB_KEY);
+        if(!db) return { saldoTotal: 0, lucroAcai: 0, historico: [] };
+        return JSON.parse(db);
+    }
+
+    function saveDB(data) {
+        localStorage.setItem(DB_KEY, JSON.stringify(data));
+        carregarDados(); // Atualiza a tela
+    }
+
+    // --- LOGIN ---
     function mostrarFormLogin() {
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('form-login-container').style.display = 'block';
@@ -336,32 +337,25 @@
         document.getElementById('login-overlay').style.display = 'flex';
     }
 
-    function verificarEnter(event) {
-        if (event.key === 'Enter') fazerLogin();
-    }
+    function verificarEnter(event) { if (event.key === 'Enter') fazerLogin(); }
 
     function entrarComo(tipo) {
-        if(tipo === 'ESTUDANTE') iniciarSistema(false);
+        if(tipo === 'ESTUDANTE') {
+            localStorage.setItem("usuario_logado", "ESTUDANTE");
+            iniciarSistema(false);
+        }
     }
 
-    async function fazerLogin() {
+    function fazerLogin() {
         const u = document.getElementById('login-user').value;
         const p = document.getElementById('login-pass').value;
 
-        try {
-            const res = await fetch(API + '/login', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({user: u, pass: p})
-            });
-            const auth = await res.json();
-            
-            if(auth) {
-                iniciarSistema(true);
-            } else {
-                Swal.fire({icon:'error', title:'Acesso Negado', text:'Senha incorreta', background:'#222', color:'#fff'});
-            }
-        } catch(e) {
-            Swal.fire({icon:'error', title:'Erro Servidor', text:'Backend está rodando?', background:'#222', color:'#fff'});
+        // Senha fixa local
+        if(u === 'admin' && p === 'admin') {
+            localStorage.setItem("usuario_logado", "ADMIN");
+            iniciarSistema(true);
+        } else {
+            Swal.fire({icon:'error', title:'Acesso Negado', text:'Tente user: admin / senha: admin', background:'#222', color:'#fff'});
         }
     }
 
@@ -382,91 +376,47 @@
         carregarDados();
     }
 
-    function sair() { location.reload(); }
-
-    async function carregarDados() {
-        try {
-            const res = await fetch(API + '/dados');
-            const data = await res.json();
-            document.getElementById('saldo').innerText = fmtMoeda(data.saldoTotal);
-            document.getElementById('lucro-acai').innerText = fmtMoeda(data.lucroAcai);
-            renderizarHistorico(data.historico);
-            renderizarGraficoElaborado(data.historico);
-        } catch(e) { console.error("Erro dados", e); }
+    function sair() {
+        localStorage.removeItem("usuario_logado");
+        location.reload();
     }
 
-    function renderizarHistorico(lista) {
-        const tb = document.getElementById('tabela-historico');
-        tb.innerHTML = '';
-        [...lista].reverse().slice(0, 20).forEach(i => {
-            const isPos = i.valor >= 0;
-            const cor = isPos ? 'txt-verde' : 'txt-vermelho';
-            const ico = isPos ? 'fa-arrow-up' : 'fa-arrow-down';
-            let dataV = "Hoje";
-            if(i.dataLancamento) {
-                const p = i.dataLancamento.split('-');
-                dataV = `${p[2]}/${p[1]}`;
-            }
-            tb.innerHTML += `<tr><td style="width:40px;text-align:center"><i class="fas ${ico} ${cor}"></i></td><td style="font-weight:600;color:#fff">${i.descricao}</td><td style="text-align:right;opacity:0.6">${dataV}</td><td style="text-align:right;font-weight:800;font-size:1rem" class="${cor}">${fmtMoeda(i.valor)}</td></tr>`;
-        });
+    // --- CORE DO SISTEMA ---
+    function carregarDados() {
+        const data = getDB();
+        document.getElementById('saldo').innerText = fmtMoeda(data.saldoTotal);
+        document.getElementById('lucro-acai').innerText = fmtMoeda(data.lucroAcai);
+        renderizarHistorico(data.historico);
+        renderizarGraficoElaborado(data.historico);
     }
 
-    function renderizarGraficoElaborado(historico) {
-        const ctx = document.getElementById('graficoEvolucao').getContext('2d');
-        historico.sort((a,b) => (a.dataLancamento < b.dataLancamento ? -1 : 1));
-
-        // ALTERAÇÃO AQUI: Começa sempre com 'Início' e '0' para garantir que forme uma linha
-        const labels = ['Início'];
-        const dadosSaldo = [0];
-        let saldoAcumulado = 0;
-
-        historico.forEach(l => {
-            saldoAcumulado += l.valor;
-            let dL = "";
-            if(l.dataLancamento) { const p = l.dataLancamento.split('-'); dL = `${p[2]}/${p[1]}`; }
-            
-            if (labels.length > 0 && labels[labels.length - 1] === dL) {
-                dadosSaldo[dadosSaldo.length - 1] = saldoAcumulado;
-            } else {
-                labels.push(dL);
-                dadosSaldo.push(saldoAcumulado);
-            }
+    function enviarLancamento(payload) {
+        const db = getDB();
+        
+        // Adiciona novo item
+        db.historico.push({
+            tipo: payload.tipo,
+            descricao: payload.descricao,
+            valor: parseFloat(payload.valor),
+            dataLancamento: payload.data
         });
 
-        if(chartInstance) chartInstance.destroy();
-        const gradiente = ctx.createLinearGradient(0, 0, 0, 300);
-        gradiente.addColorStop(0, 'rgba(0, 230, 118, 0.3)');
-        gradiente.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        // Recalcula Saldo Total
+        let novoSaldo = 0;
+        let novoLucroAcai = 0;
 
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels.slice(-15),
-                datasets: [{
-                    data: dadosSaldo.slice(-15),
-                    borderColor: '#00e676', borderWidth: 3, pointBackgroundColor: '#fff',
-                    pointBorderColor: '#00e676', pointRadius: 4, fill: true, backgroundColor: gradiente, tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { display: false }, ticks: { color: '#888' } },
-                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', callback: v => 'R$ ' + v } }
-                }
-            }
+        db.historico.forEach(item => {
+            novoSaldo += item.valor;
+            if(item.tipo === 'ACAI') novoLucroAcai += item.valor;
         });
-    }
 
-    async function enviarLancamento(payload) {
-        await fetch(API + '/lancamento', {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
+        db.saldoTotal = novoSaldo;
+        db.lucroAcai = novoLucroAcai;
+
+        saveDB(db);
+        
         const toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background:'#222', color:'#fff'});
-        toast.fire({icon: 'success', title: 'Salvo!'});
-        carregarDados();
+        toast.fire({icon: 'success', title: 'Salvo Localmente!'});
     }
 
     function venderQtd(tipo, preco, idQtd, idData) {
@@ -514,17 +464,87 @@
         document.getElementById('desc-outros').value = '';
     }
 
-    async function limparTudo() {
-        const r1 = await Swal.fire({title:'TEM CERTEZA?', text:'Vai apagar tudo!', icon:'warning', showCancelButton:true, background:'#111', color:'#fff', confirmButtonColor:'#d33'});
-        if(r1.isConfirmed) {
-            await fetch(API + '/limpar', { method: 'DELETE' });
-            carregarDados();
-        }
+    function renderizarHistorico(lista) {
+        const tb = document.getElementById('tabela-historico');
+        tb.innerHTML = '';
+        // Cópia invertida para mostrar mais recentes primeiro
+        [...lista].reverse().slice(0, 20).forEach(i => {
+            const isPos = i.valor >= 0;
+            const cor = isPos ? 'txt-verde' : 'txt-vermelho';
+            const ico = isPos ? 'fa-arrow-up' : 'fa-arrow-down';
+            let dataV = "Data";
+            if(i.dataLancamento) {
+                const p = i.dataLancamento.split('-');
+                dataV = `${p[2]}/${p[1]}`;
+            }
+            tb.innerHTML += `<tr><td style="width:40px;text-align:center"><i class="fas ${ico} ${cor}"></i></td><td style="font-weight:600;color:#fff">${i.descricao}</td><td style="text-align:right;opacity:0.6">${dataV}</td><td style="text-align:right;font-weight:800;font-size:1rem" class="${cor}">${fmtMoeda(i.valor)}</td></tr>`;
+        });
+    }
+
+    function renderizarGraficoElaborado(historico) {
+        const ctx = document.getElementById('graficoEvolucao').getContext('2d');
+        // Ordena por data (antigo -> novo)
+        const ordenado = [...historico].sort((a,b) => (a.dataLancamento < b.dataLancamento ? -1 : 1));
+
+        const labels = ['Início'];
+        const dadosSaldo = [0];
+        let saldoAcumulado = 0;
+
+        ordenado.forEach(l => {
+            saldoAcumulado += l.valor;
+            let dL = "";
+            if(l.dataLancamento) { const p = l.dataLancamento.split('-'); dL = `${p[2]}/${p[1]}`; }
+            
+            if (labels.length > 0 && labels[labels.length - 1] === dL) {
+                dadosSaldo[dadosSaldo.length - 1] = saldoAcumulado;
+            } else {
+                labels.push(dL);
+                dadosSaldo.push(saldoAcumulado);
+            }
+        });
+
+        if(chartInstance) chartInstance.destroy();
+        const gradiente = ctx.createLinearGradient(0, 0, 0, 300);
+        gradiente.addColorStop(0, 'rgba(0, 230, 118, 0.3)');
+        gradiente.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels.slice(-15),
+                datasets: [{
+                    data: dadosSaldo.slice(-15),
+                    borderColor: '#00e676', borderWidth: 3, pointBackgroundColor: '#fff',
+                    pointBorderColor: '#00e676', pointRadius: 4, fill: true, backgroundColor: gradiente, tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#888' } },
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', callback: v => 'R$ ' + v } }
+                }
+            }
+        });
+    }
+
+    function limparTudo() {
+        Swal.fire({
+            title:'ZERAR TUDO?', 
+            text:'Isso apaga os dados deste navegador para sempre.', 
+            icon:'warning', showCancelButton:true, background:'#111', color:'#fff', confirmButtonColor:'#d33'
+        }).then((r) => {
+            if(r.isConfirmed) {
+                localStorage.removeItem(DB_KEY);
+                location.reload();
+            }
+        });
     }
 
     function fmtMoeda(val) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(val); }
     function erro(msg) { Swal.fire({icon:'warning', title:'Ops', text:msg, background:'#222', color:'#fff', toast:true, position:'top-end', showConfirmButton:false, timer:2000}); }
-
 </script>
+
 </body>
 </html>
