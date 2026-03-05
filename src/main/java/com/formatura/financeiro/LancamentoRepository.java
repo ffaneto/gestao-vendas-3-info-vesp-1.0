@@ -7,14 +7,14 @@ import java.util.List;
 
 public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
     
-    // Pega os últimos 50 registros (do mais novo para o mais velho)
+    // Método auxiliar para pegar os últimos 50 lançamentos, ordenados do mais recente para o mais antigo.
     List<Lancamento> findTop50ByOrderByDataLancamentoDescHoraLancamentoDesc();
 
-    // Soma tudo pra o Saldo Geral
+    // Query JPQL para calcular o saldo total somando todos os lançamentos.
     @Query("SELECT COALESCE(SUM(l.valor), 0) FROM Lancamento l")
     BigDecimal calcularSaldoTotal();
     
-    // Soma só o lucro do Açaí
+    // Query JPQL para somar apenas os lançamentos do tipo 'ACAI'.
     @Query("SELECT COALESCE(SUM(l.valor), 0) FROM Lancamento l WHERE l.tipo = 'ACAI'")
     BigDecimal calcularLucroAcai();
 }
