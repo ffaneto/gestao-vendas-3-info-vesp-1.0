@@ -1,15 +1,14 @@
+server:
+  port: 8080
+
 spring:
-  application:
-    name: financeiro
   datasource:
-    url: jdbc:mysql://localhost:3306/db_formatura?createDatabaseIfNotExist=true&serverTimezone=America/Sao_Paulo
+    url: jdbc:mysql://localhost:3306/db_formatura?useTimezone=true&serverTimezone=UTC
     username: root
-    password: "1234567"
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: '1234567'
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect

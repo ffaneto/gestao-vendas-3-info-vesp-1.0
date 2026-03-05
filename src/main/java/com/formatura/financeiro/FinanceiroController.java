@@ -1,11 +1,11 @@
 package com.formatura.financeiro;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,60 +17,30 @@ public class FinanceiroController {
     @Autowired
     private LancamentoRepository repository;
     
-    @PostMapping("/login")
-    public boolean login(@RequestBody Map<String, String> credenciais) {
-        String user = credenciais.get("user");
-        String pass = credenciais.get("pass");
-        return "admin".equals(user) && "comissao".equals(pass);
+    // --- CORREÇÃO 1: O endpoint agora chama "/vendas" igual ao HTML ---
+    // --- CORREÇÃO 2: Retorna apenas a LISTA pura, para o JavaScript calcular os totais ---
+    @GetMapping("/vendas")
+    public List<Lancamento> listarTodasVendas() {
+        return repository.findAll();
     }
 
-    @GetMapping("/dados")
-    public Map<String, Object> getDashboard() {
-        List<Lancamento> lista = repository.findAll();
-
-        // Ordenar por data Antigo - Novo
-        lista.sort((a, b) -> {
-            if (a.getDataLancamento() == null) return -1;
-            if (b.getDataLancamento() == null) return 1;
-            return a.getDataLancamento().compareTo(b.getDataLancamento());
-        });
-
-        // Calcular Saldo Total
-        BigDecimal saldoTotal = BigDecimal.ZERO;
-        for (Lancamento l : lista) {
-            if (l.getValor() != null) {
-                saldoTotal = saldoTotal.add(l.getValor());
-            }
-        }
-
-        // Calcular Lucro Açaí
-        BigDecimal lucroAcai = BigDecimal.ZERO;
-        for (Lancamento l : lista) {
-            if ("ACAI".equalsIgnoreCase(l.getTipo()) && l.getValor() != null) {
-                lucroAcai = lucroAcai.add(l.getValor());
-            }
-        }
-
-        Map<String, Object> resposta = new HashMap<>();
-        resposta.put("saldoTotal", saldoTotal);
-        resposta.put("lucroAcai", lucroAcai);
-        resposta.put("historico", lista);
-        
-        return resposta;
-    }
-
-    @PostMapping("/lancamento")
+    // --- CORREÇÃO 3: O endpoint de salvar também chama "/vendas" (Método POST) ---
+    @PostMapping("/vendas")
     public Lancamento salvar(@RequestBody Map<String, Object> payload) {
         
         String descricao = (String) payload.get("descricao");
         String tipo = (String) payload.get("tipo");
         
+        // Tratamento de segurança para converter o valor
         BigDecimal valor = new BigDecimal(payload.get("valor").toString());
 
         LocalDate dataFinal = LocalDate.now();
         
-        if (payload.get("data") != null && !payload.get("data").toString().isEmpty()) {
-            dataFinal = LocalDate.parse(payload.get("data").toString());
+        // Se vier data do front, usa ela. Se não, usa hoje.
+        if (payload.get("dataLancamento") != null && !payload.get("dataLancamento").toString().isEmpty()) {
+             dataFinal = LocalDate.parse(payload.get("dataLancamento").toString());
+        } else if (payload.get("data") != null && !payload.get("data").toString().isEmpty()) {
+             dataFinal = LocalDate.parse(payload.get("data").toString());
         }
 
         Lancamento novo = new Lancamento();
@@ -83,8 +53,19 @@ public class FinanceiroController {
         return repository.save(novo);
     }
     
-    @org.springframework.web.bind.annotation.DeleteMapping("/limpar")
-    public void limparBanco() {
-        repository.deleteAll(); // Isso apaga tudo do banco
+    // Login simples (opcional, já que o HTML está fazendo validação local por enquanto)
+    @PostMapping("/login")
+    public boolean login(@RequestBody Map<String, String> credenciais) {
+        String user = credenciais.get("user");
+        String pass = credenciais.get("pass");
+        return "admin".equals(user) && "comissao".equals(pass);
+    }
+    
+ // No final do seu FinanceiroController.java
+
+    @DeleteMapping("/vendas") // <--- ADICIONE O ("/vendas") AQUI
+    public ResponseEntity<Void> apagarTudo() {
+        repository.deleteAll(); // Apaga tudo do banco
+        return ResponseEntity.noContent().build();
     }
 }
