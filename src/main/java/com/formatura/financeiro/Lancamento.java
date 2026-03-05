@@ -19,7 +19,6 @@ public class Lancamento {
 
     public Lancamento() {} 
     
-    // Construtor auxiliar para facilitar a criação de objetos.
     public Lancamento(String descricao, BigDecimal valor, String tipo, LocalDate data) {
         this.descricao = descricao;
         this.valor = valor;
