@@ -391,7 +391,11 @@ function lancarGastoGenerico() {
 function renderizarHistorico(lista) {
     const tb = document.getElementById('tabela-historico');
     tb.innerHTML = '';
-    [...lista].reverse().slice(0, 15).forEach(i => {
+    
+    // ORDENAÇÃO: Data mais recente no topo, data antiga no final
+    const ordenadoPorData = [...lista].sort((a, b) => a.dataLancamento > b.dataLancamento ? -1 : 1);
+
+    ordenadoPorData.slice(0, 15).forEach(i => {
         const isPos = i.valor >= 0;
         const dataFmt = i.dataLancamento ? i.dataLancamento.split('-').reverse().join('/') : '--';
         tb.innerHTML += `<tr>
