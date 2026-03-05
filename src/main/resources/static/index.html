@@ -392,7 +392,6 @@ function renderizarHistorico(lista) {
     const tb = document.getElementById('tabela-historico');
     tb.innerHTML = '';
     
-    // ORDENAÇÃO: Data mais recente no topo, data antiga no final
     const ordenadoPorData = [...lista].sort((a, b) => a.dataLancamento > b.dataLancamento ? -1 : 1);
 
     ordenadoPorData.slice(0, 15).forEach(i => {
