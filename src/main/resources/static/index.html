@@ -340,8 +340,10 @@ function fazerLogin() {
         localStorage.setItem("usuario_logado", "ADMIN");
         iniciarSistema(true);
     } else {
-        Swal.fire({icon:'error', title:'Erro', text:'admin / admin', background:'#222'});
+        Swal.fire({icon:'error', title:'Login Errado', text:'Tente Novamente', background:'#222'});
     }
+	
+	
 }
 
 function iniciarSistema(isAdmin) {
