@@ -48,18 +48,16 @@
             opacity: 0.10; z-index: -1; pointer-events: none;
         }
 
-        /* MODIFICAÇÃO: Classe para a logo na tela inicial */
         .logo-overlay {
             position: absolute;
             top: 30px;
             left: 30px;
-            width: 140px; /* Tamanho da logo */
+            width: 250px;
             height: auto;
-            z-index: 10000; /* Fica acima das divs de divisão */
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); /* Sombra para destacar no fundo */
+            z-index: 10000;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
 
-        /* Responsividade para celulares */
         @media (max-width: 600px) {
             .logo-overlay {
                 width: 100px;
