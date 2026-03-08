@@ -1,6 +1,6 @@
 
 Sistema de Gestão Financeira Para a Formatura do Terceiro Ano do Curso de Infórmatica Integrado ao Ensino Médio IFPB - Campus Itaporanga
-=======
+
 # 💰 Sistema de Gestão Financeira — Formatura 3º Info
 
 <div align="center">
