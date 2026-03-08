@@ -3,9 +3,12 @@ package com.formatura.financeiro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,5 +76,66 @@ public class FinanceiroController {
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .body(todosOsLancamentos);
     }
-}
 
+    @PostMapping("/restore")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> restaurarBackup(
+            @RequestBody List<Lancamento> lancamentos,
+            @RequestParam(defaultValue = "true") boolean limparAntes
+    ) {
+        if (lancamentos == null || lancamentos.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Arquivo de backup vazio."));
+        }
+
+        List<String> erros = new ArrayList<>();
+        List<Lancamento> paraSalvar = new ArrayList<>();
+
+        for (int i = 0; i < lancamentos.size(); i++) {
+            Lancamento item = lancamentos.get(i);
+            String prefixo = "Item " + (i + 1) + ": ";
+
+            if (item == null) {
+                erros.add(prefixo + "registro nulo.");
+                continue;
+            }
+            if (item.getDescricao() == null || item.getDescricao().isBlank()) {
+                erros.add(prefixo + "descricao obrigatoria.");
+                continue;
+            }
+            if (item.getTipo() == null || item.getTipo().isBlank()) {
+                erros.add(prefixo + "tipo obrigatorio.");
+                continue;
+            }
+            if (item.getValor() == null) {
+                erros.add(prefixo + "valor obrigatorio.");
+                continue;
+            }
+
+            // Cria uma nova instancia para ignorar id recebido no backup e evitar conflito.
+            Lancamento novo = new Lancamento();
+            novo.setDescricao(item.getDescricao().trim());
+            novo.setTipo(item.getTipo().trim());
+            novo.setValor(item.getValor());
+            novo.setDataLancamento(item.getDataLancamento() != null ? item.getDataLancamento() : LocalDate.now());
+            novo.setHoraLancamento(item.getHoraLancamento() != null ? item.getHoraLancamento() : LocalTime.now());
+            paraSalvar.add(novo);
+        }
+
+        if (!erros.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Backup invalido.", "detalhes", erros));
+        }
+
+        if (limparAntes) {
+            repository.deleteAllInBatch();
+        }
+
+        List<Lancamento> salvos = repository.saveAll(paraSalvar);
+
+        Map<String, Object> resposta = new LinkedHashMap<>();
+        resposta.put("mensagem", "Backup restaurado com sucesso.");
+        resposta.put("importados", salvos.size());
+        resposta.put("limparAntes", limparAntes);
+
+        return ResponseEntity.ok(resposta);
+    }
+}

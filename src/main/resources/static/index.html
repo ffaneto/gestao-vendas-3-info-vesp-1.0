@@ -21,6 +21,7 @@
             --red: #ff1744;
             --blue: #2979ff;
             --purple: #d500f9;
+            --backup-color: #00bcd4;
         }
 
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -97,10 +98,12 @@
         .btn-vermelho { background: rgba(255, 23, 68, 0.18); color: var(--red); border: 1px solid var(--red); }
         .btn-login { width: 100%; background: var(--blue); color: white; padding: 15px; margin-top: 15px; font-size: 1rem; }
         .btn-roxo { background: rgba(156, 39, 176, 0.18); color: var(--purple); border: 1px solid var(--purple);}
+        .btn-backup { background: rgba(0, 188, 212, 0.18); color: var(--backup-color); border: 1px solid var(--backup-color);}
 
         .txt-verde { color: var(--green); }
         .txt-vermelho { color: var(--red); }
         .txt-roxo { color: var(--purple); }
+        .txt-backup { color: var(--backup-color); }
         .admin-only { display: none; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 20px; }
@@ -295,10 +298,31 @@
         </button>
     </div>
 
+    <div class="card admin-only" style="border: 1px solid var(--backup-color); background: rgba(0, 188, 212, 0.08); margin-top: 20px;">
+        <div class="label txt-backup" style="margin-bottom: 10px; font-weight: 800;">BACKUP</div>
+        <button class="btn-backup" style="width: 100%;" onclick="baixarBackup()">
+            <i class="fas fa-download"></i> BAIXAR BACKUP JSON
+        </button>
+
+        <div style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px;">
+            <input id="arquivo-backup" type="file" accept=".json,application/json" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:8px; padding:10px; color:#ddd; font-size:0.9rem;">
+            <label style="display:flex; align-items:center; gap:8px; margin-top:10px; color:#bbb; font-size:0.85rem;">
+                <input id="restore-limpar-antes" type="checkbox" checked style="width:auto;">
+                Limpar base antes de restaurar
+            </label>
+            <button class="btn-backup" style="width:100%; margin-top:10px;" onclick="restaurarBackupJson()">
+                <i class="fas fa-upload"></i> RESTAURAR BACKUP JSON
+            </button>
+        </div>
+    </div>
+
 </div>
 
 <script>
     const API_URL = "/api/vendas";
+    const BACKUP_URL = "/api/backup";
+    const BACKUP_URL_FALLBACK = `${API_URL}/backup`;
+    const RESTORE_URL = "/api/restore";
     let chartInstance = null;
     let historicoOriginal = [];
     let historicoFiltrado = [];
@@ -378,6 +402,91 @@
         })
     }
 
+    async function baixarBackup() {
+        try {
+            let response = await fetch(BACKUP_URL);
+            if (!response.ok && response.status === 404) {
+                // Compatibilidade com a rota antiga, caso exista em algum ambiente.
+                response = await fetch(BACKUP_URL_FALLBACK);
+            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const blob = await response.blob();
+            const disposition = response.headers.get('content-disposition') || '';
+            const match = disposition.match(/filename="?([^\"]+)"?/i);
+            const fileName = match && match[1] ? match[1] : 'backup_formatura.json';
+
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            Swal.fire({
+                icon:'error',
+                title:'Erro no backup',
+                text:`Nao foi possivel baixar o arquivo agora (${error.message}).`,
+                background:'#222',
+                color:'#fff'
+            });
+        }
+    }
+
+    async function restaurarBackupJson() {
+        const arquivoInput = document.getElementById('arquivo-backup');
+        const limparAntes = document.getElementById('restore-limpar-antes').checked;
+        const arquivo = arquivoInput?.files?.[0];
+
+        if (!arquivo) {
+            return erro('Selecione um arquivo JSON para restaurar.');
+        }
+
+        try {
+            const texto = await arquivo.text();
+            const parsed = JSON.parse(texto);
+            const lancamentos = Array.isArray(parsed) ? parsed : parsed?.lancamentos;
+
+            if (!Array.isArray(lancamentos) || lancamentos.length === 0) {
+                return erro('Arquivo invalido. Esperado uma lista de lancamentos.');
+            }
+
+            const response = await fetch(`${RESTORE_URL}?limparAntes=${limparAntes}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(lancamentos)
+            });
+
+            let payload = {};
+            try { payload = await response.json(); } catch (_) { payload = {}; }
+
+            if (!response.ok) {
+                const detalhes = Array.isArray(payload?.detalhes) ? payload.detalhes.slice(0, 3).join(' | ') : '';
+                throw new Error(`${payload?.erro || `HTTP ${response.status}`}${detalhes ? ` - ${detalhes}` : ''}`);
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Restore concluido',
+                text: `${payload?.importados || lancamentos.length} registros importados.`,
+                background: '#222',
+                color: '#fff'
+            });
+            arquivoInput.value = '';
+            carregarDados();
+        } catch (error) {
+            Swal.fire({
+                icon:'error',
+                title:'Erro na restauracao',
+                text: `Nao foi possivel restaurar (${error.message}).`,
+                background:'#222',
+                color:'#fff'
+            });
+        }
+    }
+
     function mostrarFormLogin() { document.getElementById('login-overlay').style.display = 'none'; document.getElementById('form-login-container').style.display = 'block'; document.getElementById('login-user').focus(); }
     function cancelarLogin() { document.getElementById('form-login-container').style.display = 'none'; document.getElementById('login-overlay').style.display = 'flex'; }
     function verificarEnter(event) { if (event.key === 'Enter') fazerLogin(); }
@@ -394,7 +503,13 @@
             localStorage.setItem("usuario_logado", "ADMIN");
             iniciarSistema(true);
         } else {
-            Swal.fire({icon:'error', title:'Login Errado', text:'Tente Novamente', background:'#222'});
+            Swal.fire({
+                icon:'error',
+                title:'Login Errado',
+                text:'Tente Novamente',
+                background:'#222',
+                zIndex: 20001
+            });
         }
 
 
@@ -529,17 +644,53 @@
         const labels = ordenado.map(i => i.dataLancamento.split('-').reverse().join('/'));
         const dados = ordenado.map(i => { soma += i.valor; return soma; });
 
+        function corSegmento(ctx, verde, vermelho) {
+            const v1 = dados[ctx.p1DataIndex];
+            return v1 >= 0 ? verde : vermelho;
+        }
+
         if(chartInstance) chartInstance.destroy();
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    data: dados, borderColor: '#00e676', backgroundColor: 'rgba(0, 230, 118, 0.1)',
-                    fill: true, tension: 0.4, borderWidth: 3, pointRadius: 2
+                    data: dados,
+                    segment: {
+                        borderColor: ctx => corSegmento(ctx, '#00e676', '#ff1744'),
+                        backgroundColor: ctx => corSegmento(ctx, 'rgba(0, 230, 118, 0.1)', 'rgba(255, 23, 68, 0.1)')
+                    },
+                    borderColor: '#00e676',
+                    backgroundColor: 'rgba(0, 230, 118, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 3,
+                    pointBackgroundColor: dados.map(v => v >= 0 ? '#00e676' : '#ff1744')
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: context => `Saldo: ${fmtMoeda(context.parsed.y)}`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#888' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#888' }
+                    }
+                }
+            }
         });
     }
 
