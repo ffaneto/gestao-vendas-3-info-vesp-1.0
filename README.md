@@ -123,8 +123,3 @@ Usuário: admin , comissao
 - 3º Ano Informática Integrado ao Ensino Médio
 - IFPB Campus Itaporanga
 
----
-
-<div align="center">
-  <sub>Feito com Java para a formatura do 3º Info. Vesp. IFPB Itaporanga</sub>
-</div>
