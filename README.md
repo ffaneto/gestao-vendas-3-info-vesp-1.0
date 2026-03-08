@@ -10,22 +10,24 @@
 
 ---
 
-## 📋 Sobre o Projeto
+##  Sobre o Projeto
 
-Sistema web para controle financeiro da comissão de formatura, permitindo registrar vendas (trufas, bolos, açaí), gastos, aportes e acompanhar a evolução do saldo em tempo real com gráficos dinâmicos.
+Sistema web para controle financeiro da comissão de formatura, permitindo registrar vendas, gastos, aportes e acompanhar a evolução do saldo em tempo real com gráfico
 
-O projeto foi desenvolvido como ferramenta interna da turma do 3º ano de Informática do IFPB Campus Itaporanga para gerenciar de forma transparente os recursos arrecadados para a formatura.
+O projeto foi desenvolvido para melhoria da qualidade da gestão da comissão da formatura
 
-## ✨ Funcionalidades
+Além de expandir meus conhecimentos na programação
 
-- 📊 **Dashboard em tempo real** — saldo, lucro do açaí e gráfico de projeção
-- 📈 **Gráfico dinâmico** — muda de verde (lucro) para vermelho (prejuízo) automaticamente
-- 🛒 **Registro de vendas** — Trufas (R$ 2,50), Bolos (R$ 3,50) e Açaí (valor livre)
-- 💸 **Controle de gastos** — reposição de estoque e despesas diversas
-- 📜 **Histórico completo** — com busca por texto, filtro por data e paginação
-- 👥 **Dois perfis de acesso** — Estudante (visualização) e Comissão (gestão completa)
-- 💾 **Backup e Restore** — exportar e importar dados em JSON pela interface
-- 🗑️ **Reset de banco** — limpar todos os dados com confirmação
+## Funcionalidades
+
+-  **Dashboard em tempo real** — saldo, lucro do açaí e gráfico de projeção
+-  **Gráfico dinâmico** — muda de verde (lucro) para vermelho (prejuízo) automaticamente
+-  **Registro de vendas** — Trufas (R$ 2,50), Bolos (R$ 3,50) e Açaí (valor livre)
+-  **Controle de gastos** — reposição de estoque e despesas diversas
+-  **Histórico completo** — com busca por texto, filtro por data e paginação
+-  **Dois perfis de acesso** — Estudante (visualização) e Comissão (gestão completa)
+-  **Backup e Restore** — exportar e importar dados em JSON pela interface
+-  **Reset de banco** — limpar todos os dados com confirmação
 
 ## 🛠️ Tech Stack
 
@@ -48,7 +50,7 @@ O projeto foi desenvolvido como ferramenta interna da turma do 3º ano de Inform
 | **Ícones** | Font Awesome 6 |
 | **Build** | Maven |
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 financeiro/
@@ -64,7 +66,7 @@ financeiro/
 └── pom.xml                           # Dependências Maven
 ```
 
-## 🔌 Endpoints da API
+## Endpoints da API
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
@@ -75,13 +77,13 @@ financeiro/
 | `POST` | `/api/restore` | Restaurar backup JSON |
 | `POST` | `/api/login` | Autenticação local |
 
-## 🚀 Como Rodar
+## Como Rodar
 
 ### Pré-requisitos
 
-- **Java 21** instalado
-- **MySQL 8** rodando na porta `3306`
-- **Maven** (ou usar o wrapper `mvnw` incluso)
+- **Java 21** 
+- **MySQL 8** porta `3306`
+- **Maven** 
 
 ### 1. Criar o banco de dados
 
@@ -113,18 +115,11 @@ spring:
 http://localhost:8080
 ```
 
-- **Estudante**: clique em "Estudante" na tela inicial
-- **Comissão**: clique em "Comissão" → usuário: `admin` / senha: `comissao`
+Usuário: admin , comissao
 
-## 📸 Preview
+## Autor
 
-| Tela de Login | Dashboard Admin |
-|:---:|:---:|
-| Dois perfis: Estudante e Comissão | Vendas, gastos, gráfico e histórico |
-
-## 👨‍💻 Autor
-
-**Francisco Figueiredo**
+**Francisco Figueiredo** @ffaneto
 - 🎓 3º Ano — Informática Integrado ao Ensino Médio
 - 🏫 IFPB Campus Itaporanga
 
@@ -133,5 +128,3 @@ http://localhost:8080
 <div align="center">
   <sub>Feito com ☕ e Java para a formatura do 3º Info — IFPB Itaporanga</sub>
 </div>
-
->>>>>>> accd74f (Melhoria do README)
