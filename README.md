@@ -22,10 +22,10 @@ Além de expandir meus conhecimentos na programação
 
 -  **Dashboard em tempo real** — saldo, lucro do açaí e gráfico de projeção
 -  **Gráfico dinâmico** — muda de verde (lucro) para vermelho (prejuízo) automaticamente
--  **Registro de vendas** — Trufas (R$ 2,50), Bolos (R$ 3,50) e Açaí (valor livre)
+-  **Registro de vendas** — Trufas, Bolos e Açaí
 -  **Controle de gastos** — reposição de estoque e despesas diversas
 -  **Histórico completo** — com busca por texto, filtro por data e paginação
--  **Dois perfis de acesso** — Estudante (visualização) e Comissão (gestão completa)
+-  **Dois perfis de acesso** — Estudante da turma e Comissão
 -  **Backup e Restore** — exportar e importar dados em JSON pela interface
 -  **Reset de banco** — limpar todos os dados com confirmação
 
