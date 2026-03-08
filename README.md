@@ -5,7 +5,7 @@
   <img src="src/main/resources/static/logoifpb.png" alt="IFPB Logo" height="80"/>
   <br><br>
   <p><strong>Sistema de Gestão Financeira Para a Formatura do Terceiro Ano do Curso de Informática Integrado ao Ensino Médio</strong></p>
-  <p>IFPB — Campus Itaporanga</p>
+  <p>IFPB Campus Itaporanga</p>
 </div>
 
 ---
