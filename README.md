@@ -126,5 +126,5 @@ Usuário: admin , comissao
 ---
 
 <div align="center">
-  <sub>Feito com ☕ e Java para a formatura do 3º Info — IFPB Itaporanga</sub>
+  <sub>Feito com Java para a formatura do 3º Info. Vesp. IFPB Itaporanga</sub>
 </div>
