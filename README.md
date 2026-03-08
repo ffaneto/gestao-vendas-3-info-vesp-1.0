@@ -1,5 +1,5 @@
 
-# Sistema de Gestão Financeira — Formatura 3º Info
+# Sistema de Gestão Financeira Formatura 3º Info
 
 <div align="center">
   <img src="src/main/resources/static/logoifpb.png" alt="IFPB Logo" height="80"/>
@@ -120,8 +120,8 @@ Usuário: admin , comissao
 ## Autor
 
 **Francisco Figueiredo** @ffaneto
-- 🎓 3º Ano — Informática Integrado ao Ensino Médio
-- 🏫 IFPB Campus Itaporanga
+- 3º Ano Informática Integrado ao Ensino Médio
+- IFPB Campus Itaporanga
 
 ---
 
