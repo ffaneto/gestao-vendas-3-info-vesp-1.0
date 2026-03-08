@@ -45,9 +45,6 @@ Além de expandir meus conhecimentos na programação
 | **Backend** | Java 21 + Spring Boot 3.1.5 |
 | **Banco de Dados** | MySQL 8 |
 | **Frontend** | HTML5 + CSS3 + JavaScript |
-| **Gráficos** | Chart.js |
-| **Alertas** | SweetAlert2 |
-| **Ícones** | Font Awesome 6 |
 | **Build** | Maven |
 
 ## Estrutura do Projeto
