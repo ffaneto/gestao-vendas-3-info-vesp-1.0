@@ -43,7 +43,7 @@ Além de expandir meus conhecimentos na programação
 | Camada | Tecnologia |
 |--------|-----------|
 | **Backend** | Java 21 + Spring Boot 3.1.5 |
-| **Banco de Dados** | MySQL 8 (`db_formatura`) |
+| **Banco de Dados** | MySQL 8 |
 | **Frontend** | HTML5 + CSS3 + JavaScript (vanilla) |
 | **Gráficos** | Chart.js |
 | **Alertas** | SweetAlert2 |
