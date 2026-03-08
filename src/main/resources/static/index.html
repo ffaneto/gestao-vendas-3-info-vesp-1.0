@@ -105,6 +105,16 @@
 
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 20px; }
         td { padding: 15px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #ccc; }
+
+        .historico-tools { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; gap: 10px; margin-top: 15px; }
+        .historico-tools input { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 0.9rem; }
+        .historico-paginacao { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .historico-paginacao .paginacao-btns { display: flex; gap: 8px; }
+
+        @media (max-width: 700px) {
+            .historico-tools { grid-template-columns: 1fr; }
+            .historico-paginacao { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
@@ -260,8 +270,21 @@
 
     <div class="card" style="margin-top: 10px;">
         <div class="label">Histórico</div>
+        <div class="historico-tools">
+            <input type="text" id="filtro-historico" placeholder="Buscar por descrição ou tipo" oninput="aplicarFiltrosHistorico()">
+            <input type="date" id="data-inicio-historico" onchange="aplicarFiltrosHistorico()">
+            <input type="date" id="data-fim-historico" onchange="aplicarFiltrosHistorico()">
+            <button onclick="limparFiltrosHistorico()" style="background: rgba(255,255,255,0.08); color: #fff;">Limpar</button>
+        </div>
         <div style="overflow-x: auto;">
             <table id="tabela-historico"></table>
+        </div>
+        <div class="historico-paginacao">
+            <span id="historico-page-info" style="font-size: 0.8rem; color:#888;">Página 1 de 1</span>
+            <div class="paginacao-btns">
+                <button id="btn-pagina-anterior" onclick="paginaAnteriorHistorico()" style="background: rgba(255,255,255,0.08); color: #fff;">Anterior</button>
+                <button id="btn-pagina-proxima" onclick="paginaProximaHistorico()" style="background: rgba(255,255,255,0.08); color: #fff;">Próxima</button>
+            </div>
         </div>
     </div>
 
@@ -277,6 +300,10 @@
 <script>
     const API_URL = "/api/vendas";
     let chartInstance = null;
+    let historicoOriginal = [];
+    let historicoFiltrado = [];
+    let historicoPaginaAtual = 1;
+    const historicoItensPorPagina = 15;
 
     window.onload = () => {
         const hoje = new Date().toISOString().split('T')[0];
@@ -354,12 +381,16 @@
     function mostrarFormLogin() { document.getElementById('login-overlay').style.display = 'none'; document.getElementById('form-login-container').style.display = 'block'; document.getElementById('login-user').focus(); }
     function cancelarLogin() { document.getElementById('form-login-container').style.display = 'none'; document.getElementById('login-overlay').style.display = 'flex'; }
     function verificarEnter(event) { if (event.key === 'Enter') fazerLogin(); }
-    function entrarComo(tipo) { localStorage.setItem("usuario_logado", "ESTUDANTE"); iniciarSistema(false); }
+    function entrarComo(tipo) {
+        const tipoNormalizado = tipo === 'ADMIN' ? 'ADMIN' : 'ESTUDANTE';
+        localStorage.setItem("usuario_logado", tipoNormalizado);
+        iniciarSistema(tipoNormalizado === 'ADMIN');
+    }
 
     function fazerLogin() {
         const u = document.getElementById('login-user').value;
         const p = document.getElementById('login-pass').value;
-        if(u === 'admin' && p === 'admin') {
+        if(u === 'admin' && p === 'comissao') {
             localStorage.setItem("usuario_logado", "ADMIN");
             iniciarSistema(true);
         } else {
@@ -373,7 +404,9 @@
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('form-login-container').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        if(isAdmin) document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.admin-only').forEach(el => {
+            el.style.display = isAdmin ? (el.classList.contains('main-grid') ? 'grid' : 'block') : 'none';
+        });
         carregarDados();
     }
 
@@ -414,21 +447,79 @@
     }
 
     function renderizarHistorico(lista) {
+        historicoOriginal = [...lista].sort((a, b) => a.dataLancamento > b.dataLancamento ? -1 : 1);
+        historicoPaginaAtual = 1;
+        aplicarFiltrosHistorico(false);
+    }
+
+    function aplicarFiltrosHistorico(resetPagina = true) {
+        const filtroTexto = (document.getElementById('filtro-historico')?.value || '').trim().toLowerCase();
+        const dataInicio = document.getElementById('data-inicio-historico')?.value || '';
+        const dataFim = document.getElementById('data-fim-historico')?.value || '';
+
+        if (resetPagina) historicoPaginaAtual = 1;
+
+        historicoFiltrado = historicoOriginal.filter(i => {
+            const descricao = (i.descricao || '').toLowerCase();
+            const tipo = (i.tipo || '').toLowerCase();
+            const textoOk = !filtroTexto || descricao.includes(filtroTexto) || tipo.includes(filtroTexto);
+            const data = i.dataLancamento || '';
+            const inicioOk = !dataInicio || data >= dataInicio;
+            const fimOk = !dataFim || data <= dataFim;
+            return textoOk && inicioOk && fimOk;
+        });
+
+        renderizarHistoricoPaginado();
+    }
+
+    function renderizarHistoricoPaginado() {
         const tb = document.getElementById('tabela-historico');
         tb.innerHTML = '';
 
-        const ordenadoPorData = [...lista].sort((a, b) => a.dataLancamento > b.dataLancamento ? -1 : 1);
+        const totalPaginas = Math.max(1, Math.ceil(historicoFiltrado.length / historicoItensPorPagina));
+        if (historicoPaginaAtual > totalPaginas) historicoPaginaAtual = totalPaginas;
 
-        ordenadoPorData.slice(0, 15).forEach(i => {
-            const isPos = i.valor >= 0;
-            const dataFmt = i.dataLancamento ? i.dataLancamento.split('-').reverse().join('/') : '--';
-            tb.innerHTML += `<tr>
-            <td style="width:40px;text-align:center"><i class="fas ${isPos ? 'fa-arrow-up txt-verde' : 'fa-arrow-down txt-vermelho'}"></i></td>
-            <td style="font-weight:600">${i.descricao}</td>
-            <td style="text-align:right;opacity:0.5">${dataFmt}</td>
-            <td style="text-align:right;font-weight:800" class="${isPos ? 'txt-verde' : 'txt-vermelho'}">${fmtMoeda(i.valor)}</td>
-        </tr>`;
-        });
+        const inicio = (historicoPaginaAtual - 1) * historicoItensPorPagina;
+        const pagina = historicoFiltrado.slice(inicio, inicio + historicoItensPorPagina);
+
+        if (pagina.length === 0) {
+            tb.innerHTML = '<tr><td colspan="4" style="text-align:center; opacity:0.6;">Nenhum lançamento encontrado</td></tr>';
+        } else {
+            pagina.forEach(i => {
+                const isPos = i.valor >= 0;
+                const dataFmt = i.dataLancamento ? i.dataLancamento.split('-').reverse().join('/') : '--';
+                tb.innerHTML += `<tr>
+                <td style="width:40px;text-align:center"><i class="fas ${isPos ? 'fa-arrow-up txt-verde' : 'fa-arrow-down txt-vermelho'}"></i></td>
+                <td style="font-weight:600">${i.descricao}</td>
+                <td style="text-align:right;opacity:0.5">${dataFmt}</td>
+                <td style="text-align:right;font-weight:800" class="${isPos ? 'txt-verde' : 'txt-vermelho'}">${fmtMoeda(i.valor)}</td>
+            </tr>`;
+            });
+        }
+
+        document.getElementById('historico-page-info').innerText = `Página ${historicoPaginaAtual} de ${totalPaginas} (${historicoFiltrado.length} registros)`;
+        document.getElementById('btn-pagina-anterior').disabled = historicoPaginaAtual <= 1;
+        document.getElementById('btn-pagina-proxima').disabled = historicoPaginaAtual >= totalPaginas;
+    }
+
+    function paginaAnteriorHistorico() {
+        if (historicoPaginaAtual <= 1) return;
+        historicoPaginaAtual -= 1;
+        renderizarHistoricoPaginado();
+    }
+
+    function paginaProximaHistorico() {
+        const totalPaginas = Math.max(1, Math.ceil(historicoFiltrado.length / historicoItensPorPagina));
+        if (historicoPaginaAtual >= totalPaginas) return;
+        historicoPaginaAtual += 1;
+        renderizarHistoricoPaginado();
+    }
+
+    function limparFiltrosHistorico() {
+        document.getElementById('filtro-historico').value = '';
+        document.getElementById('data-inicio-historico').value = '';
+        document.getElementById('data-fim-historico').value = '';
+        aplicarFiltrosHistorico();
     }
 
     function renderizarGrafico(historico) {
@@ -456,5 +547,6 @@
     function erro(msg) { Swal.fire({icon:'warning', title:'Ops', text:msg, background:'#222', color:'#fff', toast:true, position:'top-end', showConfirmButton:false, timer:2000}); }
 </script>
 
-</body>1
+</body>
 </html>
+

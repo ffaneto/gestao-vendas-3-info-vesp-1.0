@@ -60,5 +60,18 @@ public class FinanceiroController {
         repository.deleteAll(); 
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/backup")
+    public ResponseEntity<List<Lancamento>> baixarBackupJson() {
+
+        List<Lancamento> todosOsLancamentos = repository.findAll();
+
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.add(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=backup_formatura.json");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                .body(todosOsLancamentos);
+    }
 }
 
