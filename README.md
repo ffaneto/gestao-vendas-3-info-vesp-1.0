@@ -30,7 +30,7 @@ do GitHub, pretendo usar como tema do meu Trabalho de Conclusão de Curso (TCC).
 -  **Backup e Restore** — exportar e importar dados em JSON pela interface
 -  **Reset de banco** — limpar todos os dados com confirmação
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 <div align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="40" alt="java" />
