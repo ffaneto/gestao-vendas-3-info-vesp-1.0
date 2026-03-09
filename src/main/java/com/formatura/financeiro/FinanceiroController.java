@@ -63,6 +63,30 @@ public class FinanceiroController {
         repository.deleteAll(); 
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/vendas/{id}")
+    public ResponseEntity<Void> apagarPorId(@PathVariable Long id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+    @PatchMapping("/vendas/{id}/data")
+    public ResponseEntity<Lancamento> atualizarData(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body
+    ) {
+        return repository.findById(id).map(lancamento -> {
+            String novaData = body.get("dataLancamento");
+            if (novaData == null || novaData.isBlank()) {
+                return ResponseEntity.badRequest().<Lancamento>build();
+            }
+            lancamento.setDataLancamento(LocalDate.parse(novaData));
+            return ResponseEntity.ok(repository.save(lancamento));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/backup")
     public ResponseEntity<List<Lancamento>> baixarBackupJson() {
 

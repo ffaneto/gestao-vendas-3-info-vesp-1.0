@@ -84,7 +84,7 @@
 
         .big-number { font-size: 3rem; font-weight: 800; margin: 10px 0; letter-spacing: -1.5px; }
         .label { font-size: 0.8rem; text-transform: uppercase; color: #888; font-weight: 600; letter-spacing: 1.5px; }
-        .chart-container { position: relative; height: 280px; width: 100%; margin-top: 20px; }
+        .chart-container { position: relative; height: 200px; width: 100%; margin-top: 10px; }
 
         .input-group { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 12px; margin-bottom: 15px; border: 1px solid transparent; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.3s; }
         .input-group:focus-within { border-color: rgba(255,255,255,0.2); }
@@ -105,11 +105,12 @@
         .txt-roxo { color: var(--purple); }
         .txt-backup { color: var(--backup-color); }
         .admin-only { display: none; }
+        .estudante-only { display: none; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 20px; }
         td { padding: 15px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #ccc; }
 
-        .historico-tools { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; gap: 10px; margin-top: 15px; }
+        .historico-tools { display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.8fr auto; gap: 10px; margin-top: 15px; }
         .historico-tools input { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 0.9rem; }
         .historico-paginacao { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .historico-paginacao .paginacao-btns { display: flex; gap: 8px; }
@@ -160,18 +161,25 @@
     </header>
 
     <div class="main-grid">
-        <div class="card">
-            <div class="label">Caixa</div>
+        <div class="card admin-only" id="card-caixa-admin">
+            <div class="label">Caixa <span style="font-size: 0.65rem; color: #555; text-transform: none; letter-spacing: 0;">(Ana Thays)</span></div>
             <div class="big-number txt-verde" id="saldo">R$ 0,00</div>
-            <div style="margin-top: 20px;">
-                <div class="label">Lucro Açaí</div>
-                <div class="txt-roxo" style="font-weight: 800; font-size: 1.4rem;" id="lucro-acai">R$ 0,00</div>
+
+            <div style="display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                <div>
+                    <div class="label">Lucro Açaí <span style="font-size: 0.65rem; color: #555; text-transform: none; letter-spacing: 0;">(Izabelly)</span></div>
+                    <div class="txt-roxo" style="font-weight: 800; font-size: 1.4rem;" id="lucro-acai">R$ 0,00</div>
+                </div>
+                <div>
+                    <div class="label">Caixa Madrinha <span style="font-size: 0.65rem; color: #555; text-transform: none; letter-spacing: 0;">(Erivânia)</span></div>
+                    <div style="font-weight: 800; font-size: 1.4rem; color: #ffc107;" id="saldo-erivania">R$ 0,00</div>
+                </div>
             </div>
 
-            <div class="admin-only" style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <div style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
                 <div class="input-group">
                     <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
-                        <span class="label" style="color:#aaa">Aporte</span>
+                        <span class="label" style="color:#aaa">Aporte (Ana Thays)</span>
                         <input type="date" id="data-aporte">
                     </div>
                     <div class="input-row">
@@ -179,15 +187,58 @@
                         <button class="btn-verde" style="width: auto; padding: 12px;" onclick="lancarGenerico('SALDO_INICIAL', 'valor-aporte', 'Aporte', 'data-aporte')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
+                <div class="input-group" style="border: 1px solid rgba(255, 193, 7, 0.25);">
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
+                        <span class="label" style="color:#ffc107">Aporte Erivânia</span>
+                        <input type="date" id="data-erivania">
+                    </div>
+                    <div class="input-row">
+                        <input type="number" id="valor-erivania" placeholder="R$ Valor">
+                        <button style="background:rgba(255,193,7,0.18); color:#ffc107; border:1px solid #ffc107; border-radius:10px; padding:12px; width:auto; font-weight:700; cursor:pointer;" onclick="lancarGenerico('ERIVANIA', 'valor-erivania', 'Aporte Erivânia', 'data-erivania')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card estudante-only" id="card-caixa-estudante" style="align-self: start;">
+            <div class="label" style="text-align:center; margin-bottom:5px;">Caixa Total da Turma</div>
+            <div class="big-number txt-verde" style="text-align:center;" id="saldo-total">R$ 0,00</div>
+
+            <div style="margin-top:22px; background:rgba(255,255,255,0.03); border-radius:16px; padding:18px 20px; border:1px solid rgba(255,255,255,0.06);">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <span style="font-size:0.78rem; color:#888; font-weight:600; letter-spacing:0.5px;"><i class="fas fa-wallet" style="color:var(--green); margin-right:6px;"></i>Caixa (Ana Thays)</span>
+                    <span style="font-size:0.95rem; font-weight:700; color:var(--green);" id="est-saldo-ana">R$ 0,00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <span style="font-size:0.78rem; color:#888; font-weight:600; letter-spacing:0.5px;"><i class="fas fa-ice-cream" style="color:var(--purple); margin-right:6px;"></i>Lucro Açaí (Izabelly)</span>
+                    <span style="font-size:0.95rem; font-weight:700; color:var(--purple);" id="est-lucro-acai">R$ 0,00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
+                    <span style="font-size:0.78rem; color:#888; font-weight:600; letter-spacing:0.5px;"><i class="fas fa-hand-holding-heart" style="color:#ffc107; margin-right:6px;"></i>Madrinha (Erivânia)</span>
+                    <span style="font-size:0.95rem; font-weight:700; color:#ffc107;" id="est-saldo-erivania">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="align-self: start;">
             <div class="label" style="text-align: center;">Projeção</div>
             <div class="chart-container">
                 <canvas id="graficoEvolucao"></canvas>
             </div>
         </div>
+    </div>
+
+    <div class="admin-only" id="data-global-wrapper" style="position:fixed; top:12px; right:12px; z-index:9998; display:flex; gap:8px; align-items:center;">
+        <button onclick="document.getElementById('arquivo-backup').click()" title="Importar Backup JSON" style="background:rgba(20,20,20,0.85); backdrop-filter:blur(10px); border:1px solid var(--border); color:#ff9800; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:0; font-size:1.15rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); cursor:pointer;">
+            <i class="fas fa-file-import"></i>
+        </button>
+        <button onclick="baixarBackup()" title="Baixar Backup JSON" style="background:rgba(20,20,20,0.85); backdrop-filter:blur(10px); border:1px solid var(--border); color:#00bcd4; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:0; font-size:1.15rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); cursor:pointer;">
+            <i class="fas fa-download"></i>
+        </button>
+        <button onclick="document.getElementById('data-global').showPicker()" style="background:rgba(20,20,20,0.85); backdrop-filter:blur(10px); border:1px solid var(--border); color:var(--blue); width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:0; font-size:1.15rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); cursor:pointer;">
+            <i class="fas fa-calendar-alt"></i>
+        </button>
+        <input type="date" id="data-global" onchange="sincronizarDatas(this.value)" style="position:absolute; top:0; right:0; width:44px; height:44px; opacity:0; cursor:pointer;">
     </div>
 
     <div class="main-grid admin-only">
@@ -277,6 +328,7 @@
             <input type="text" id="filtro-historico" placeholder="Buscar por descrição ou tipo" oninput="aplicarFiltrosHistorico()">
             <input type="date" id="data-inicio-historico" onchange="aplicarFiltrosHistorico()">
             <input type="date" id="data-fim-historico" onchange="aplicarFiltrosHistorico()">
+            <input type="number" id="filtro-id-historico" placeholder="ID" oninput="aplicarFiltrosHistorico()" min="1">
             <button onclick="limparFiltrosHistorico()" style="background: rgba(255,255,255,0.08); color: #fff;">Limpar</button>
         </div>
         <div style="overflow-x: auto;">
@@ -298,23 +350,7 @@
         </button>
     </div>
 
-    <div class="card admin-only" style="border: 1px solid var(--backup-color); background: rgba(0, 188, 212, 0.08); margin-top: 20px;">
-        <div class="label txt-backup" style="margin-bottom: 10px; font-weight: 800;">BACKUP</div>
-        <button class="btn-backup" style="width: 100%;" onclick="baixarBackup()">
-            <i class="fas fa-download"></i> BAIXAR BACKUP JSON
-        </button>
-
-        <div style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px;">
-            <input id="arquivo-backup" type="file" accept=".json,application/json" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:8px; padding:10px; color:#ddd; font-size:0.9rem;">
-            <label style="display:flex; align-items:center; gap:8px; margin-top:10px; color:#bbb; font-size:0.85rem;">
-                <input id="restore-limpar-antes" type="checkbox" checked style="width:auto;">
-                Limpar base antes de restaurar
-            </label>
-            <button class="btn-backup" style="width:100%; margin-top:10px;" onclick="restaurarBackupJson()">
-                <i class="fas fa-upload"></i> RESTAURAR BACKUP JSON
-            </button>
-        </div>
-    </div>
+    <input id="arquivo-backup" type="file" accept=".json,application/json" style="display:none;" onchange="restaurarBackupJson()">
 
 </div>
 
@@ -328,14 +364,27 @@
     let historicoFiltrado = [];
     let historicoPaginaAtual = 1;
     const historicoItensPorPagina = 15;
+    let isAdminLogado = false;
 
     window.onload = () => {
         const hoje = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(el => el.value = hoje);
+        document.getElementById('data-global').value = hoje;
         const usuarioLogado = localStorage.getItem("usuario_logado");
         if(usuarioLogado === "ADMIN") iniciarSistema(true);
         else if(usuarioLogado === "ESTUDANTE") iniciarSistema(false);
     };
+
+    function sincronizarDatas(valor) {
+        const idsLancamento = [
+            'data-aporte', 'data-erivania', 'data-trufa', 'data-bolo', 'data-acai',
+            'data-trufa-compra', 'data-bolo-compra', 'data-outros'
+        ];
+        idsLancamento.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = valor;
+        });
+    }
 
     async function carregarDados() {
         try {
@@ -343,11 +392,19 @@
             if (!response.ok) throw new Error('Servidor offline');
             const data = await response.json();
 
-            const saldo = data.reduce((acc, i) => acc + i.valor, 0);
+            const saldo = data.filter(i => i.tipo !== 'ERIVANIA').reduce((acc, i) => acc + i.valor, 0);
             const lucroAcai = data.filter(i => i.tipo === 'ACAI').reduce((acc, i) => acc + i.valor, 0);
+            const saldoErivania = data.filter(i => i.tipo === 'ERIVANIA').reduce((acc, i) => acc + i.valor, 0);
+            const caixaTotal = saldo + saldoErivania;
 
             document.getElementById('saldo').innerText = fmtMoeda(saldo);
             document.getElementById('lucro-acai').innerText = fmtMoeda(lucroAcai);
+            document.getElementById('saldo-erivania').innerText = fmtMoeda(saldoErivania);
+
+            document.getElementById('saldo-total').innerText = fmtMoeda(caixaTotal);
+            document.getElementById('est-saldo-ana').innerText = fmtMoeda(saldo);
+            document.getElementById('est-lucro-acai').innerText = fmtMoeda(lucroAcai);
+            document.getElementById('est-saldo-erivania').innerText = fmtMoeda(saldoErivania);
 
             renderizarHistorico(data);
             renderizarGrafico(data);
@@ -437,12 +494,29 @@
 
     async function restaurarBackupJson() {
         const arquivoInput = document.getElementById('arquivo-backup');
-        const limparAntes = document.getElementById('restore-limpar-antes').checked;
         const arquivo = arquivoInput?.files?.[0];
 
         if (!arquivo) {
             return erro('Selecione um arquivo JSON para restaurar.');
         }
+
+        const confirmacao = await Swal.fire({
+            title: 'Restaurar Backup?',
+            html: `<span style="color:#ccc">Arquivo: <b style="color:#fff">${arquivo.name}</b></span>`,
+            icon: 'question',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Limpar e restaurar',
+            denyButtonText: 'Apenas adicionar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#00bcd4',
+            denyButtonColor: '#ff9800',
+            background: '#222',
+            color: '#fff'
+        });
+
+        if (confirmacao.isDismissed) { arquivoInput.value = ''; return; }
+        const limparAntes = confirmacao.isConfirmed;
 
         try {
             const texto = await arquivo.text();
@@ -516,11 +590,18 @@
     }
 
     function iniciarSistema(isAdmin) {
+        isAdminLogado = isAdmin;
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('form-login-container').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.querySelectorAll('.admin-only').forEach(el => {
-            el.style.display = isAdmin ? (el.classList.contains('main-grid') ? 'grid' : 'block') : 'none';
+            if (!isAdmin) { el.style.display = 'none'; return; }
+            if (el.classList.contains('main-grid')) el.style.display = 'grid';
+            else if (el.id === 'data-global-wrapper') el.style.display = 'flex';
+            else el.style.display = 'block';
+        });
+        document.querySelectorAll('.estudante-only').forEach(el => {
+            el.style.display = isAdmin ? 'none' : 'block';
         });
         carregarDados();
     }
@@ -571,6 +652,7 @@
         const filtroTexto = (document.getElementById('filtro-historico')?.value || '').trim().toLowerCase();
         const dataInicio = document.getElementById('data-inicio-historico')?.value || '';
         const dataFim = document.getElementById('data-fim-historico')?.value || '';
+        const filtroId = (document.getElementById('filtro-id-historico')?.value || '').trim();
 
         if (resetPagina) historicoPaginaAtual = 1;
 
@@ -581,7 +663,9 @@
             const data = i.dataLancamento || '';
             const inicioOk = !dataInicio || data >= dataInicio;
             const fimOk = !dataFim || data <= dataFim;
-            return textoOk && inicioOk && fimOk;
+            const idAtual = String(i.id ?? '');
+            const idOk = !filtroId || idAtual.startsWith(filtroId);
+            return textoOk && inicioOk && fimOk && idOk;
         });
 
         renderizarHistoricoPaginado();
@@ -603,11 +687,18 @@
             pagina.forEach(i => {
                 const isPos = i.valor >= 0;
                 const dataFmt = i.dataLancamento ? i.dataLancamento.split('-').reverse().join('/') : '--';
+                const dataEditavel = isAdminLogado
+                    ? `<td style="text-align:right;opacity:0.7;cursor:pointer;position:relative;" title="Clique para alterar a data" onclick="editarData(this, ${i.id}, '${i.dataLancamento || ''}')"><span style="border-bottom:1px dashed #555;">${dataFmt}</span></td>`
+                    : `<td style="text-align:right;opacity:0.5">${dataFmt}</td>`;
+                const btnDesfazer = isAdminLogado
+                    ? `<td style="width:40px;text-align:center"><button onclick="desfazerLancamento(${i.id}, '${i.descricao.replace(/'/g, "\\'")}')" style="background:rgba(255,23,68,0.15); border:1px solid var(--red); color:var(--red); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:0.75rem;" title="Desfazer"><i class="fas fa-undo"></i></button></td>`
+                    : '';
                 tb.innerHTML += `<tr>
                 <td style="width:40px;text-align:center"><i class="fas ${isPos ? 'fa-arrow-up txt-verde' : 'fa-arrow-down txt-vermelho'}"></i></td>
                 <td style="font-weight:600">${i.descricao}</td>
-                <td style="text-align:right;opacity:0.5">${dataFmt}</td>
+                ${dataEditavel}
                 <td style="text-align:right;font-weight:800" class="${isPos ? 'txt-verde' : 'txt-vermelho'}">${fmtMoeda(i.valor)}</td>
+                ${btnDesfazer}
             </tr>`;
             });
         }
@@ -634,12 +725,14 @@
         document.getElementById('filtro-historico').value = '';
         document.getElementById('data-inicio-historico').value = '';
         document.getElementById('data-fim-historico').value = '';
+        document.getElementById('filtro-id-historico').value = '';
         aplicarFiltrosHistorico();
     }
 
     function renderizarGrafico(historico) {
         const ctx = document.getElementById('graficoEvolucao').getContext('2d');
-        const ordenado = [...historico].sort((a,b) => a.dataLancamento > b.dataLancamento ? 1 : -1);
+        const semErivania = historico.filter(i => i.tipo !== 'ERIVANIA');
+        const ordenado = [...semErivania].sort((a,b) => a.dataLancamento > b.dataLancamento ? 1 : -1);
         let soma = 0;
         const labels = ordenado.map(i => i.dataLancamento.split('-').reverse().join('/'));
         const dados = ordenado.map(i => { soma += i.valor; return soma; });
@@ -696,7 +789,92 @@
 
     function fmtMoeda(val) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(val); }
     function erro(msg) { Swal.fire({icon:'warning', title:'Ops', text:msg, background:'#222', color:'#fff', toast:true, position:'top-end', showConfirmButton:false, timer:2000}); }
+
+    function editarData(td, id, dataAtual) {
+        if (td.querySelector('input')) return;
+        td.onclick = null;
+        const input = document.createElement('input');
+        input.type = 'date';
+        input.value = dataAtual;
+        Object.assign(input.style, {
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid var(--blue)',
+            color: '#fff',
+            borderRadius: '6px',
+            padding: '4px 6px',
+            fontSize: '0.85rem',
+            width: '100%',
+            cursor: 'pointer'
+        });
+        td.innerHTML = '';
+        td.appendChild(input);
+        input.focus();
+        try { input.showPicker(); } catch(_) {}
+
+        input.addEventListener('change', () => salvarData(id, input.value));
+        input.addEventListener('blur', () => {
+            setTimeout(() => {
+                if (td.querySelector('input')) {
+                    const fmt = dataAtual ? dataAtual.split('-').reverse().join('/') : '--';
+                    td.innerHTML = `<span style="border-bottom:1px dashed #555;">${fmt}</span>`;
+                    td.onclick = () => editarData(td, id, dataAtual);
+                }
+            }, 200);
+        });
+    }
+
+    async function salvarData(id, novaData) {
+        if (!novaData) return;
+        try {
+            const response = await fetch(`${API_URL}/${id}/data`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dataLancamento: novaData })
+            });
+            if (response.ok) {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Data atualizada!', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff' });
+                carregarDados();
+            } else {
+                erro('Erro ao atualizar a data.');
+            }
+        } catch (e) {
+            erro('Erro de conexão com o servidor.');
+        }
+    }
+
+    async function desfazerLancamento(id, descricao) {
+        const resultado = await Swal.fire({
+            title: 'Desfazer lançamento?',
+            html: `<span style="color:#ccc">Tem certeza que deseja remover:<br><b style="color:#fff">${descricao}</b></span>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff1744',
+            cancelButtonColor: '#555',
+            confirmButtonText: 'Sim, desfazer',
+            cancelButtonText: 'Cancelar',
+            background: '#222',
+            color: '#fff'
+        });
+
+        if (!resultado.isConfirmed) return;
+
+        try {
+            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Lançamento desfeito!', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff' });
+                carregarDados();
+            } else if (response.status === 404) {
+                erro('Lançamento não encontrado (já removido?).');
+                carregarDados();
+            } else {
+                erro('Erro ao desfazer o lançamento.');
+            }
+        } catch (e) {
+            erro('Erro de conexão com o servidor.');
+        }
+    }
 </script>
 
 </body>
 </html>
+
