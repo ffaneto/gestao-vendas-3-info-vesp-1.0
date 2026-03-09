@@ -82,15 +82,15 @@ financeiro/
 - **MySQL 8** porta `3306`
 - **Maven** 
 
-### 1. Criar o banco de dados
+### Criar o banco de dados
 
 ```sql
 CREATE DATABASE db_formatura;
 ```
 
-### 2. Configurar credenciais
+### Configurar credenciais
 
-Edite `src/main/resources/application.yml` com seu usuário e senha do MySQL:
+Edite `src/main/resources/application.yml` :
 
 ```yaml
 spring:
@@ -100,13 +100,13 @@ spring:
     password: 'SUA_SENHA'
 ```
 
-### 3. Executar o projeto
+### Executar o projeto
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-### 4. Acessar no navegador
+### Acessar no navegador
 
 ```
 http://localhost:8080
