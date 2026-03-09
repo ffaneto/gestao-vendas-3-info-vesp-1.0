@@ -90,7 +90,7 @@ CREATE DATABASE db_formatura;
 
 ### Configurar credenciais
 
-Edite `src/main/resources/application.yml` :
+Edite `src/main/resources/application.yml`
 
 ```yaml
 spring:
@@ -112,7 +112,7 @@ spring:
 http://localhost:8080
 ```
 
-Usuário: admin , comissao
+Usuário: admin , Senha: comissao
 
 ## Autor
 
