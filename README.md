@@ -123,9 +123,8 @@ Usuário: admin , Senha: comissao
 
 ## Autor
 
-**Francisco Figueiredo** [@ffaneto](https://github.com/ffaneto)
+**Francisco Figueiredo** [![GitHub](https://img.shields.io/badge/-ffaneto-181717?logo=github&logoColor=white&style=flat-square)](https://github.com/ffaneto)
 
-[![GitHub](https://img.shields.io/badge/GitHub-ffaneto-181717?logo=github&logoColor=white)](https://github.com/ffaneto)
 - 3º Ano Informática Integrado ao Ensino Médio
 - IFPB Campus Itaporanga
 
