@@ -1,4 +1,3 @@
-
 # Sistema de Gestão Financeira Formatura 3º Info
 
 <div align="center">
@@ -24,7 +23,9 @@ Além de expandir meus conhecimentos na programação
 -  **Gráfico dinâmico** — muda de verde (lucro) para vermelho (prejuízo) automaticamente
 -  **Registro de vendas** — Trufas, Bolos e Açaí
 -  **Controle de gastos** — reposição de estoque e despesas diversas
--  **Histórico completo** — com busca por texto, filtro por data e paginação
+-  **Histórico completo** — com busca por texto, filtro por data, filtro por ID e paginação
+-  **Edição rápida no histórico** — alterar a data de um lançamento direto na tabela
+-  **Desfazer lançamento** — exclusão individual por ID no histórico
 -  **Dois perfis de acesso** — Estudante da turma e Comissão
 -  **Backup e Restore** — exportar e importar dados em JSON pela interface
 -  **Reset de banco** — limpar todos os dados com confirmação
@@ -70,8 +71,10 @@ financeiro/
 | `GET` | `/api/vendas` | Listar todos os lançamentos |
 | `POST` | `/api/vendas` | Registrar novo lançamento |
 | `DELETE` | `/api/vendas` | Apagar todos os dados |
+| `DELETE` | `/api/vendas/{id}` | Apagar um lançamento específico |
+| `PATCH` | `/api/vendas/{id}/data` | Atualizar apenas a data de um lançamento |
 | `GET` | `/api/backup` | Baixar backup em JSON |
-| `POST` | `/api/restore` | Restaurar backup JSON |
+| `POST` | `/api/restore` | Restaurar backup JSON (`limparAntes=true|false`) |
 | `POST` | `/api/login` | Autenticação local |
 
 ## Como Rodar
@@ -103,6 +106,10 @@ spring:
 ### Executar o projeto
 
 ```bash
+# Windows (PowerShell)
+.\mvnw.cmd spring-boot:run
+
+# Git Bash / Linux / macOS
 ./mvnw spring-boot:run
 ```
 
@@ -116,7 +123,9 @@ Usuário: admin , Senha: comissao
 
 ## Autor
 
-**Francisco Figueiredo** @ffaneto
+**Francisco Figueiredo** [@ffaneto](https://github.com/ffaneto)
+
+[![GitHub](https://img.shields.io/badge/GitHub-ffaneto-181717?logo=github&logoColor=white)](https://github.com/ffaneto)
 - 3º Ano Informática Integrado ao Ensino Médio
 - IFPB Campus Itaporanga
 
