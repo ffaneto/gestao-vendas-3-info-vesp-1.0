@@ -7,874 +7,244 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="app.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <style>
-        :root {
-            --bg: #050505;
-            --card-bg: rgba(20, 20, 20, 0.7);
-            --border: rgba(255, 255, 255, 0.1);
-            --text: #e4e4e7;
-            --green: #00e676;
-            --red: #ff1744;
-            --blue: #2979ff;
-            --purple: #d500f9;
-            --backup-color: #00bcd4;
-        }
-
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
-
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-
-        body {
-            background-color: var(--bg); color: var(--text); margin: 0; padding: 0;
-            min-height: 100vh; display: flex; flex-direction: column;
-            position: relative;
-        }
-
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('logoBoa.png');
-            background-position: center; background-repeat: no-repeat; background-size: 60%;
-            opacity: 0.10; z-index: -1; pointer-events: none;
-        }
-
-        .logo-overlay {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            width: 250px;
-            height: auto;
-            z-index: 10000;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-        }
-
-        @media (max-width: 600px) {
-            .logo-overlay {
-                width: 100px;
-                top: 20px;
-                left: 20px;
-            }
-        }
-
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; }
-        .split-side { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; text-align: center; border: 1px solid #111; position: relative; transition: background 0.3s; }
-        .split-side:hover { background: #111; }
-        .split-side i { font-size: 3.5rem; margin-bottom: 25px; }
-        .split-title { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; }
-
-        #form-login-container { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #18181b; border: 1px solid #333; padding: 35px; border-radius: 20px; width: 90%; max-width: 350px; box-shadow: 0 25px 60px rgba(0,0,0,0.9); z-index: 10000; }
-
-        .app-container { max-width: 1200px; margin: 0 auto; padding: 25px; width: 100%; display: none; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; border-bottom: 1px solid var(--border); padding-bottom: 25px; }
-
-        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 25px; }
-        .card { background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 24px; padding: 30px; position: relative; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); transition: transform 0.2s ease; }
-        .card:hover { transform: translateY(-5px); }
-
-        .big-number { font-size: 3rem; font-weight: 800; margin: 10px 0; letter-spacing: -1.5px; }
-        .label { font-size: 0.8rem; text-transform: uppercase; color: #888; font-weight: 600; letter-spacing: 1.5px; }
-        .chart-container { position: relative; height: 200px; width: 100%; margin-top: 10px; }
-
-        .input-group { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 12px; margin-bottom: 15px; border: 1px solid transparent; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.3s; }
-        .input-group:focus-within { border-color: rgba(255,255,255,0.2); }
-        .input-row { display: flex; gap: 12px; align-items: center; }
-        input { background: transparent; border: none; color: #fff; font-size: 1.1rem; width: 100%; padding: 10px; font-weight: 600; }
-
-        button { border: none; padding: 14px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; white-space: nowrap; transition: opacity 0.2s, transform 0.1s; }
-        button:active { transform: scale(0.96); }
-        button:hover { opacity: 0.85; }
-        .btn-verde { background: rgba(0, 230, 118, 0.18); color: var(--green); border: 1px solid var(--green); }
-        .btn-vermelho { background: rgba(255, 23, 68, 0.18); color: var(--red); border: 1px solid var(--red); }
-        .btn-login { width: 100%; background: var(--blue); color: white; padding: 15px; margin-top: 15px; font-size: 1rem; }
-        .btn-roxo { background: rgba(156, 39, 176, 0.18); color: var(--purple); border: 1px solid var(--purple);}
-        .btn-backup { background: rgba(0, 188, 212, 0.18); color: var(--backup-color); border: 1px solid var(--backup-color);}
-
-        .txt-verde { color: var(--green); }
-        .txt-vermelho { color: var(--red); }
-        .txt-roxo { color: var(--purple); }
-        .txt-backup { color: var(--backup-color); }
-        .admin-only { display: none; }
-        .estudante-only { display: none; }
-
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 20px; }
-        td { padding: 15px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #ccc; }
-
-        .historico-tools { display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.8fr auto; gap: 10px; margin-top: 15px; }
-        .historico-tools input { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 0.9rem; }
-        .historico-paginacao { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .historico-paginacao .paginacao-btns { display: flex; gap: 8px; }
-
-        @media (max-width: 700px) {
-            .historico-tools { grid-template-columns: 1fr; }
-            .historico-paginacao { flex-direction: column; align-items: flex-start; }
-        }
-    </style>
 </head>
 <body>
 
 <div id="login-overlay">
     <img src="logoifpb.png" alt="IFPB" class="logo-overlay">
 
-    <div class="split-side" onclick="entrarComo('ESTUDANTE')">
-        <i class="fas fa-user-graduate" style="color: var(--blue)"></i>
+    <div class="split-side" id="login-estudante" role="button" tabindex="0">
+        <i class="fas fa-user-graduate icon-blue"></i>
         <div class="split-title">Estudante</div>
     </div>
-    <div class="split-side" style="background: #080808;" onclick="mostrarFormLogin()">
+    <div class="split-side split-side-dark" id="login-comissao" role="button" tabindex="0">
         <i class="fas fa-user-shield txt-roxo"></i>
         <div class="split-title">Comissão</div>
     </div>
 </div>
 
 <div id="form-login-container">
-    <h3 style="text-align: center; margin-top: 0; font-weight: 800; letter-spacing: 1px;">Acesso Local</h3>
+    <h3 class="login-title">Acesso Local</h3>
     <div class="input-group">
         <input type="text" id="login-user" placeholder="Usuário (admin)">
     </div>
     <div class="input-group">
-        <input type="password" id="login-pass" placeholder="Senha" onkeydown="verificarEnter(event)">
+        <input type="password" id="login-pass" placeholder="Senha">
     </div>
-    <button class="btn-login" onclick="fazerLogin()">Entrar</button>
-    <button style="background:transparent; color:#666; width:100%; margin-top:15px; font-size: 0.8rem;" onclick="cancelarLogin()">Cancelar</button>
+    <button class="btn-login" id="btn-login">Entrar</button>
+    <button class="btn-link-muted" id="btn-cancelar-login">Cancelar</button>
 </div>
 
 <div class="app-container" id="app">
     <header>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <img src="logoifpb.png" alt="IFPB" style="height: 50px; width: auto;">
+        <div class="header-brand">
+            <img src="logoifpb.png" alt="IFPB" class="header-logo">
             <div>
-                <h1 style="margin:0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 300;">Financeiro <span style="font-weight: 800;" class="txt-roxo">3º Info</span></h1>
-                <span id="badge-user" style="font-size: 0.75rem; background: #222; padding: 4px 10px; border-radius: 6px; color: #aaa; font-weight: 600;">MySQL Conectado</span>
+                <h1 class="app-title">Financeiro <span class="txt-roxo app-title-strong">3º Info</span></h1>
+                <span id="badge-user" class="status-badge">MySQL Conectado</span>
             </div>
         </div>
-        <button onclick="sair()" style="background: rgba(255,255,255,0.08); color: #fff; padding: 12px 18px; width: auto;"><i class="fas fa-power-off"></i></button>
+        <button id="btn-sair" class="btn-muted btn-logout"><i class="fas fa-power-off"></i></button>
     </header>
 
     <div class="main-grid">
         <div class="card admin-only" id="card-caixa-admin">
-            <div class="label">Caixa <span style="font-size: 0.65rem; color: #555; text-transform: none; letter-spacing: 0;">(Ana Thays)</span></div>
+            <div class="label">Caixa <span class="label-subinfo">(Ana Thays)</span></div>
             <div class="big-number txt-verde" id="saldo">R$ 0,00</div>
 
-            <div style="display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+            <div class="card-balances-row">
                 <div>
-                    <div class="label">Lucro Açaí <span style="font-size: 0.65rem; color: #555; text-transform: none; letter-spacing: 0;">(Izabelly)</span></div>
-                    <div class="txt-roxo" style="font-weight: 800; font-size: 1.4rem;" id="lucro-acai">R$ 0,00</div>
+                    <div class="label">Lucro Açaí <span class="label-subinfo">(Izabelly)</span></div>
+                    <div class="txt-roxo balance-highlight-purple" id="lucro-acai">R$ 0,00</div>
                 </div>
                 <div>
-                    <div class="label">Caixa Madrinha <span style="font-size: 0.65rem; color: #555; text-transform: none; letter-spacing: 0;">(Erivânia)</span></div>
-                    <div style="font-weight: 800; font-size: 1.4rem; color: #ffc107;" id="saldo-erivania">R$ 0,00</div>
+                    <div class="label">Caixa Madrinha <span class="label-subinfo">(Erivânia)</span></div>
+                    <div class="balance-highlight-yellow" id="saldo-erivania">R$ 0,00</div>
                 </div>
             </div>
 
-            <div style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <div class="card-section-divider">
                 <div class="input-group">
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
-                        <span class="label" style="color:#aaa">Aporte (Ana Thays)</span>
+                    <div class="row-between-center">
+                        <span class="label label-light">Aporte (Ana Thays)</span>
                         <input type="date" id="data-aporte">
                     </div>
                     <div class="input-row">
                         <input type="number" id="valor-aporte" placeholder="R$ Valor">
-                        <button class="btn-verde" style="width: auto; padding: 12px;" onclick="lancarGenerico('SALDO_INICIAL', 'valor-aporte', 'Aporte', 'data-aporte')"><i class="fas fa-plus"></i></button>
+                        <button class="btn-verde btn-compact" id="btn-aporte"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-group" style="border: 1px solid rgba(255, 193, 7, 0.25);">
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items: center;">
-                        <span class="label" style="color:#ffc107">Aporte Erivânia</span>
+                <div class="input-group input-group-erivania">
+                    <div class="row-between-center">
+                        <span class="label label-erivania">Aporte Erivânia</span>
                         <input type="date" id="data-erivania">
                     </div>
                     <div class="input-row">
                         <input type="number" id="valor-erivania" placeholder="R$ Valor">
-                        <button style="background:rgba(255,193,7,0.18); color:#ffc107; border:1px solid #ffc107; border-radius:10px; padding:12px; width:auto; font-weight:700; cursor:pointer;" onclick="lancarGenerico('ERIVANIA', 'valor-erivania', 'Aporte Erivânia', 'data-erivania')"><i class="fas fa-plus"></i></button>
+                        <button class="btn-erivania" id="btn-erivania"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card estudante-only" id="card-caixa-estudante" style="align-self: start;">
-            <div class="label" style="text-align:center; margin-bottom:5px;">Caixa Total da Turma</div>
-            <div class="big-number txt-verde" style="text-align:center;" id="saldo-total">R$ 0,00</div>
+        <div class="card estudante-only card-align-start" id="card-caixa-estudante">
+            <div class="label text-center mb-5">Caixa Total da Turma</div>
+            <div class="big-number txt-verde text-center" id="saldo-total">R$ 0,00</div>
 
-            <div style="margin-top:22px; background:rgba(255,255,255,0.03); border-radius:16px; padding:18px 20px; border:1px solid rgba(255,255,255,0.06);">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <span style="font-size:0.78rem; color:#888; font-weight:600; letter-spacing:0.5px;"><i class="fas fa-wallet" style="color:var(--green); margin-right:6px;"></i>Caixa (Ana Thays)</span>
-                    <span style="font-size:0.95rem; font-weight:700; color:var(--green);" id="est-saldo-ana">R$ 0,00</span>
+            <div class="student-breakdown">
+                <div class="student-row student-row-border">
+                    <span class="student-label"><i class="fas fa-wallet icon-green icon-gap"></i>Caixa (Ana Thays)</span>
+                    <span class="student-value student-value-green" id="est-saldo-ana">R$ 0,00</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <span style="font-size:0.78rem; color:#888; font-weight:600; letter-spacing:0.5px;"><i class="fas fa-ice-cream" style="color:var(--purple); margin-right:6px;"></i>Lucro Açaí (Izabelly)</span>
-                    <span style="font-size:0.95rem; font-weight:700; color:var(--purple);" id="est-lucro-acai">R$ 0,00</span>
+                <div class="student-row student-row-border">
+                    <span class="student-label"><i class="fas fa-ice-cream icon-purple icon-gap"></i>Lucro Açaí (Izabelly)</span>
+                    <span class="student-value student-value-purple" id="est-lucro-acai">R$ 0,00</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
-                    <span style="font-size:0.78rem; color:#888; font-weight:600; letter-spacing:0.5px;"><i class="fas fa-hand-holding-heart" style="color:#ffc107; margin-right:6px;"></i>Madrinha (Erivânia)</span>
-                    <span style="font-size:0.95rem; font-weight:700; color:#ffc107;" id="est-saldo-erivania">R$ 0,00</span>
+                <div class="student-row">
+                    <span class="student-label"><i class="fas fa-hand-holding-heart icon-yellow icon-gap"></i>Madrinha (Erivânia)</span>
+                    <span class="student-value student-value-yellow" id="est-saldo-erivania">R$ 0,00</span>
                 </div>
             </div>
         </div>
 
-        <div class="card" style="align-self: start;">
-            <div class="label" style="text-align: center;">Projeção</div>
+        <div class="card card-align-start">
+            <div class="label card-title-center">Projeção</div>
             <div class="chart-container">
                 <canvas id="graficoEvolucao"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="admin-only" id="data-global-wrapper" style="position:fixed; top:12px; right:12px; z-index:9998; display:flex; gap:8px; align-items:center;">
-        <button onclick="document.getElementById('arquivo-backup').click()" title="Importar Backup JSON" style="background:rgba(20,20,20,0.85); backdrop-filter:blur(10px); border:1px solid var(--border); color:#ff9800; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:0; font-size:1.15rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); cursor:pointer;">
+    <div class="admin-only toolbar-floating" id="data-global-wrapper">
+        <button id="btn-importar-backup" class="toolbar-icon-btn toolbar-import" title="Importar Backup JSON">
             <i class="fas fa-file-import"></i>
         </button>
-        <button onclick="baixarBackup()" title="Baixar Backup JSON" style="background:rgba(20,20,20,0.85); backdrop-filter:blur(10px); border:1px solid var(--border); color:#00bcd4; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:0; font-size:1.15rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); cursor:pointer;">
+        <button id="btn-baixar-backup" class="toolbar-icon-btn toolbar-download" title="Baixar Backup JSON">
             <i class="fas fa-download"></i>
         </button>
-        <button onclick="document.getElementById('data-global').showPicker()" style="background:rgba(20,20,20,0.85); backdrop-filter:blur(10px); border:1px solid var(--border); color:var(--blue); width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:0; font-size:1.15rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); cursor:pointer;">
+        <button id="btn-data-global" class="toolbar-icon-btn toolbar-calendar" title="Sincronizar datas">
             <i class="fas fa-calendar-alt"></i>
         </button>
-        <input type="date" id="data-global" onchange="sincronizarDatas(this.value)" style="position:absolute; top:0; right:0; width:44px; height:44px; opacity:0; cursor:pointer;">
+        <input type="date" id="data-global" class="toolbar-date-input">
     </div>
 
     <div class="main-grid admin-only">
         <div class="card">
-            <h3 class="txt-verde" style="margin:0 0 15px 0; font-size:1.1rem; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+            <h3 class="txt-verde section-title">
                 <i class="fas fa-cash-register"></i> Vendas
             </h3>
 
             <div class="input-group">
-                <div class="input-row" style="justify-content: space-between;">
+                <div class="input-row date-row">
                     <span>Trufa <small>(R$ 2,50)</small></span>
-                    <input type="date" id="data-trufa" style="width:130px">
+                    <input type="date" id="data-trufa" class="date-input-compact">
                 </div>
                 <div class="input-row">
                     <input type="number" id="qtd-trufa" placeholder="Quantidade">
-                    <button class="btn-verde" onclick="venderQtd('TRUFA', 2.50, 'qtd-trufa', 'data-trufa')">Vender</button>
+                    <button class="btn-verde" id="btn-vender-trufa">Vender</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <div class="input-row" style="justify-content: space-between;">
+                <div class="input-row date-row">
                     <span>Bolo <small>(R$ 3,50)</small></span>
-                    <input type="date" id="data-bolo" style="width:130px">
+                    <input type="date" id="data-bolo" class="date-input-compact">
                 </div>
                 <div class="input-row">
                     <input type="number" id="qtd-bolo" placeholder="Quantidade">
-                    <button class="btn-verde" onclick="venderQtd('BOLO', 3.50, 'qtd-bolo', 'data-bolo')">Vender</button>
+                    <button class="btn-verde" id="btn-vender-bolo">Vender</button>
                 </div>
             </div>
 
-            <div class="input-group" style="border: 1px solid rgba(213, 0, 249, 0.3);">
-                <div class="input-row" style="justify-content: space-between;">
+            <div class="input-group input-group-acai">
+                <div class="input-row date-row">
                     <span class="txt-roxo">Venda Açaí / Outros</span>
-                    <input type="date" id="data-acai" style="width:130px">
+                    <input type="date" id="data-acai" class="date-input-compact">
                 </div>
                 <div class="input-row">
                     <input type="number" id="valor-acai" placeholder="R$ Valor Livre">
-                    <button class="btn-roxo" style="border-color:var(--purple); color:var(--purple)" onclick="lancarGenerico('ACAI', 'valor-acai', 'Venda Açaí', 'data-acai')">Vender</button>
+                    <button class="btn-roxo btn-roxo-strong" id="btn-vender-acai">Vender</button>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="txt-vermelho" style="margin:0 0 15px 0; font-size:1.1rem; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+            <h3 class="txt-vermelho section-title">
                 <i class="fas fa-shopping-cart"></i> Gastos (Saída)
             </h3>
 
             <div class="input-group">
-                <div class="input-row" style="justify-content: space-between;">
-                    <span>Repor Trufas <small style="color:var(--red)">(- R$ 1,50)</small></span>
-                    <input type="date" id="data-trufa-compra" style="width:130px">
+                <div class="input-row date-row">
+                    <span>Repor Trufas <small class="small-red">(- R$ 1,50)</small></span>
+                    <input type="date" id="data-trufa-compra" class="date-input-compact">
                 </div>
                 <div class="input-row">
                     <input type="number" id="qtd-trufa-compra" placeholder="Qtd Comprada">
-                    <button class="btn-vermelho" onclick="lancarGastoQtd('TRUFA_COMPRA', 1.50, 'qtd-trufa-compra', 'data-trufa-compra')">Pagar</button>
+                    <button class="btn-vermelho" id="btn-pagar-trufa">Pagar</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <div class="input-row" style="justify-content: space-between;">
-                    <span>Repor Bolos <small style="color:var(--red)">(- R$ 2,50)</small></span>
-                    <input type="date" id="data-bolo-compra" style="width:130px">
+                <div class="input-row date-row">
+                    <span>Repor Bolos <small class="small-red">(- R$ 2,50)</small></span>
+                    <input type="date" id="data-bolo-compra" class="date-input-compact">
                 </div>
                 <div class="input-row">
                     <input type="number" id="qtd-bolo-compra" placeholder="Qtd Comprada">
-                    <button class="btn-vermelho" onclick="lancarGastoQtd('BOLO_COMPRA', 2.50, 'qtd-bolo-compra', 'data-bolo-compra')">Pagar</button>
+                    <button class="btn-vermelho" id="btn-pagar-bolo">Pagar</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <div class="input-row" style="justify-content: space-between;">
+                <div class="input-row date-row">
                     <span>Outras Despesas</span>
-                    <input type="date" id="data-outros" style="width:130px">
+                    <input type="date" id="data-outros" class="date-input-compact">
                 </div>
-                <input type="text" id="desc-outros" placeholder="Descrição do gasto" style="background:rgba(0,0,0,0.3); border:none; padding:8px; color:#fff; border-radius:6px; margin:5px 0;">
+                <input type="text" id="desc-outros" placeholder="Descrição do gasto" class="desc-outros-input">
                 <div class="input-row">
                     <input type="number" id="valor-outros" placeholder="R$ Valor Gasto">
-                    <button class="btn-vermelho" onclick="lancarGastoGenerico()">Lançar Gasto</button>
+                    <button class="btn-vermelho" id="btn-lancar-gasto">Lançar Gasto</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card" style="margin-top: 10px;">
+    <div class="card card-top-gap">
         <div class="label">Histórico</div>
         <div class="historico-tools">
-            <input type="text" id="filtro-historico" placeholder="Buscar por descrição ou tipo" oninput="aplicarFiltrosHistorico()">
-            <input type="date" id="data-inicio-historico" onchange="aplicarFiltrosHistorico()">
-            <input type="date" id="data-fim-historico" onchange="aplicarFiltrosHistorico()">
-            <input type="number" id="filtro-id-historico" placeholder="ID" oninput="aplicarFiltrosHistorico()" min="1">
-            <button onclick="limparFiltrosHistorico()" style="background: rgba(255,255,255,0.08); color: #fff;">Limpar</button>
+            <input type="text" id="filtro-historico" placeholder="Buscar por descrição ou tipo">
+            <input type="date" id="data-inicio-historico">
+            <input type="date" id="data-fim-historico">
+            <input type="number" id="filtro-id-historico" placeholder="ID" min="1">
+            <button id="btn-limpar-filtros" class="btn-muted">Limpar</button>
         </div>
-        <div style="overflow-x: auto;">
+        <div class="table-scroll">
             <table id="tabela-historico"></table>
         </div>
         <div class="historico-paginacao">
-            <span id="historico-page-info" style="font-size: 0.8rem; color:#888;">Página 1 de 1</span>
+            <span id="historico-page-info" class="page-info">Página 1 de 1</span>
             <div class="paginacao-btns">
-                <button id="btn-pagina-anterior" onclick="paginaAnteriorHistorico()" style="background: rgba(255,255,255,0.08); color: #fff;">Anterior</button>
-                <button id="btn-pagina-proxima" onclick="paginaProximaHistorico()" style="background: rgba(255,255,255,0.08); color: #fff;">Próxima</button>
+                <button id="btn-pagina-anterior" class="btn-muted">Anterior</button>
+                <button id="btn-pagina-proxima" class="btn-muted">Próxima</button>
             </div>
         </div>
     </div>
 
-    <div class="card admin-only" style="border: 1px solid var(--red); background: rgba(255, 23, 68, 0.05); margin-top: 25px;">
-        <div class="label" style="color: var(--red); margin-bottom: 10px; font-weight: 800;">APAGAR DADOS</div>
-        <button class="btn-vermelho" style="width: 100%; background: var(--red); color: white;" onclick="resetarBanco()">
+    <div class="card admin-only danger-card">
+        <div class="label danger-title">APAGAR DADOS</div>
+        <button class="btn-vermelho btn-full-danger" id="btn-resetar">
             <i class="fas fa-trash"></i> RESET
         </button>
     </div>
 
-    <input id="arquivo-backup" type="file" accept=".json,application/json" style="display:none;" onchange="restaurarBackupJson()">
+    <input id="arquivo-backup" class="hidden-input" type="file" accept=".json,application/json">
 
 </div>
 
-<script>
-    const API_URL = "/api/vendas";
-    const BACKUP_URL = "/api/backup";
-    const BACKUP_URL_FALLBACK = `${API_URL}/backup`;
-    const RESTORE_URL = "/api/restore";
-    let chartInstance = null;
-    let historicoOriginal = [];
-    let historicoFiltrado = [];
-    let historicoPaginaAtual = 1;
-    const historicoItensPorPagina = 15;
-    let isAdminLogado = false;
-
-    window.onload = () => {
-        const hoje = new Date().toISOString().split('T')[0];
-        document.querySelectorAll('input[type="date"]').forEach(el => el.value = hoje);
-        document.getElementById('data-global').value = hoje;
-        const usuarioLogado = localStorage.getItem("usuario_logado");
-        if(usuarioLogado === "ADMIN") iniciarSistema(true);
-        else if(usuarioLogado === "ESTUDANTE") iniciarSistema(false);
-    };
-
-    function sincronizarDatas(valor) {
-        const idsLancamento = [
-            'data-aporte', 'data-erivania', 'data-trufa', 'data-bolo', 'data-acai',
-            'data-trufa-compra', 'data-bolo-compra', 'data-outros'
-        ];
-        idsLancamento.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = valor;
-        });
-    }
-
-    async function carregarDados() {
-        try {
-            const response = await fetch(API_URL);
-            if (!response.ok) throw new Error('Servidor offline');
-            const data = await response.json();
-
-            const saldo = data.filter(i => i.tipo !== 'ERIVANIA').reduce((acc, i) => acc + i.valor, 0);
-            const lucroAcai = data.filter(i => i.tipo === 'ACAI').reduce((acc, i) => acc + i.valor, 0);
-            const saldoErivania = data.filter(i => i.tipo === 'ERIVANIA').reduce((acc, i) => acc + i.valor, 0);
-            const caixaTotal = saldo + saldoErivania;
-
-            document.getElementById('saldo').innerText = fmtMoeda(saldo);
-            document.getElementById('lucro-acai').innerText = fmtMoeda(lucroAcai);
-            document.getElementById('saldo-erivania').innerText = fmtMoeda(saldoErivania);
-
-            document.getElementById('saldo-total').innerText = fmtMoeda(caixaTotal);
-            document.getElementById('est-saldo-ana').innerText = fmtMoeda(saldo);
-            document.getElementById('est-lucro-acai').innerText = fmtMoeda(lucroAcai);
-            document.getElementById('est-saldo-erivania').innerText = fmtMoeda(saldoErivania);
-
-            renderizarHistorico(data);
-            renderizarGrafico(data);
-        } catch (error) {
-            console.error(error);
-            Swal.fire({icon:'error', title:'Erro', text:'O Java está rodando?', background:'#222', color:'#fff'});
-        }
-    }
-
-    async function enviarLancamento(payload) {
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (response.ok) {
-                carregarDados();
-                Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Salvo no MySQL!', showConfirmButton: false, timer: 1500});
-            }
-        } catch (error) {
-            erro("Erro ao conectar com o Java.");
-        }
-    }
-
-    async function resetarBanco() {
-        Swal.fire({
-            title: 'Apagar?',
-            text: "Vai apagar TODOS os dados do BD",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#8A00C4',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sim',
-            background: '#222',
-            color: '#fff'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const response = await fetch(API_URL, { method: 'DELETE' });
-
-                    if (response.ok) {
-                        Swal.fire({title: 'Apagado!', text: 'Banco de dados reiniciado.', icon: 'success', background:'#222', color:'#fff'});
-                        carregarDados();
-                    } else {
-                        erro("Erro ao tentar resetar o banco.");
-                    }
-                } catch (e) {
-                    erro("Erro de conexão.");
-                }
-            }
-        })
-    }
-
-    async function baixarBackup() {
-        try {
-            let response = await fetch(BACKUP_URL);
-            if (!response.ok && response.status === 404) {
-                // Compatibilidade com a rota antiga, caso exista em algum ambiente.
-                response = await fetch(BACKUP_URL_FALLBACK);
-            }
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-            const blob = await response.blob();
-            const disposition = response.headers.get('content-disposition') || '';
-            const match = disposition.match(/filename="?([^\"]+)"?/i);
-            const fileName = match && match[1] ? match[1] : 'backup_formatura.json';
-
-            const blobUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            URL.revokeObjectURL(blobUrl);
-        } catch (error) {
-            Swal.fire({
-                icon:'error',
-                title:'Erro no backup',
-                text:`Nao foi possivel baixar o arquivo agora (${error.message}).`,
-                background:'#222',
-                color:'#fff'
-            });
-        }
-    }
-
-    async function restaurarBackupJson() {
-        const arquivoInput = document.getElementById('arquivo-backup');
-        const arquivo = arquivoInput?.files?.[0];
-
-        if (!arquivo) {
-            return erro('Selecione um arquivo JSON para restaurar.');
-        }
-
-        const confirmacao = await Swal.fire({
-            title: 'Restaurar Backup?',
-            html: `<span style="color:#ccc">Arquivo: <b style="color:#fff">${arquivo.name}</b></span>`,
-            icon: 'question',
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: 'Limpar e restaurar',
-            denyButtonText: 'Apenas adicionar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#00bcd4',
-            denyButtonColor: '#ff9800',
-            background: '#222',
-            color: '#fff'
-        });
-
-        if (confirmacao.isDismissed) { arquivoInput.value = ''; return; }
-        const limparAntes = confirmacao.isConfirmed;
-
-        try {
-            const texto = await arquivo.text();
-            const parsed = JSON.parse(texto);
-            const lancamentos = Array.isArray(parsed) ? parsed : parsed?.lancamentos;
-
-            if (!Array.isArray(lancamentos) || lancamentos.length === 0) {
-                return erro('Arquivo invalido. Esperado uma lista de lancamentos.');
-            }
-
-            const response = await fetch(`${RESTORE_URL}?limparAntes=${limparAntes}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(lancamentos)
-            });
-
-            let payload = {};
-            try { payload = await response.json(); } catch (_) { payload = {}; }
-
-            if (!response.ok) {
-                const detalhes = Array.isArray(payload?.detalhes) ? payload.detalhes.slice(0, 3).join(' | ') : '';
-                throw new Error(`${payload?.erro || `HTTP ${response.status}`}${detalhes ? ` - ${detalhes}` : ''}`);
-            }
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Restore concluido',
-                text: `${payload?.importados || lancamentos.length} registros importados.`,
-                background: '#222',
-                color: '#fff'
-            });
-            arquivoInput.value = '';
-            carregarDados();
-        } catch (error) {
-            Swal.fire({
-                icon:'error',
-                title:'Erro na restauracao',
-                text: `Nao foi possivel restaurar (${error.message}).`,
-                background:'#222',
-                color:'#fff'
-            });
-        }
-    }
-
-    function mostrarFormLogin() { document.getElementById('login-overlay').style.display = 'none'; document.getElementById('form-login-container').style.display = 'block'; document.getElementById('login-user').focus(); }
-    function cancelarLogin() { document.getElementById('form-login-container').style.display = 'none'; document.getElementById('login-overlay').style.display = 'flex'; }
-    function verificarEnter(event) { if (event.key === 'Enter') fazerLogin(); }
-    function entrarComo(tipo) {
-        const tipoNormalizado = tipo === 'ADMIN' ? 'ADMIN' : 'ESTUDANTE';
-        localStorage.setItem("usuario_logado", tipoNormalizado);
-        iniciarSistema(tipoNormalizado === 'ADMIN');
-    }
-
-    function fazerLogin() {
-        const u = document.getElementById('login-user').value;
-        const p = document.getElementById('login-pass').value;
-        if(u === 'admin' && p === 'comissao') {
-            localStorage.setItem("usuario_logado", "ADMIN");
-            iniciarSistema(true);
-        } else {
-            Swal.fire({
-                icon:'error',
-                title:'Login Errado',
-                text:'Tente Novamente',
-                background:'#222',
-                zIndex: 20001
-            });
-        }
-
-
-    }
-
-    function iniciarSistema(isAdmin) {
-        isAdminLogado = isAdmin;
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('form-login-container').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.querySelectorAll('.admin-only').forEach(el => {
-            if (!isAdmin) { el.style.display = 'none'; return; }
-            if (el.classList.contains('main-grid')) el.style.display = 'grid';
-            else if (el.id === 'data-global-wrapper') el.style.display = 'flex';
-            else el.style.display = 'block';
-        });
-        document.querySelectorAll('.estudante-only').forEach(el => {
-            el.style.display = isAdmin ? 'none' : 'block';
-        });
-        carregarDados();
-    }
-
-    function sair() { localStorage.removeItem("usuario_logado"); location.reload(); }
-
-    function venderQtd(tipo, preco, idQtd, idData) {
-        const qtd = document.getElementById(idQtd).value;
-        const data = document.getElementById(idData).value;
-        if(!qtd || qtd <= 0) return erro("Qtd inválida");
-        enviarLancamento({ tipo, descricao: `Venda ${qtd}x ${tipo}`, valor: (qtd * preco), dataLancamento: data });
-        document.getElementById(idQtd).value = '';
-    }
-
-    function lancarGastoQtd(tipo, custo, idQtd, idData) {
-        const qtd = document.getElementById(idQtd).value;
-        const data = document.getElementById(idData).value;
-        if(!qtd || qtd <= 0) return erro("Qtd inválida");
-        enviarLancamento({ tipo, descricao: `Compra Estoque ${qtd}x`, valor: -(qtd * custo), dataLancamento: data });
-        document.getElementById(idQtd).value = '';
-    }
-
-    function lancarGenerico(tipo, idValor, desc, idData) {
-        const val = document.getElementById(idValor).value;
-        const data = document.getElementById(idData).value;
-        if(!val || val <= 0) return erro("Valor inválido");
-        enviarLancamento({ tipo, descricao: desc, valor: parseFloat(val), dataLancamento: data });
-        document.getElementById(idValor).value = '';
-    }
-
-    function lancarGastoGenerico() {
-        const val = document.getElementById('valor-outros').value;
-        const desc = document.getElementById('desc-outros').value || 'Despesa';
-        const data = document.getElementById('data-outros').value;
-        if(!val || val <= 0) return erro("Valor inválido");
-        enviarLancamento({ tipo: 'OUTROS', descricao: desc, valor: -Math.abs(val), dataLancamento: data });
-        document.getElementById('valor-outros').value = '';
-        document.getElementById('desc-outros').value = '';
-    }
-
-    function renderizarHistorico(lista) {
-        historicoOriginal = [...lista].sort((a, b) => a.dataLancamento > b.dataLancamento ? -1 : 1);
-        historicoPaginaAtual = 1;
-        aplicarFiltrosHistorico(false);
-    }
-
-    function aplicarFiltrosHistorico(resetPagina = true) {
-        const filtroTexto = (document.getElementById('filtro-historico')?.value || '').trim().toLowerCase();
-        const dataInicio = document.getElementById('data-inicio-historico')?.value || '';
-        const dataFim = document.getElementById('data-fim-historico')?.value || '';
-        const filtroId = (document.getElementById('filtro-id-historico')?.value || '').trim();
-
-        if (resetPagina) historicoPaginaAtual = 1;
-
-        historicoFiltrado = historicoOriginal.filter(i => {
-            const descricao = (i.descricao || '').toLowerCase();
-            const tipo = (i.tipo || '').toLowerCase();
-            const textoOk = !filtroTexto || descricao.includes(filtroTexto) || tipo.includes(filtroTexto);
-            const data = i.dataLancamento || '';
-            const inicioOk = !dataInicio || data >= dataInicio;
-            const fimOk = !dataFim || data <= dataFim;
-            const idAtual = String(i.id ?? '');
-            const idOk = !filtroId || idAtual.startsWith(filtroId);
-            return textoOk && inicioOk && fimOk && idOk;
-        });
-
-        renderizarHistoricoPaginado();
-    }
-
-    function renderizarHistoricoPaginado() {
-        const tb = document.getElementById('tabela-historico');
-        tb.innerHTML = '';
-
-        const totalPaginas = Math.max(1, Math.ceil(historicoFiltrado.length / historicoItensPorPagina));
-        if (historicoPaginaAtual > totalPaginas) historicoPaginaAtual = totalPaginas;
-
-        const inicio = (historicoPaginaAtual - 1) * historicoItensPorPagina;
-        const pagina = historicoFiltrado.slice(inicio, inicio + historicoItensPorPagina);
-
-        if (pagina.length === 0) {
-            tb.innerHTML = '<tr><td colspan="4" style="text-align:center; opacity:0.6;">Nenhum lançamento encontrado</td></tr>';
-        } else {
-            pagina.forEach(i => {
-                const isPos = i.valor >= 0;
-                const dataFmt = i.dataLancamento ? i.dataLancamento.split('-').reverse().join('/') : '--';
-                const dataEditavel = isAdminLogado
-                    ? `<td style="text-align:right;opacity:0.7;cursor:pointer;position:relative;" title="Clique para alterar a data" onclick="editarData(this, ${i.id}, '${i.dataLancamento || ''}')"><span style="border-bottom:1px dashed #555;">${dataFmt}</span></td>`
-                    : `<td style="text-align:right;opacity:0.5">${dataFmt}</td>`;
-                const btnDesfazer = isAdminLogado
-                    ? `<td style="width:40px;text-align:center"><button onclick="desfazerLancamento(${i.id}, '${i.descricao.replace(/'/g, "\\'")}')" style="background:rgba(255,23,68,0.15); border:1px solid var(--red); color:var(--red); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:0.75rem;" title="Desfazer"><i class="fas fa-undo"></i></button></td>`
-                    : '';
-                tb.innerHTML += `<tr>
-                <td style="width:40px;text-align:center"><i class="fas ${isPos ? 'fa-arrow-up txt-verde' : 'fa-arrow-down txt-vermelho'}"></i></td>
-                <td style="font-weight:600">${i.descricao}</td>
-                ${dataEditavel}
-                <td style="text-align:right;font-weight:800" class="${isPos ? 'txt-verde' : 'txt-vermelho'}">${fmtMoeda(i.valor)}</td>
-                ${btnDesfazer}
-            </tr>`;
-            });
-        }
-
-        document.getElementById('historico-page-info').innerText = `Página ${historicoPaginaAtual} de ${totalPaginas} (${historicoFiltrado.length} registros)`;
-        document.getElementById('btn-pagina-anterior').disabled = historicoPaginaAtual <= 1;
-        document.getElementById('btn-pagina-proxima').disabled = historicoPaginaAtual >= totalPaginas;
-    }
-
-    function paginaAnteriorHistorico() {
-        if (historicoPaginaAtual <= 1) return;
-        historicoPaginaAtual -= 1;
-        renderizarHistoricoPaginado();
-    }
-
-    function paginaProximaHistorico() {
-        const totalPaginas = Math.max(1, Math.ceil(historicoFiltrado.length / historicoItensPorPagina));
-        if (historicoPaginaAtual >= totalPaginas) return;
-        historicoPaginaAtual += 1;
-        renderizarHistoricoPaginado();
-    }
-
-    function limparFiltrosHistorico() {
-        document.getElementById('filtro-historico').value = '';
-        document.getElementById('data-inicio-historico').value = '';
-        document.getElementById('data-fim-historico').value = '';
-        document.getElementById('filtro-id-historico').value = '';
-        aplicarFiltrosHistorico();
-    }
-
-    function renderizarGrafico(historico) {
-        const ctx = document.getElementById('graficoEvolucao').getContext('2d');
-        const semErivania = historico.filter(i => i.tipo !== 'ERIVANIA');
-        const ordenado = [...semErivania].sort((a,b) => a.dataLancamento > b.dataLancamento ? 1 : -1);
-        let soma = 0;
-        const labels = ordenado.map(i => i.dataLancamento.split('-').reverse().join('/'));
-        const dados = ordenado.map(i => { soma += i.valor; return soma; });
-
-        function corSegmento(ctx, verde, vermelho) {
-            const v1 = dados[ctx.p1DataIndex];
-            return v1 >= 0 ? verde : vermelho;
-        }
-
-        if(chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: dados,
-                    segment: {
-                        borderColor: ctx => corSegmento(ctx, '#00e676', '#ff1744'),
-                        backgroundColor: ctx => corSegmento(ctx, 'rgba(0, 230, 118, 0.1)', 'rgba(255, 23, 68, 0.1)')
-                    },
-                    borderColor: '#00e676',
-                    backgroundColor: 'rgba(0, 230, 118, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointRadius: 3,
-                    pointBackgroundColor: dados.map(v => v >= 0 ? '#00e676' : '#ff1744')
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: context => `Saldo: ${fmtMoeda(context.parsed.y)}`
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { color: '#888' }
-                    },
-                    x: {
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { color: '#888' }
-                    }
-                }
-            }
-        });
-    }
-
-    function fmtMoeda(val) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(val); }
-    function erro(msg) { Swal.fire({icon:'warning', title:'Ops', text:msg, background:'#222', color:'#fff', toast:true, position:'top-end', showConfirmButton:false, timer:2000}); }
-
-    function editarData(td, id, dataAtual) {
-        if (td.querySelector('input')) return;
-        td.onclick = null;
-        const input = document.createElement('input');
-        input.type = 'date';
-        input.value = dataAtual;
-        Object.assign(input.style, {
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid var(--blue)',
-            color: '#fff',
-            borderRadius: '6px',
-            padding: '4px 6px',
-            fontSize: '0.85rem',
-            width: '100%',
-            cursor: 'pointer'
-        });
-        td.innerHTML = '';
-        td.appendChild(input);
-        input.focus();
-        try { input.showPicker(); } catch(_) {}
-
-        input.addEventListener('change', () => salvarData(id, input.value));
-        input.addEventListener('blur', () => {
-            setTimeout(() => {
-                if (td.querySelector('input')) {
-                    const fmt = dataAtual ? dataAtual.split('-').reverse().join('/') : '--';
-                    td.innerHTML = `<span style="border-bottom:1px dashed #555;">${fmt}</span>`;
-                    td.onclick = () => editarData(td, id, dataAtual);
-                }
-            }, 200);
-        });
-    }
-
-    async function salvarData(id, novaData) {
-        if (!novaData) return;
-        try {
-            const response = await fetch(`${API_URL}/${id}/data`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ dataLancamento: novaData })
-            });
-            if (response.ok) {
-                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Data atualizada!', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff' });
-                carregarDados();
-            } else {
-                erro('Erro ao atualizar a data.');
-            }
-        } catch (e) {
-            erro('Erro de conexão com o servidor.');
-        }
-    }
-
-    async function desfazerLancamento(id, descricao) {
-        const resultado = await Swal.fire({
-            title: 'Desfazer lançamento?',
-            html: `<span style="color:#ccc">Tem certeza que deseja remover:<br><b style="color:#fff">${descricao}</b></span>`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ff1744',
-            cancelButtonColor: '#555',
-            confirmButtonText: 'Sim, desfazer',
-            cancelButtonText: 'Cancelar',
-            background: '#222',
-            color: '#fff'
-        });
-
-        if (!resultado.isConfirmed) return;
-
-        try {
-            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-            if (response.ok) {
-                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Lançamento desfeito!', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff' });
-                carregarDados();
-            } else if (response.status === 404) {
-                erro('Lançamento não encontrado (já removido?).');
-                carregarDados();
-            } else {
-                erro('Erro ao desfazer o lançamento.');
-            }
-        } catch (e) {
-            erro('Erro de conexão com o servidor.');
-        }
-    }
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
-
