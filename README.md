@@ -11,11 +11,11 @@
 
 ##  Sobre o Projeto
 
-Sistema web para controle financeiro da comissão de formatura, permitindo registrar vendas, gastos, aportes e acompanhar a evolução do saldo em tempo real com gráfico
+Sistema web para controle financeiro da comissão de formatura, permitindo registrar vendas, gastos, aportes e acompanhar a evolução do saldo em tempo real com gráfico.
+O projeto foi desenvolvido para melhoria da qualidade da gestão da comissão da formatura, criado no dia 26/02/2026 localmente, e após alguns dias, adicionado a este repositório
+do GitHub, pretendo usar como tema do meu Trabalho de Conclusão de Curso (TCC). Esse projeto além do que já foi supracitado, tem o objetivo de expandir meus conhecimentos e aprendizado na área de informática, além de expandir meu portfólio e demonstrar minhas habilidades e competências na área.
 
-O projeto foi desenvolvido para melhoria da qualidade da gestão da comissão da formatura
 
-Além de expandir meus conhecimentos na programação
 
 ## Funcionalidades
 
@@ -30,7 +30,7 @@ Além de expandir meus conhecimentos na programação
 -  **Backup e Restore** — exportar e importar dados em JSON pela interface
 -  **Reset de banco** — limpar todos os dados com confirmação
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 <div align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="40" alt="java" />
@@ -74,7 +74,7 @@ financeiro/
 | `DELETE` | `/api/vendas/{id}` | Apagar um lançamento específico |
 | `PATCH` | `/api/vendas/{id}/data` | Atualizar apenas a data de um lançamento |
 | `GET` | `/api/backup` | Baixar backup em JSON |
-| `POST` | `/api/restore` | Restaurar backup JSON (`limparAntes=true|false`) |
+| `POST` | `/api/restore` | Restaurar backup JSON  |
 | `POST` | `/api/login` | Autenticação local |
 
 ## Como Rodar
@@ -91,7 +91,7 @@ financeiro/
 CREATE DATABASE db_formatura;
 ```
 
-### Configurar credenciais
+### Configurar dados
 
 Edite `src/main/resources/application.yml`
 
