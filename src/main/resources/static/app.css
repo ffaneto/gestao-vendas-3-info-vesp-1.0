@@ -36,7 +36,7 @@ body::before {
     opacity: 0.10; z-index: -1; pointer-events: none;
 }
 
-/* ── Animations ── */
+/* Animations */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -58,7 +58,7 @@ body::before {
     50% { opacity: 0.85; }
 }
 
-/* ── Login ── */
+/* Login */
 .logo-overlay {
     position: absolute;
     top: 30px;
@@ -99,7 +99,7 @@ body::before {
     animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── App container ── */
+/* App container */
 .app-container {
     max-width: 1200px; margin: 0 auto; padding: 25px; width: 100%; display: none;
     animation: fadeIn 0.5s ease;
@@ -110,7 +110,7 @@ header {
     animation: fadeInUp 0.5s ease;
 }
 
-/* ── Grid & Cards ── */
+/* Grid & Cards */
 .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr)); gap: 25px; margin-bottom: 25px; }
 .card {
     background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -132,7 +132,7 @@ header {
 .label { font-size: 0.8rem; text-transform: uppercase; color: #888; font-weight: 600; letter-spacing: 1.5px; }
 .chart-container { position: relative; height: 200px; width: 100%; margin-top: 10px; }
 
-/* ── Inputs & Buttons ── */
+/* Inputs & Buttons */
 .input-group {
     background: rgba(255,255,255,0.04); border-radius: 14px; padding: 12px; margin-bottom: 15px;
     border: 1px solid transparent; display: flex; flex-direction: column; gap: 8px;
@@ -179,7 +179,7 @@ button:hover { opacity: 0.9; transform: translateY(-1px); }
 .admin-only { display: none; }
 .estudante-only { display: none; }
 
-/* ── Table ── */
+/* Table */
 table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 20px; }
 td {
     padding: 15px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #ccc;
@@ -187,7 +187,7 @@ td {
 }
 tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* ── Historico ── */
+/* Historico */
 .historico-tools { display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.8fr auto; gap: 10px; margin-top: 15px; }
 .historico-tools input {
     background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px;
@@ -201,7 +201,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .login-title { text-align: center; margin-top: 0; font-weight: 800; letter-spacing: 1px; }
 .btn-link-muted { background: transparent; color: #666; width: 100%; margin-top: 15px; font-size: 0.8rem; }
 
-/* ── Header ── */
+/* Header */
 .header-brand { display: flex; align-items: center; gap: 15px; }
 .header-logo { height: 50px; width: auto; }
 .app-title { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 300; }
@@ -219,7 +219,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 }
 .btn-logout:hover { background: rgba(255,23,68,0.15); color: var(--red); }
 
-/* ── Balances ── */
+/* Balances */
 .label-subinfo { font-size: 0.65rem; color: #555; text-transform: none; letter-spacing: 0; }
 .card-balances-row { display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap; }
 .balance-highlight-green { font-weight: 800; font-size: 1.4rem; color: var(--green); }
@@ -238,7 +238,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 }
 .btn-erivania:hover { background: rgba(255,193,7,0.3); box-shadow: 0 0 20px rgba(255,193,7,0.1); }
 
-/* ── Student card ── */
+/* Student card */
 .card-align-start { align-self: start; }
 .text-center { text-align: center; }
 .mb-5 { margin-bottom: 5px; }
@@ -262,7 +262,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .icon-purple { color: var(--purple); }
 .icon-yellow { color: #ffc107; }
 
-/* ── Toolbar (Backup/Calendar) — z-index below SweetAlert toasts ── */
+/* Toolbar (Backup/Calendar) - z-index below SweetAlert toasts */
 .card-title-center { text-align: center; }
 .toolbar-floating { position: fixed; top: 12px; right: 12px; z-index: 900; display: flex; gap: 8px; align-items: center; }
 .toolbar-icon-btn {
@@ -281,7 +281,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .toolbar-calendar:hover { border-color: rgba(41,121,255,0.4); background: rgba(41,121,255,0.1); }
 .toolbar-date-input { position: absolute; top: 0; right: 0; width: 44px; height: 44px; opacity: 0; cursor: pointer; }
 
-/* ── Vendas / Gastos ── */
+/* Vendas / Gastos */
 .section-title { margin: 0 0 15px 0; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
 .date-row { justify-content: space-between; }
 .date-input-compact { width: 130px; }
@@ -303,7 +303,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .btn-full-danger:hover { background: #ff2d58; box-shadow: 0 6px 30px rgba(255,23,68,0.3); }
 .hidden-input { display: none; }
 
-/* ── Observações ── */
+/* Observacoes */
 .desc-cell { display: flex; align-items: center; gap: 8px; }
 .obs-btn {
     cursor: pointer; font-size: 0.75rem; color: #555;
@@ -317,7 +317,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     border-left: 2px solid var(--blue); border-radius: 0 6px 6px 0;
 }
 
-/* ── Projeção card premium ── */
+/* Projecao card premium */
 .card-projecao { overflow: hidden; border: 1px solid rgba(0,230,118,0.12); }
 .card-projecao::before {
     content: ""; position: absolute; top: -60%; left: -30%; width: 160%; height: 160%;
@@ -344,7 +344,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
 .chart-container { height: 220px; }
 
-/* ── Fullscreen overlay ── */
+/* Fullscreen overlay */
 .chart-fullscreen-overlay {
     display: none; position: fixed; inset: 0; z-index: 10001;
     background: rgba(0, 0, 0, 0.88);
@@ -406,7 +406,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     flex: 1; position: relative; z-index: 2; min-height: 0;
 }
 
-/* ── Chart stats bar (fullscreen) ── */
+/* Chart stats bar (fullscreen) */
 .chart-stats-bar {
     display: flex; gap: 24px; margin-bottom: 18px; position: relative; z-index: 2;
     flex-wrap: wrap;
@@ -422,9 +422,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .chart-stat-value.negative { color: var(--red); }
 .chart-stat-value.neutral { color: #aaa; }
 
-/* ══════════════════════════════════════════
-   RESPONSIVE — TABLET (≤ 900px)
-   ══════════════════════════════════════════ */
+/* Tela Tablet 900px */
 @media (max-width: 900px) {
     .main-grid { grid-template-columns: 1fr; }
     .big-number { font-size: 2.4rem; }
@@ -434,17 +432,14 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     .balance-highlight-yellow { font-size: 1.2rem; }
 }
 
-/* ══════════════════════════════════════════
-   RESPONSIVE — MOBILE (≤ 600px)
-   ══════════════════════════════════════════ */
+/* Tela Mobile 600px */
 @media (max-width: 600px) {
-    /* ── Layout geral ── */
     .app-container { padding: 14px; }
     .card { padding: 18px; border-radius: 18px; }
     .card:hover { transform: none; } /* sem hover float no touch */
     .main-grid { grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
 
-    /* ── Header ── */
+    /*Header */
     header { flex-direction: row; gap: 10px; margin-bottom: 20px; padding-bottom: 16px; }
     .header-brand { gap: 10px; }
     .header-logo { height: 36px; }
@@ -452,7 +447,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     .status-badge { font-size: 0.65rem; padding: 3px 7px; }
     .btn-logout { padding: 10px 14px; font-size: 0.8rem; }
 
-    /* ── Saldos ── */
+    /* Saldos */
     .big-number { font-size: 2rem; margin: 6px 0; }
     .card-balances-row { flex-direction: column; gap: 12px; margin-top: 14px; }
     .balance-highlight-green,
@@ -461,17 +456,17 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     .label { font-size: 0.72rem; letter-spacing: 1px; }
     .label-subinfo { font-size: 0.6rem; }
 
-    /* ── Student card ── */
+    /* Student card */
     .student-breakdown { padding: 14px 16px; }
     .student-label { font-size: 0.72rem; }
     .student-value { font-size: 0.88rem; }
 
-    /* ── Toolbar flutuante ── */
+    /* Toolbar flutuante */
     .toolbar-floating { top: 8px; right: 8px; gap: 6px; }
     .toolbar-icon-btn { width: 38px; height: 38px; border-radius: 10px; font-size: 1rem; }
     .toolbar-date-input { width: 38px; height: 38px; }
 
-    /* ── Vendas / Gastos ── */
+    /* Vendas / Gastos */
     .section-title { font-size: 0.95rem; margin-bottom: 12px; padding-bottom: 12px; }
     .input-group { padding: 10px; margin-bottom: 12px; border-radius: 12px; }
     .input-row { gap: 8px; }
@@ -481,11 +476,11 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     .date-row { flex-wrap: wrap; gap: 6px; }
     .desc-outros-input { font-size: 0.85rem; }
 
-    /* ── Aporte section ── */
+    /* Aporte section */
     .card-section-divider { margin-top: 18px; padding-top: 16px; }
     .row-between-center { flex-wrap: wrap; gap: 6px; }
 
-    /* ── Historico ── */
+    /* Historico */
     .historico-tools { grid-template-columns: 1fr; gap: 8px; }
     .historico-paginacao { flex-direction: column; align-items: stretch; gap: 8px; }
     .paginacao-btns { justify-content: space-between; }
@@ -496,22 +491,22 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     .obs-display { font-size: 0.68rem; }
     .obs-btn { font-size: 0.7rem; }
 
-    /* ── Danger zone ── */
+    /* Danger zone */
     .danger-card { margin-top: 16px; }
 
-    /* ── Login ── */
+    /* Login */
     .split-side i { font-size: 2.5rem; margin-bottom: 16px; }
     .split-title { font-size: 1.1rem; letter-spacing: 2px; }
     #form-login-container { padding: 25px; border-radius: 16px; }
     .login-title { font-size: 1.1rem; }
     .btn-login { padding: 13px; font-size: 0.9rem; }
 
-    /* ── Gráfico ── */
+    /* Grafico */
     .chart-container { height: 180px; }
     .projecao-header .label { font-size: 0.75rem; }
     .btn-expand-chart { width: 32px; height: 32px; font-size: 0.75rem; }
 
-    /* ── Fullscreen gráfico ── */
+    /* Fullscreen grafico */
     .chart-fullscreen-wrapper { width: 98vw; height: 94vh; padding: 14px; border-radius: 16px; }
     .chart-fullscreen-header { margin-bottom: 12px; padding-bottom: 10px; }
     .chart-fullscreen-title { font-size: 0.8rem; gap: 8px; letter-spacing: 1px; }
@@ -547,7 +542,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     .chart-stat-value { font-size: 0.7rem; }
 }
 
-/* ── SweetAlert2 Dark Theme ── */
+/* SweetAlert2 Dark Theme */
 .swal2-container { z-index: 10100 !important; }
 .swal-dark-popup {
     border: 1px solid rgba(255,255,255,0.08) !important;

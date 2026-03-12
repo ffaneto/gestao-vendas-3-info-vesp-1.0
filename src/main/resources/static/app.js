@@ -12,7 +12,7 @@ let historicoPaginaAtual = 1;
 const historicoItensPorPagina = 15;
 let isAdminLogado = false;
 
-// ── SweetAlert2 dark theme global ──
+/* SweetAlert2 dark theme global */
 const DarkSwal = Swal.mixin({
     background: '#1a1a1e',
     color: '#fff',
@@ -927,4 +927,3 @@ async function salvarObservacao(id, obs) {
         erro('Erro de conexão com o servidor.');
     }
 }
-
