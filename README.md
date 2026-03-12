@@ -140,20 +140,7 @@ http://localhost:8080
 
 ## Deploy (DigitalOcean)
 
-Em produção, o projeto utiliza PostgreSQL e variáveis de ambiente no painel da DigitalOcean.
-
-Variáveis principais:
-
-```bash
-SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:<porta>/<database>
-SPRING_DATASOURCE_USERNAME=<usuario>
-SPRING_DATASOURCE_PASSWORD=<senha>
-
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=<senha_forte>
-CORS_ALLOWED_ORIGIN=https://gestao-vendas-formatura-ke5o4.ondigitalocean.app
-SESSION_COOKIE_SECURE=true
-```
+Na parte da produção, o projeto utiliza PostgreSQL e variáveis de ambiente no painel da DigitalOcean.
 
 ## Segurança
 
