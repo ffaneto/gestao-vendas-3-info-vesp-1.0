@@ -3,7 +3,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="src/main/resources/static/logoifpb-branca.png">
     <source media="(prefers-color-scheme: light)" srcset="src/main/resources/static/logoifpb-preta.png">
-    <img alt="IFPB Logo" src="src/main/resources/static/logoifpb-preta.png" height="80">
+    <img alt="IFPB Logo" src="src/main/resources/static/logoifpb-preta.png" height="120">
   </picture>
   <br><br>
   <p><strong>Sistema de Gestão Financeira Para a Formatura do Terceiro Ano do Curso de Informática Integrado ao Ensino Médio</strong></p>
