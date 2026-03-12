@@ -56,15 +56,15 @@ do GitHub, pretendo usar como tema do meu Trabalho de Conclusão de Curso (TCC).
 ```
 financeiro/
 ├── src/main/java/com/formatura/financeiro/
-│   ├── FinanceiroApplication.java    # Classe principal Spring Boot
-│   ├── FinanceiroController.java     # REST Controller (API)
-│   ├── Lancamento.java               # Entidade JPA
-│   └── LancamentoRepository.java     # Repository Spring Data
+│   ├── FinanceiroApplication.java    
+│   ├── FinanceiroController.java     
+│   ├── Lancamento.java               
+│   └── LancamentoRepository.java     
 ├── src/main/resources/
-│   ├── application.yml               # Configurações (porta, banco)
+│   ├── application.yml              
 │   └── static/
-│       └── index.html                # Interface completa (SPA)
-└── pom.xml                           # Dependências Maven
+│       └── index.html                
+└── pom.xml                           
 ```
 
 ## Endpoints da API
