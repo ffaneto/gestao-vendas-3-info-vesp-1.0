@@ -1,4 +1,4 @@
-# Sistema de Gestão Financeira - Formatura 3o Info
+# Sistema de Gestão Financeira - Formatura 3º Info
 
 <div align="center">
   <picture>
@@ -7,7 +7,7 @@
     <img alt="IFPB Logo" src="src/main/resources/static/logoifpb-preta.png" height="120">
   </picture>
   <br><br>
-  <p><strong>Sistema de Gestao Financeira para a formatura do 3o ano do Curso Tecnico em Informatica Integrado ao Ensino Medio</strong></p>
+  <p><strong>Sistema de Gestão Financeira para a formatura do 3º ano do Curso Técnico em Informática Integrado ao Ensino Médio</strong></p>
   <p>IFPB Campus Itaporanga</p>
 </div>
 
@@ -15,30 +15,30 @@
 
 ## Sobre o Projeto
 
-Este projeto consiste em uma aplicacao web para gestao financeira da comissao de formatura, com foco em organizacao, rastreabilidade e transparencia das movimentacoes.
+Este projeto consiste em uma aplicação web para gestão financeira da comissão de formatura, com foco em organização, rastreabilidade e transparência das movimentações.
 
-A plataforma permite registrar entradas e saidas, acompanhar o historico completo de lancamentos e visualizar a evolucao do caixa por meio de grafico dinamico.
+A plataforma permite registrar entradas e saídas, acompanhar o histórico completo de lançamentos e visualizar a evolução do caixa por meio de gráfico dinâmico.
 
-O sistema foi concebido inicialmente em 26/02/2026 e evoluiu para uma versao em producao. Atualmente, o projeto esta em uso como tema de Trabalho de Conclusao de Curso (TCC) no IFPB, no Curso Tecnico em Informatica.
+O sistema foi concebido inicialmente em 26/02/2026 e evoluiu para uma versão em produção. Atualmente, o projeto está em uso como tema de Trabalho de Conclusão de Curso (TCC) no IFPB, no Curso Técnico em Informática.
 
-## Ambiente em Producao
+## Ambiente em Produção
 
 - **Hospedagem:** DigitalOcean
-- **Banco em producao:** PostgreSQL
-- **URL publica:** `https://gestao-vendas-formatura-ke5o4.ondigitalocean.app/`
+- **Banco em produção:** PostgreSQL
+- **URL pública:** `https://gestao-vendas-formatura-ke5o4.ondigitalocean.app/`
 
 ## Funcionalidades
 
 - **Dashboard em tempo real** - acompanhamento de saldo e indicadores principais
-- **Grafico de projecao** - variacao visual entre lucro (verde) e prejuizo (vermelho)
-- **Registro de vendas** - Trufas, Bolos e Acai
-- **Controle de gastos** - reposicao de estoque e despesas diversas
-- **Historico completo** - busca por texto, filtro por data, filtro por ID e paginacao
-- **Edicao rapida no historico** - alteracao de data diretamente na tabela
-- **Desfazer lancamento** - exclusao individual por ID
-- **Dois perfis de acesso** - Estudante e Comissao
-- **Backup e restore** - exportacao e importacao de JSON pela interface
-- **Reset de banco** - limpeza total dos dados com confirmacao
+- **Gráfico de projeção** - variação visual entre lucro (verde) e prejuízo (vermelho)
+- **Registro de vendas** - Trufas, Bolos e Açaí
+- **Controle de gastos** - reposição de estoque e despesas diversas
+- **Histórico completo** - busca por texto, filtro por data, filtro por ID e paginação
+- **Edição rápida no histórico** - alteração de data diretamente na tabela
+- **Desfazer lançamento** - exclusão individual por ID
+- **Dois perfis de acesso** - Estudante e Comissão
+- **Backup e restore** - exportação e importação de JSON pela interface
+- **Reset de banco** - limpeza total dos dados com confirmação
 
 ## Tech Stack
 
@@ -55,7 +55,7 @@ O sistema foi concebido inicialmente em 26/02/2026 e evoluiu para uma versao em 
 | Camada | Tecnologia |
 |--------|------------|
 | **Backend** | Java 21 + Spring Boot 3.1.5 |
-| **Banco de Dados (producao)** | PostgreSQL |
+| **Banco de Dados (produção)** | PostgreSQL |
 | **Banco de Dados (local/dev)** | MySQL 8 |
 | **Frontend** | HTML5 + CSS3 + JavaScript |
 | **Build** | Maven |
@@ -82,23 +82,23 @@ financeiro/
 
 ## Endpoints da API
 
-| Metodo | Rota | Descricao |
+| Método | Rota | Descrição |
 |--------|------|-----------|
-| `GET` | `/api/vendas` | Lista todos os lancamentos |
-| `POST` | `/api/vendas` | Registra novo lancamento |
+| `GET` | `/api/vendas` | Lista todos os lançamentos |
+| `POST` | `/api/vendas` | Registra novo lançamento |
 | `DELETE` | `/api/vendas` | Remove todos os dados |
-| `DELETE` | `/api/vendas/{id}` | Remove lancamento especifico |
-| `PATCH` | `/api/vendas/{id}/data` | Atualiza a data de um lancamento |
-| `PATCH` | `/api/vendas/{id}/observacao` | Atualiza observacao de um lancamento |
+| `DELETE` | `/api/vendas/{id}` | Remove lançamento específico |
+| `PATCH` | `/api/vendas/{id}/data` | Atualiza a data de um lançamento |
+| `PATCH` | `/api/vendas/{id}/observacao` | Atualiza observação de um lançamento |
 | `GET` | `/api/backup` | Baixa backup JSON |
 | `POST` | `/api/restore` | Restaura backup JSON |
-| `POST` | `/api/login` | Autenticacao da comissao |
-| `GET` | `/api/session` | Verifica sessao admin ativa |
-| `POST` | `/api/logout` | Encerra sessao admin |
+| `POST` | `/api/login` | Autenticação da comissão |
+| `GET` | `/api/session` | Verifica sessão admin ativa |
+| `POST` | `/api/logout` | Encerra sessão admin |
 
 ## Como Rodar Localmente
 
-### Pre-requisitos
+### Pré-requisitos
 
 - **Java 21**
 - **MySQL 8** (porta `3306`)
@@ -114,7 +114,7 @@ CREATE DATABASE financeiro;
 
 Para executar localmente com MySQL, utilize o profile `dev` em `src/main/resources/application-dev.yml`.
 
-Se quiser configurar via variaveis de ambiente, exemplo:
+Se quiser configurar via variáveis de ambiente, exemplo:
 
 ```bash
 SPRING_PROFILES_ACTIVE=dev
@@ -140,9 +140,9 @@ http://localhost:8080
 
 ## Deploy (DigitalOcean)
 
-Em producao, o projeto utiliza PostgreSQL e variaveis de ambiente no painel da DigitalOcean.
+Em produção, o projeto utiliza PostgreSQL e variáveis de ambiente no painel da DigitalOcean.
 
-Variaveis principais:
+Variáveis principais:
 
 ```bash
 SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:<porta>/<database>
@@ -157,14 +157,14 @@ SESSION_COOKIE_SECURE=true
 
 > Opcional (mais seguro): use `ADMIN_PASSWORD_HASH` (BCrypt) e deixe `ADMIN_PASSWORD` vazio.
 
-## Seguranca
+## Segurança
 
-A autenticacao da comissao e validada no backend por sessao HTTP. Dessa forma, credenciais administrativas nao ficam hardcoded no frontend.
+A autenticação da comissão é validada no backend por sessão HTTP. Dessa forma, credenciais administrativas não ficam hardcoded no frontend.
 
 ## Autor
 
 **Francisco Figueiredo** [![GitHub](https://img.shields.io/badge/-ffaneto-181717?logo=github&logoColor=white&style=flat-square)](https://github.com/ffaneto)
 
-- 3o ano - Informatica Integrado ao Ensino Medio
+- 3º ano - Informática Integrado ao Ensino Médio
 - IFPB Campus Itaporanga
 - Projeto atualmente utilizado como tema de TCC
