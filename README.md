@@ -155,8 +155,6 @@ CORS_ALLOWED_ORIGIN=https://gestao-vendas-formatura-ke5o4.ondigitalocean.app
 SESSION_COOKIE_SECURE=true
 ```
 
-> Opcional (mais seguro): use `ADMIN_PASSWORD_HASH` (BCrypt) e deixe `ADMIN_PASSWORD` vazio.
-
 ## Segurança
 
 A autenticação da comissão é validada no backend por sessão HTTP. Dessa forma, credenciais administrativas não ficam hardcoded no frontend.
