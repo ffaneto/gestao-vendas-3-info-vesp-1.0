@@ -26,7 +26,7 @@ input[type=number] {
 body {
     background-color: var(--bg); color: var(--text); margin: 0; padding: 0;
     min-height: 100vh; display: flex; flex-direction: column;
-    position: relative;
+    position: relative; overflow-x: hidden;
 }
 
 body::before {
@@ -111,7 +111,7 @@ header {
 }
 
 /* ── Grid & Cards ── */
-.main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 25px; }
+.main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr)); gap: 25px; margin-bottom: 25px; }
 .card {
     background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border); border-radius: 24px; padding: 30px; position: relative;
@@ -291,7 +291,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .small-red { color: var(--red); }
 .desc-outros-input { background: rgba(0,0,0,0.3); border: none; padding: 8px; color: #fff; border-radius: 6px; margin: 5px 0; }
 .card-top-gap { margin-top: 10px; }
-.table-scroll { overflow-x: auto; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .page-info { font-size: 0.8rem; color: #888; }
 .danger-card {
     border: 1px solid var(--red); background: rgba(255, 23, 68, 0.05); margin-top: 25px;
@@ -422,15 +422,129 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .chart-stat-value.negative { color: var(--red); }
 .chart-stat-value.neutral { color: #aaa; }
 
-@media (max-width: 700px) {
-    .historico-tools { grid-template-columns: 1fr; }
-    .historico-paginacao { flex-direction: column; align-items: flex-start; }
-    .chart-fullscreen-wrapper { width: 98vw; height: 94vh; padding: 16px; border-radius: 18px; }
-    .chart-fullscreen-title { font-size: 0.85rem; }
-    .chart-stats-bar { gap: 10px; }
-    .chart-stat-item { padding: 8px 12px; min-width: 0; flex: 1; }
-    .chart-stat-label { font-size: 0.6rem; }
-    .chart-stat-value { font-size: 0.85rem; }
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLET (≤ 900px)
+   ══════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .big-number { font-size: 2.4rem; }
+    .card-balances-row { gap: 20px; }
+    .balance-highlight-green,
+    .balance-highlight-purple,
+    .balance-highlight-yellow { font-size: 1.2rem; }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 600px)
+   ══════════════════════════════════════════ */
+@media (max-width: 600px) {
+    /* ── Layout geral ── */
+    .app-container { padding: 14px; }
+    .card { padding: 18px; border-radius: 18px; }
+    .card:hover { transform: none; } /* sem hover float no touch */
+    .main-grid { grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+
+    /* ── Header ── */
+    header { flex-direction: row; gap: 10px; margin-bottom: 20px; padding-bottom: 16px; }
+    .header-brand { gap: 10px; }
+    .header-logo { height: 36px; }
+    .app-title { font-size: 1rem; letter-spacing: 1px; }
+    .status-badge { font-size: 0.65rem; padding: 3px 7px; }
+    .btn-logout { padding: 10px 14px; font-size: 0.8rem; }
+
+    /* ── Saldos ── */
+    .big-number { font-size: 2rem; margin: 6px 0; }
+    .card-balances-row { flex-direction: column; gap: 12px; margin-top: 14px; }
+    .balance-highlight-green,
+    .balance-highlight-purple,
+    .balance-highlight-yellow { font-size: 1.15rem; }
+    .label { font-size: 0.72rem; letter-spacing: 1px; }
+    .label-subinfo { font-size: 0.6rem; }
+
+    /* ── Student card ── */
+    .student-breakdown { padding: 14px 16px; }
+    .student-label { font-size: 0.72rem; }
+    .student-value { font-size: 0.88rem; }
+
+    /* ── Toolbar flutuante ── */
+    .toolbar-floating { top: 8px; right: 8px; gap: 6px; }
+    .toolbar-icon-btn { width: 38px; height: 38px; border-radius: 10px; font-size: 1rem; }
+    .toolbar-date-input { width: 38px; height: 38px; }
+
+    /* ── Vendas / Gastos ── */
+    .section-title { font-size: 0.95rem; margin-bottom: 12px; padding-bottom: 12px; }
+    .input-group { padding: 10px; margin-bottom: 12px; border-radius: 12px; }
+    .input-row { gap: 8px; }
+    input { font-size: 0.95rem; padding: 8px; }
+    button { padding: 12px 14px; font-size: 0.78rem; }
+    .date-input-compact { width: 110px; font-size: 0.75rem; }
+    .date-row { flex-wrap: wrap; gap: 6px; }
+    .desc-outros-input { font-size: 0.85rem; }
+
+    /* ── Aporte section ── */
+    .card-section-divider { margin-top: 18px; padding-top: 16px; }
+    .row-between-center { flex-wrap: wrap; gap: 6px; }
+
+    /* ── Historico ── */
+    .historico-tools { grid-template-columns: 1fr; gap: 8px; }
+    .historico-paginacao { flex-direction: column; align-items: stretch; gap: 8px; }
+    .paginacao-btns { justify-content: space-between; }
+    .page-info { text-align: center; }
+    table { font-size: 0.78rem; }
+    td { padding: 10px 6px; }
+    .card-top-gap { margin-top: 8px; }
+    .obs-display { font-size: 0.68rem; }
+    .obs-btn { font-size: 0.7rem; }
+
+    /* ── Danger zone ── */
+    .danger-card { margin-top: 16px; }
+
+    /* ── Login ── */
+    .split-side i { font-size: 2.5rem; margin-bottom: 16px; }
+    .split-title { font-size: 1.1rem; letter-spacing: 2px; }
+    #form-login-container { padding: 25px; border-radius: 16px; }
+    .login-title { font-size: 1.1rem; }
+    .btn-login { padding: 13px; font-size: 0.9rem; }
+
+    /* ── Gráfico ── */
+    .chart-container { height: 180px; }
+    .projecao-header .label { font-size: 0.75rem; }
+    .btn-expand-chart { width: 32px; height: 32px; font-size: 0.75rem; }
+
+    /* ── Fullscreen gráfico ── */
+    .chart-fullscreen-wrapper { width: 98vw; height: 94vh; padding: 14px; border-radius: 16px; }
+    .chart-fullscreen-header { margin-bottom: 12px; padding-bottom: 10px; }
+    .chart-fullscreen-title { font-size: 0.8rem; gap: 8px; letter-spacing: 1px; }
+    .chart-fullscreen-icon { font-size: 1rem; }
+    .btn-close-chart-fullscreen { width: 38px; height: 38px; font-size: 0.9rem; border-radius: 10px; }
+    .chart-stats-bar { gap: 8px; margin-bottom: 12px; }
+    .chart-stat-item { padding: 7px 10px; border-radius: 10px; flex: 1; min-width: 0; }
+    .chart-stat-label { font-size: 0.55rem; letter-spacing: 1px; }
+    .chart-stat-value { font-size: 0.8rem; }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE (≤ 380px)
+   ══════════════════════════════════════════ */
+@media (max-width: 380px) {
+    .app-container { padding: 10px; }
+    .card { padding: 14px; border-radius: 14px; }
+    .big-number { font-size: 1.7rem; }
+    .balance-highlight-green,
+    .balance-highlight-purple,
+    .balance-highlight-yellow { font-size: 1rem; }
+    .header-logo { height: 30px; }
+    .app-title { font-size: 0.85rem; }
+    .btn-logout { padding: 8px 10px; }
+    .toolbar-floating { top: 6px; right: 6px; gap: 4px; }
+    .toolbar-icon-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+    .toolbar-date-input { width: 34px; height: 34px; }
+    .split-side i { font-size: 2rem; margin-bottom: 12px; }
+    .split-title { font-size: 0.9rem; letter-spacing: 1px; }
+    .date-input-compact { width: 95px; font-size: 0.7rem; }
+    .chart-stat-item { padding: 5px 8px; }
+    .chart-stat-label { font-size: 0.5rem; }
+    .chart-stat-value { font-size: 0.7rem; }
 }
 
 /* ── SweetAlert2 Dark Theme ── */
