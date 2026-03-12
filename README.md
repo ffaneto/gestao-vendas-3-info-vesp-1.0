@@ -1,7 +1,10 @@
 # Sistema de Gestão Financeira Formatura 3º Info
-
 <div align="center">
-  <img src="src/main/resources/static/logoifpb.png" alt="IFPB Logo" height="80"/>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="src/main/resources/static/logoifpb-branca.png">
+    <source media="(prefers-color-scheme: light)" srcset="src/main/resources/static/logoifpb-preta.png">
+    <img alt="IFPB Logo" src="src/main/resources/static/logoifpb-preta.png" height="80">
+  </picture>
   <br><br>
   <p><strong>Sistema de Gestão Financeira Para a Formatura do Terceiro Ano do Curso de Informática Integrado ao Ensino Médio</strong></p>
   <p>IFPB Campus Itaporanga</p>
