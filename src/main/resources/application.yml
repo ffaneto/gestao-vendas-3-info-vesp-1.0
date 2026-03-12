@@ -1,8 +1,16 @@
+server:
+  port: ${PORT:8080}
 
-server.port=${PORT:8080}
-  
-
-spring.datasource.url=${DATABASE_URL}
-  
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
