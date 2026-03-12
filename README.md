@@ -1,4 +1,5 @@
-# Sistema de Gestão Financeira Formatura 3º Info
+# Sistema de Gestão Financeira - Formatura 3o Info
+
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="src/main/resources/static/logoifpb-branca.png">
@@ -6,38 +7,45 @@
     <img alt="IFPB Logo" src="src/main/resources/static/logoifpb-preta.png" height="120">
   </picture>
   <br><br>
-  <p><strong>Sistema de Gestão Financeira Para a Formatura do Terceiro Ano do Curso de Informática Integrado ao Ensino Médio</strong></p>
+  <p><strong>Sistema de Gestao Financeira para a formatura do 3o ano do Curso Tecnico em Informatica Integrado ao Ensino Medio</strong></p>
   <p>IFPB Campus Itaporanga</p>
 </div>
 
 ---
 
-##  Sobre o Projeto
+## Sobre o Projeto
 
-Sistema web para controle financeiro da comissão de formatura, permitindo registrar vendas, gastos, aportes e acompanhar a evolução do saldo em tempo real com gráfico.
-O projeto foi desenvolvido para melhoria da qualidade da gestão da comissão da formatura, criado no dia 26/02/2026 localmente, e após alguns dias, adicionado a este repositório
-do GitHub, pretendo usar como tema do meu Trabalho de Conclusão de Curso (TCC). Esse projeto além do que já foi supracitado, tem o objetivo de expandir meus conhecimentos e aprendizado na área de informática, também tem o objetivo de expandir meu portfólio e demonstrar minhas habilidades e competências na área.
+Este projeto consiste em uma aplicacao web para gestao financeira da comissao de formatura, com foco em organizacao, rastreabilidade e transparencia das movimentacoes.
 
+A plataforma permite registrar entradas e saidas, acompanhar o historico completo de lancamentos e visualizar a evolucao do caixa por meio de grafico dinamico.
 
+O sistema foi concebido inicialmente em 26/02/2026 e evoluiu para uma versao em producao. Atualmente, o projeto esta em uso como tema de Trabalho de Conclusao de Curso (TCC) no IFPB, no Curso Tecnico em Informatica.
+
+## Ambiente em Producao
+
+- **Hospedagem:** DigitalOcean
+- **Banco em producao:** PostgreSQL
+- **URL publica:** `https://gestao-vendas-formatura-ke5o4.ondigitalocean.app/`
 
 ## Funcionalidades
 
--  **Dashboard em tempo real** — saldo, lucro do açaí e gráfico de projeção
--  **Gráfico dinâmico** — muda de verde (lucro) para vermelho (prejuízo) automaticamente
--  **Registro de vendas** — Trufas, Bolos e Açaí
--  **Controle de gastos** — reposição de estoque e despesas diversas
--  **Histórico completo** — com busca por texto, filtro por data, filtro por ID e paginação
--  **Edição rápida no histórico** — alterar a data de um lançamento direto na tabela
--  **Desfazer lançamento** — exclusão individual por ID no histórico
--  **Dois perfis de acesso** — Estudante da turma e Comissão
--  **Backup e Restore** — exportar e importar dados em JSON pela interface
--  **Reset de banco** — limpar todos os dados com confirmação
+- **Dashboard em tempo real** - acompanhamento de saldo e indicadores principais
+- **Grafico de projecao** - variacao visual entre lucro (verde) e prejuizo (vermelho)
+- **Registro de vendas** - Trufas, Bolos e Acai
+- **Controle de gastos** - reposicao de estoque e despesas diversas
+- **Historico completo** - busca por texto, filtro por data, filtro por ID e paginacao
+- **Edicao rapida no historico** - alteracao de data diretamente na tabela
+- **Desfazer lancamento** - exclusao individual por ID
+- **Dois perfis de acesso** - Estudante e Comissao
+- **Backup e restore** - exportacao e importacao de JSON pela interface
+- **Reset de banco** - limpeza total dos dados com confirmacao
 
 ## Tech Stack
 
 <div align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="40" alt="java" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" height="40" alt="spring boot" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" height="40" alt="postgresql" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" height="40" alt="mysql" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" height="40" alt="html5" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" height="40" alt="css3" />
@@ -45,84 +53,76 @@ do GitHub, pretendo usar como tema do meu Trabalho de Conclusão de Curso (TCC).
 </div>
 
 | Camada | Tecnologia |
-|--------|-----------|
+|--------|------------|
 | **Backend** | Java 21 + Spring Boot 3.1.5 |
-| **Banco de Dados** | MySQL 8 |
+| **Banco de Dados (producao)** | PostgreSQL |
+| **Banco de Dados (local/dev)** | MySQL 8 |
 | **Frontend** | HTML5 + CSS3 + JavaScript |
 | **Build** | Maven |
+| **Infraestrutura** | DigitalOcean |
 
 ## Estrutura do Projeto
 
-```
+```text
 financeiro/
 ├── src/main/java/com/formatura/financeiro/
-│   ├── FinanceiroApplication.java    
-│   ├── FinanceiroController.java     
-│   ├── Lancamento.java               
-│   └── LancamentoRepository.java     
+│   ├── FinanceiroApplication.java
+│   ├── FinanceiroController.java
+│   ├── Lancamento.java
+│   └── LancamentoRepository.java
 ├── src/main/resources/
-│   ├── application.yml              
+│   ├── application.yml
+│   ├── application-dev.yml
 │   └── static/
-│       └── index.html                
-└── pom.xml                           
+│       ├── index.html
+│       ├── app.css
+│       └── app.js
+└── pom.xml
 ```
 
 ## Endpoints da API
 
-| Método | Rota | Descrição |
+| Metodo | Rota | Descricao |
 |--------|------|-----------|
-| `GET` | `/api/vendas` | Listar todos os lançamentos |
-| `POST` | `/api/vendas` | Registrar novo lançamento |
-| `DELETE` | `/api/vendas` | Apagar todos os dados |
-| `DELETE` | `/api/vendas/{id}` | Apagar um lançamento específico |
-| `PATCH` | `/api/vendas/{id}/data` | Atualizar apenas a data de um lançamento |
-| `GET` | `/api/backup` | Baixar backup em JSON |
-| `POST` | `/api/restore` | Restaurar backup JSON  |
-| `POST` | `/api/login` | Autenticação da comissão |
-| `GET` | `/api/session` | Verificar sessão admin ativa |
-| `POST` | `/api/logout` | Encerrar sessão admin |
+| `GET` | `/api/vendas` | Lista todos os lancamentos |
+| `POST` | `/api/vendas` | Registra novo lancamento |
+| `DELETE` | `/api/vendas` | Remove todos os dados |
+| `DELETE` | `/api/vendas/{id}` | Remove lancamento especifico |
+| `PATCH` | `/api/vendas/{id}/data` | Atualiza a data de um lancamento |
+| `PATCH` | `/api/vendas/{id}/observacao` | Atualiza observacao de um lancamento |
+| `GET` | `/api/backup` | Baixa backup JSON |
+| `POST` | `/api/restore` | Restaura backup JSON |
+| `POST` | `/api/login` | Autenticacao da comissao |
+| `GET` | `/api/session` | Verifica sessao admin ativa |
+| `POST` | `/api/logout` | Encerra sessao admin |
 
-## Como Rodar
+## Como Rodar Localmente
 
-### Pré-requisitos
+### Pre-requisitos
 
-- **Java 21** 
-- **MySQL 8** porta `3306`
-- **Maven** 
+- **Java 21**
+- **MySQL 8** (porta `3306`)
+- **Maven**
 
-### Criar o banco de dados
+### 1) Criar o banco local
 
 ```sql
-CREATE DATABASE db_formatura;
+CREATE DATABASE financeiro;
 ```
 
-### Configurar dados
+### 2) Configurar ambiente de desenvolvimento
 
-Edite `src/main/resources/application.yml`
+Para executar localmente com MySQL, utilize o profile `dev` em `src/main/resources/application-dev.yml`.
 
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/db_formatura?useTimezone=true&serverTimezone=UTC
-    username: root
-    password: 'SUA_SENHA'
-
-app:
-  admin:
-    username: ${ADMIN_USERNAME:admin}
-    password: ${ADMIN_PASSWORD:comissao}
-```
-
-### Deploy (DigitalOcean) - variáveis recomendadas
+Se quiser configurar via variaveis de ambiente, exemplo:
 
 ```bash
+SPRING_PROFILES_ACTIVE=dev
 ADMIN_USERNAME=admin
-ADMIN_PASSWORD=uma_senha_forte_aqui
+ADMIN_PASSWORD=comissao
 ```
 
-> Opcional (mais seguro): use `ADMIN_PASSWORD_HASH` com BCrypt e deixe `ADMIN_PASSWORD` vazio.
-
-### Executar o projeto
+### 3) Executar o projeto
 
 ```bash
 # Windows (PowerShell)
@@ -132,19 +132,39 @@ ADMIN_PASSWORD=uma_senha_forte_aqui
 ./mvnw spring-boot:run
 ```
 
-### Acessar no navegador
+### 4) Acessar no navegador
 
-```
+```text
 http://localhost:8080
 ```
 
-Usuário: admin , Senha: comissao
+## Deploy (DigitalOcean)
+
+Em producao, o projeto utiliza PostgreSQL e variaveis de ambiente no painel da DigitalOcean.
+
+Variaveis principais:
+
+```bash
+SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:<porta>/<database>
+SPRING_DATASOURCE_USERNAME=<usuario>
+SPRING_DATASOURCE_PASSWORD=<senha>
+
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=<senha_forte>
+CORS_ALLOWED_ORIGIN=https://gestao-vendas-formatura-ke5o4.ondigitalocean.app
+SESSION_COOKIE_SECURE=true
+```
+
+> Opcional (mais seguro): use `ADMIN_PASSWORD_HASH` (BCrypt) e deixe `ADMIN_PASSWORD` vazio.
+
+## Seguranca
+
+A autenticacao da comissao e validada no backend por sessao HTTP. Dessa forma, credenciais administrativas nao ficam hardcoded no frontend.
 
 ## Autor
 
 **Francisco Figueiredo** [![GitHub](https://img.shields.io/badge/-ffaneto-181717?logo=github&logoColor=white&style=flat-square)](https://github.com/ffaneto)
 
-- 3º Ano Informática Integrado ao Ensino Médio
+- 3o ano - Informatica Integrado ao Ensino Medio
 - IFPB Campus Itaporanga
-
-A autenticação da comissão agora é validada no backend com sessão HTTP (não fica mais hardcoded no frontend).
+- Projeto atualmente utilizado como tema de TCC
