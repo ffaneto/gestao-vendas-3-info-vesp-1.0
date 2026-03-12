@@ -1,9 +1,15 @@
 package com.formatura.financeiro;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,31 +20,44 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*")
 public class FinanceiroController {
+
+    private static final String ADMIN_SESSION_KEY = "ADMIN_AUTH";
 
     @Autowired
     private LancamentoRepository repository;
-    
+
+    @Value("${app.admin.username:admin}")
+    private String adminUsername;
+
+    @Value("${app.admin.password:}")
+    private String adminPassword;
+
+    @Value("${app.admin.password-hash:}")
+    private String adminPasswordHash;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @GetMapping("/vendas")
     public List<Lancamento> listarTodasVendas() {
         return repository.findAll();
     }
 
     @PostMapping("/vendas")
-    public Lancamento salvar(@RequestBody Map<String, Object> payload) {
-        
+    public ResponseEntity<?> salvar(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
+        if (!isAdminAutenticado(request)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
+        }
+
         String descricao = (String) payload.get("descricao");
         String tipo = (String) payload.get("tipo");
-        
         BigDecimal valor = new BigDecimal(payload.get("valor").toString());
 
         LocalDate dataFinal = LocalDate.now();
-        
         if (payload.get("dataLancamento") != null && !payload.get("dataLancamento").toString().isEmpty()) {
-             dataFinal = LocalDate.parse(payload.get("dataLancamento").toString());
+            dataFinal = LocalDate.parse(payload.get("dataLancamento").toString());
         } else if (payload.get("data") != null && !payload.get("data").toString().isEmpty()) {
-             dataFinal = LocalDate.parse(payload.get("data").toString());
+            dataFinal = LocalDate.parse(payload.get("data").toString());
         }
 
         Lancamento novo = new Lancamento();
@@ -46,37 +65,68 @@ public class FinanceiroController {
         novo.setValor(valor);
         novo.setTipo(tipo);
         novo.setDataLancamento(dataFinal);
-        novo.setHoraLancamento(LocalTime.now()); 
+        novo.setHoraLancamento(LocalTime.now());
 
-        return repository.save(novo);
+        return ResponseEntity.ok(repository.save(novo));
     }
-    
+
     @PostMapping("/login")
-    public boolean login(@RequestBody Map<String, String> credenciais) {
-        String user = credenciais.get("user");
-        String pass = credenciais.get("pass");
-        return "admin".equals(user) && "comissao".equals(pass);
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> credenciais, HttpServletRequest request) {
+        String user = credenciais.getOrDefault("user", "");
+        String pass = credenciais.getOrDefault("pass", "");
+        boolean ok = autenticarAdmin(user, pass);
+
+        if (!ok) {
+            request.getSession(true).removeAttribute(ADMIN_SESSION_KEY);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("ok", false, "erro", "Credenciais inválidas."));
+        }
+
+        request.getSession(true).setAttribute(ADMIN_SESSION_KEY, true);
+        return ResponseEntity.ok(Map.of("ok", true, "role", "ADMIN"));
     }
-    
-    @DeleteMapping("/vendas") 
-    public ResponseEntity<Void> apagarTudo() {
-        repository.deleteAll(); 
+
+    @GetMapping("/session")
+    public ResponseEntity<Map<String, Object>> sessao(HttpServletRequest request) {
+        return ResponseEntity.ok(Map.of("admin", isAdminAutenticado(request)));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.ok(Map.of("ok", true));
+    }
+
+    @DeleteMapping("/vendas")
+    public ResponseEntity<?> apagarTudo(HttpServletRequest request) {
+        if (!isAdminAutenticado(request)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
+        }
+        repository.deleteAll();
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/vendas/{id}")
-    public ResponseEntity<Void> apagarPorId(@PathVariable Long id) {
+    public ResponseEntity<?> apagarPorId(@PathVariable Long id, HttpServletRequest request) {
+        if (!isAdminAutenticado(request)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
+        }
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
     @PatchMapping("/vendas/{id}/data")
-    public ResponseEntity<Lancamento> atualizarData(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> body
-    ) {
+    public ResponseEntity<?> atualizarData(@PathVariable Long id, @RequestBody Map<String, String> body, HttpServletRequest request) {
+        if (!isAdminAutenticado(request)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
+        }
+
         return repository.findById(id).map(lancamento -> {
             String novaData = body.get("dataLancamento");
             if (novaData == null || novaData.isBlank()) {
@@ -88,10 +138,11 @@ public class FinanceiroController {
     }
 
     @PatchMapping("/vendas/{id}/observacao")
-    public ResponseEntity<Lancamento> atualizarObservacao(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> body
-    ) {
+    public ResponseEntity<?> atualizarObservacao(@PathVariable Long id, @RequestBody Map<String, String> body, HttpServletRequest request) {
+        if (!isAdminAutenticado(request)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
+        }
+
         return repository.findById(id).map(lancamento -> {
             String obs = body.get("observacao");
             lancamento.setObservacao(obs != null ? obs.trim() : null);
@@ -100,7 +151,10 @@ public class FinanceiroController {
     }
 
     @GetMapping("/backup")
-    public ResponseEntity<List<Lancamento>> baixarBackupJson() {
+    public ResponseEntity<?> baixarBackupJson(HttpServletRequest request) {
+        if (!isAdminAutenticado(request)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
+        }
 
         List<Lancamento> todosOsLancamentos = repository.findAll();
 
@@ -117,8 +171,13 @@ public class FinanceiroController {
     @Transactional
     public ResponseEntity<Map<String, Object>> restaurarBackup(
             @RequestBody List<Lancamento> lancamentos,
-            @RequestParam(defaultValue = "true") boolean limparAntes
+            @RequestParam(defaultValue = "true") boolean limparAntes,
+            HttpServletRequest request
     ) {
+        if (!isAdminAutenticado(request)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
+        }
+
         if (lancamentos == null || lancamentos.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("erro", "Arquivo de backup vazio."));
         }
@@ -147,7 +206,6 @@ public class FinanceiroController {
                 continue;
             }
 
-            // Cria uma nova instancia para ignorar id recebido no backup e evitar conflito.
             Lancamento novo = new Lancamento();
             novo.setDescricao(item.getDescricao().trim());
             novo.setTipo(item.getTipo().trim());
@@ -174,5 +232,22 @@ public class FinanceiroController {
         resposta.put("limparAntes", limparAntes);
 
         return ResponseEntity.ok(resposta);
+    }
+
+    private boolean isAdminAutenticado(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && Boolean.TRUE.equals(session.getAttribute(ADMIN_SESSION_KEY));
+    }
+
+    private boolean autenticarAdmin(String user, String pass) {
+        if (!adminUsername.equals(user) || pass == null || pass.isBlank()) {
+            return false;
+        }
+
+        if (adminPasswordHash != null && !adminPasswordHash.isBlank()) {
+            return passwordEncoder.matches(pass, adminPasswordHash);
+        }
+
+        return adminPassword != null && !adminPassword.isBlank() && adminPassword.equals(pass);
     }
 }

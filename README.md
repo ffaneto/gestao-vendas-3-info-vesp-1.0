@@ -78,7 +78,9 @@ financeiro/
 | `PATCH` | `/api/vendas/{id}/data` | Atualizar apenas a data de um lançamento |
 | `GET` | `/api/backup` | Baixar backup em JSON |
 | `POST` | `/api/restore` | Restaurar backup JSON  |
-| `POST` | `/api/login` | Autenticação local |
+| `POST` | `/api/login` | Autenticação da comissão |
+| `GET` | `/api/session` | Verificar sessão admin ativa |
+| `POST` | `/api/logout` | Encerrar sessão admin |
 
 ## Como Rodar
 
@@ -104,7 +106,21 @@ spring:
     url: jdbc:mysql://localhost:3306/db_formatura?useTimezone=true&serverTimezone=UTC
     username: root
     password: 'SUA_SENHA'
+
+app:
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:comissao}
 ```
+
+### Deploy (DigitalOcean) - variáveis recomendadas
+
+```bash
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=uma_senha_forte_aqui
+```
+
+> Opcional (mais seguro): use `ADMIN_PASSWORD_HASH` com BCrypt e deixe `ADMIN_PASSWORD` vazio.
 
 ### Executar o projeto
 
@@ -131,3 +147,4 @@ Usuário: admin , Senha: comissao
 - 3º Ano Informática Integrado ao Ensino Médio
 - IFPB Campus Itaporanga
 
+A autenticação da comissão agora é validada no backend com sessão HTTP (não fica mais hardcoded no frontend).

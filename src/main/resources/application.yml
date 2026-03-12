@@ -1,5 +1,11 @@
 server:
   port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: Lax
+        secure: ${SESSION_COOKIE_SECURE:true}
 
 spring:
   datasource:
@@ -15,3 +21,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc.lob.non_contextual_creation: true
+
+app:
+  cors:
+    origin: ${CORS_ALLOWED_ORIGIN:*}
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:}
+    password-hash: ${ADMIN_PASSWORD_HASH:}

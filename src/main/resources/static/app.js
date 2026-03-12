@@ -2,6 +2,9 @@ const API_URL = "/api/vendas";
 const BACKUP_URL = "/api/backup";
 const BACKUP_URL_FALLBACK = `${API_URL}/backup`;
 const RESTORE_URL = "/api/restore";
+const LOGIN_URL = "/api/login";
+const SESSION_URL = "/api/session";
+const LOGOUT_URL = "/api/logout";
 let chartInstance = null;
 let historicoOriginal = [];
 let historicoFiltrado = [];
@@ -32,15 +35,59 @@ const DarkToast = Swal.mixin({
     }
 });
 
-window.onload = () => {
+window.onload = async () => {
     configurarEventos();
     const hoje = new Date().toISOString().split('T')[0];
     document.querySelectorAll('input[type="date"]').forEach(el => el.value = hoje);
     document.getElementById('data-global').value = hoje;
-    const usuarioLogado = localStorage.getItem("usuario_logado");
-    if(usuarioLogado === "ADMIN") iniciarSistema(true);
-    else if(usuarioLogado === "ESTUDANTE") iniciarSistema(false);
+
+    const usuarioPreferido = localStorage.getItem("usuario_logado");
+    const adminAtivo = await verificarSessaoAdmin();
+
+    if (adminAtivo) {
+        localStorage.setItem("usuario_logado", "ADMIN");
+        iniciarSistema(true);
+        return;
+    }
+
+    if (usuarioPreferido === "ESTUDANTE") {
+        iniciarSistema(false);
+        return;
+    }
+
+    mostrarTelaInicialLogin();
 };
+
+function mostrarTelaInicialLogin() {
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('form-login-container').style.display = 'none';
+    document.getElementById('login-overlay').style.display = 'flex';
+}
+
+async function verificarSessaoAdmin() {
+    try {
+        const response = await fetch(SESSION_URL, { credentials: 'same-origin' });
+        if (!response.ok) return false;
+        const payload = await response.json();
+        return payload?.admin === true;
+    } catch (_) {
+        return false;
+    }
+}
+
+async function tratarNaoAutorizado(response) {
+    if (response.status !== 401) return false;
+
+    isAdminLogado = false;
+    localStorage.setItem("usuario_logado", "ESTUDANTE");
+    iniciarSistema(false);
+    await DarkSwal.fire({
+        icon: 'warning',
+        title: 'Sessão da comissão expirada',
+        text: 'Faça login novamente para editar os dados.'
+    });
+    return true;
+}
 
 function configurarEventos() {
     vincularCliqueComTeclado(document.getElementById('login-estudante'), () => entrarComo('ESTUDANTE'));
@@ -149,12 +196,16 @@ async function enviarLancamento(payload) {
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
             body: JSON.stringify(payload)
         });
+        if (await tratarNaoAutorizado(response)) return;
         if (response.ok) {
             carregarDados();
             DarkToast.fire({icon: 'success', title: 'Salvo no PostgreSQL!'});
+            return;
         }
+        erro('Nao foi possivel salvar o lancamento.');
     } catch (error) {
         erro("Erro ao conectar com o Java.");
     }
@@ -172,8 +223,9 @@ async function resetarBanco() {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const response = await fetch(API_URL, { method: 'DELETE' });
+                const response = await fetch(API_URL, { method: 'DELETE', credentials: 'same-origin' });
 
+                if (await tratarNaoAutorizado(response)) return;
                 if (response.ok) {
                     DarkSwal.fire({title: 'Apagado!', text: 'Banco de dados reiniciado.', icon: 'success'});
                     carregarDados();
@@ -189,10 +241,11 @@ async function resetarBanco() {
 
 async function baixarBackup() {
     try {
-        let response = await fetch(BACKUP_URL);
+        let response = await fetch(BACKUP_URL, { credentials: 'same-origin' });
         if (!response.ok && response.status === 404) {
-            response = await fetch(BACKUP_URL_FALLBACK);
+            response = await fetch(BACKUP_URL_FALLBACK, { credentials: 'same-origin' });
         }
+        if (await tratarNaoAutorizado(response)) return;
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const blob = await response.blob();
@@ -253,8 +306,11 @@ async function restaurarBackupJson() {
         const response = await fetch(`${RESTORE_URL}?limparAntes=${limparAntes}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
             body: JSON.stringify(lancamentos)
         });
+
+        if (await tratarNaoAutorizado(response)) return;
 
         let payload = {};
         try { payload = await response.json(); } catch (_) { payload = {}; }
@@ -283,24 +339,47 @@ async function restaurarBackupJson() {
 function mostrarFormLogin() { document.getElementById('login-overlay').style.display = 'none'; document.getElementById('form-login-container').style.display = 'block'; document.getElementById('login-user').focus(); }
 function cancelarLogin() { document.getElementById('form-login-container').style.display = 'none'; document.getElementById('login-overlay').style.display = 'flex'; }
 function verificarEnter(event) { if (event.key === 'Enter') fazerLogin(); }
-function entrarComo(tipo) {
-    const tipoNormalizado = tipo === 'ADMIN' ? 'ADMIN' : 'ESTUDANTE';
-    localStorage.setItem("usuario_logado", tipoNormalizado);
-    iniciarSistema(tipoNormalizado === 'ADMIN');
-}
+async function entrarComo(tipo) {
+    if (tipo !== 'ADMIN') {
+        localStorage.setItem("usuario_logado", "ESTUDANTE");
+        iniciarSistema(false);
+        return;
+    }
 
-function fazerLogin() {
-    const u = document.getElementById('login-user').value;
-    const p = document.getElementById('login-pass').value;
-    if(u === 'admin' && p === 'comissao') {
+    if (await verificarSessaoAdmin()) {
         localStorage.setItem("usuario_logado", "ADMIN");
         iniciarSistema(true);
-    } else {
+        return;
+    }
+
+    mostrarFormLogin();
+}
+
+async function fazerLogin() {
+    const u = document.getElementById('login-user').value;
+    const p = document.getElementById('login-pass').value;
+
+    try {
+        const response = await fetch(LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ user: u, pass: p })
+        });
+
+        if (response.ok) {
+            localStorage.setItem("usuario_logado", "ADMIN");
+            iniciarSistema(true);
+            return;
+        }
+
         DarkSwal.fire({
             icon:'error',
             title:'Login Errado',
             text:'Tente Novamente',
         });
+    } catch (e) {
+        erro('Servidor indisponivel para login.');
     }
 }
 
@@ -321,7 +400,15 @@ function iniciarSistema(isAdmin) {
     carregarDados();
 }
 
-function sair() { localStorage.removeItem("usuario_logado"); location.reload(); }
+async function sair() {
+    try {
+        await fetch(LOGOUT_URL, { method: 'POST', credentials: 'same-origin' });
+    } catch (_) {
+        // Ignora: localStorage ainda sera limpo no cliente.
+    }
+    localStorage.removeItem("usuario_logado");
+    location.reload();
+}
 
 function venderQtd(tipo, preco, idQtd, idData) {
     const qtd = parseInt(document.getElementById(idQtd).value);
@@ -746,8 +833,10 @@ async function salvarData(id, novaData) {
         const response = await fetch(`${API_URL}/${id}/data`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
             body: JSON.stringify({ dataLancamento: novaData })
         });
+        if (await tratarNaoAutorizado(response)) return;
         if (response.ok) {
             DarkToast.fire({icon: 'success', title: 'Data atualizada!'});
             carregarDados();
@@ -774,7 +863,8 @@ async function desfazerLancamento(id, descricao) {
     if (!resultado.isConfirmed) return;
 
     try {
-        const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE', credentials: 'same-origin' });
+        if (await tratarNaoAutorizado(response)) return;
         if (response.ok) {
             DarkToast.fire({icon: 'success', title: 'Lançamento desfeito!'});
             carregarDados();
@@ -823,8 +913,10 @@ async function salvarObservacao(id, obs) {
         const response = await fetch(`${API_URL}/${id}/observacao`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
             body: JSON.stringify({ observacao: obs || null })
         });
+        if (await tratarNaoAutorizado(response)) return;
         if (response.ok) {
             DarkToast.fire({icon: 'success', title: 'Observação salva!'});
             carregarDados();
