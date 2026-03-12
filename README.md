@@ -16,7 +16,7 @@
 
 Sistema web para controle financeiro da comissão de formatura, permitindo registrar vendas, gastos, aportes e acompanhar a evolução do saldo em tempo real com gráfico.
 O projeto foi desenvolvido para melhoria da qualidade da gestão da comissão da formatura, criado no dia 26/02/2026 localmente, e após alguns dias, adicionado a este repositório
-do GitHub, pretendo usar como tema do meu Trabalho de Conclusão de Curso (TCC). Esse projeto além do que já foi supracitado, tem o objetivo de expandir meus conhecimentos e aprendizado na área de informática, além de expandir meu portfólio e demonstrar minhas habilidades e competências na área.
+do GitHub, pretendo usar como tema do meu Trabalho de Conclusão de Curso (TCC). Esse projeto além do que já foi supracitado, tem o objetivo de expandir meus conhecimentos e aprendizado na área de informática, também tem o objetivo de expandir meu portfólio e demonstrar minhas habilidades e competências na área.
 
 
 
