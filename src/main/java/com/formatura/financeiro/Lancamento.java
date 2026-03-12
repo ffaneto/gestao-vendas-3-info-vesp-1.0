@@ -16,6 +16,7 @@ public class Lancamento {
     private String tipo;
     private LocalDate dataLancamento;
     private LocalTime horaLancamento;
+    private String observacao;
 
     public Lancamento() {} 
     
@@ -73,5 +74,13 @@ public class Lancamento {
     
     public void setHoraLancamento(LocalTime horaLancamento) { 
     	this.horaLancamento = horaLancamento; 
+    }
+
+    public String getObservacao() {
+    	return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+    	this.observacao = observacao;
     }
 }

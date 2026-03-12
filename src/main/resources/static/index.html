@@ -42,10 +42,10 @@
 <div class="app-container" id="app">
     <header>
         <div class="header-brand">
-            <img src="logoifpb.png" alt="IFPB" class="header-logo">
+            <img src="logoifpb-branca.png" alt="IFPB" class="header-logo">
             <div>
                 <h1 class="app-title">Financeiro <span class="txt-roxo app-title-strong">3º Info</span></h1>
-                <span id="badge-user" class="status-badge">MySQL Conectado</span>
+                <span id="badge-user" class="status-badge">PostgreSQL Conectado</span>
             </div>
         </div>
         <button id="btn-sair" class="btn-muted btn-logout"><i class="fas fa-power-off"></i></button>
@@ -53,10 +53,14 @@
 
     <div class="main-grid">
         <div class="card admin-only" id="card-caixa-admin">
-            <div class="label">Caixa <span class="label-subinfo">(Ana Thays)</span></div>
-            <div class="big-number txt-verde" id="saldo">R$ 0,00</div>
+            <div class="label">Caixa Total</div>
+            <div class="big-number txt-verde" id="admin-caixa-total">R$ 0,00</div>
 
             <div class="card-balances-row">
+                <div>
+                    <div class="label">Caixa Vendas <span class="label-subinfo">(Ana Thays)</span></div>
+                    <div class="balance-highlight-green" id="saldo">R$ 0,00</div>
+                </div>
                 <div>
                     <div class="label">Lucro Açaí <span class="label-subinfo">(Izabelly)</span></div>
                     <div class="txt-roxo balance-highlight-purple" id="lucro-acai">R$ 0,00</div>
@@ -97,7 +101,7 @@
 
             <div class="student-breakdown">
                 <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-wallet icon-green icon-gap"></i>Caixa (Ana Thays)</span>
+                    <span class="student-label"><i class="fas fa-wallet icon-green icon-gap"></i>Caixa Vendas (Ana Thays)</span>
                     <span class="student-value student-value-green" id="est-saldo-ana">R$ 0,00</span>
                 </div>
                 <div class="student-row student-row-border">
@@ -111,10 +115,33 @@
             </div>
         </div>
 
-        <div class="card card-align-start">
-            <div class="label card-title-center">Projeção</div>
+        <div class="card card-align-start card-projecao">
+            <div class="projecao-header">
+                <div class="label card-title-center">Projeção</div>
+                <button id="btn-expand-chart" class="btn-expand-chart" title="Ampliar gráfico">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
             <div class="chart-container">
                 <canvas id="graficoEvolucao"></canvas>
+            </div>
+        </div>
+
+        <div id="chart-fullscreen-overlay" class="chart-fullscreen-overlay">
+            <div class="chart-fullscreen-wrapper">
+                <div class="chart-fullscreen-header">
+                    <div class="chart-fullscreen-title">
+                        <i class="fas fa-chart-line chart-fullscreen-icon"></i>
+                        <span>Projeção Financeira</span>
+                    </div>
+                    <button id="btn-close-chart-fullscreen" class="btn-close-chart-fullscreen" title="Fechar">
+                        <i class="fas fa-compress"></i>
+                    </button>
+                </div>
+                <div id="chart-stats-bar" class="chart-stats-bar"></div>
+                <div class="chart-fullscreen-container">
+                    <canvas id="graficoFullscreen"></canvas>
+                </div>
             </div>
         </div>
     </div>

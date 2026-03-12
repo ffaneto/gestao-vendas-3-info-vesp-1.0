@@ -87,6 +87,18 @@ public class FinanceiroController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @PatchMapping("/vendas/{id}/observacao")
+    public ResponseEntity<Lancamento> atualizarObservacao(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body
+    ) {
+        return repository.findById(id).map(lancamento -> {
+            String obs = body.get("observacao");
+            lancamento.setObservacao(obs != null ? obs.trim() : null);
+            return ResponseEntity.ok(repository.save(lancamento));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/backup")
     public ResponseEntity<List<Lancamento>> baixarBackupJson() {
 
@@ -142,6 +154,7 @@ public class FinanceiroController {
             novo.setValor(item.getValor());
             novo.setDataLancamento(item.getDataLancamento() != null ? item.getDataLancamento() : LocalDate.now());
             novo.setHoraLancamento(item.getHoraLancamento() != null ? item.getHoraLancamento() : LocalTime.now());
+            novo.setObservacao(item.getObservacao());
             paraSalvar.add(novo);
         }
 

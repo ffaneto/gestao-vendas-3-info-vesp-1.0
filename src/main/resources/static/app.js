@@ -9,6 +9,29 @@ let historicoPaginaAtual = 1;
 const historicoItensPorPagina = 15;
 let isAdminLogado = false;
 
+// ── SweetAlert2 dark theme global ──
+const DarkSwal = Swal.mixin({
+    background: '#1a1a1e',
+    color: '#fff',
+    confirmButtonColor: '#2979ff',
+    cancelButtonColor: '#555',
+    customClass: {
+        popup: 'swal-dark-popup'
+    }
+});
+const DarkToast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1800,
+    timerProgressBar: true,
+    background: '#1a1a1e',
+    color: '#fff',
+    customClass: {
+        popup: 'swal-dark-popup'
+    }
+});
+
 window.onload = () => {
     configurarEventos();
     const hoje = new Date().toISOString().split('T')[0];
@@ -53,6 +76,15 @@ function configurarEventos() {
     document.getElementById('btn-limpar-filtros')?.addEventListener('click', limparFiltrosHistorico);
     document.getElementById('btn-pagina-anterior')?.addEventListener('click', paginaAnteriorHistorico);
     document.getElementById('btn-pagina-proxima')?.addEventListener('click', paginaProximaHistorico);
+
+    document.getElementById('btn-expand-chart')?.addEventListener('click', abrirGraficoFullscreen);
+    document.getElementById('btn-close-chart-fullscreen')?.addEventListener('click', fecharGraficoFullscreen);
+    document.getElementById('chart-fullscreen-overlay')?.addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) fecharGraficoFullscreen();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') fecharGraficoFullscreen();
+    });
 }
 
 function vincularCliqueComTeclado(elemento, handler) {
@@ -83,17 +115,24 @@ async function carregarDados() {
         if (!response.ok) throw new Error('Servidor offline');
         const data = await response.json();
 
-        const saldo = data.filter(i => i.tipo !== 'ERIVANIA').reduce((acc, i) => acc + i.valor, 0);
-        const lucroAcai = data.filter(i => i.tipo === 'ACAI').reduce((acc, i) => acc + i.valor, 0);
-        const saldoErivania = data.filter(i => i.tipo === 'ERIVANIA').reduce((acc, i) => acc + i.valor, 0);
-        const caixaTotal = saldo + saldoErivania;
+        const saldoAna = data
+            .filter(i => i.tipo !== 'ERIVANIA')
+            .reduce((acc, i) => acc + i.valor, 0);
+        const lucroAcai = data
+            .filter(i => i.tipo === 'ACAI')
+            .reduce((acc, i) => acc + i.valor, 0);
+        const saldoErivania = data
+            .filter(i => i.tipo === 'ERIVANIA')
+            .reduce((acc, i) => acc + i.valor, 0);
+        const caixaTotal = saldoAna + saldoErivania;
 
-        document.getElementById('saldo').innerText = fmtMoeda(saldo);
+        document.getElementById('admin-caixa-total').innerText = fmtMoeda(caixaTotal);
+        document.getElementById('saldo').innerText = fmtMoeda(saldoAna);
         document.getElementById('lucro-acai').innerText = fmtMoeda(lucroAcai);
         document.getElementById('saldo-erivania').innerText = fmtMoeda(saldoErivania);
 
         document.getElementById('saldo-total').innerText = fmtMoeda(caixaTotal);
-        document.getElementById('est-saldo-ana').innerText = fmtMoeda(saldo);
+        document.getElementById('est-saldo-ana').innerText = fmtMoeda(saldoAna);
         document.getElementById('est-lucro-acai').innerText = fmtMoeda(lucroAcai);
         document.getElementById('est-saldo-erivania').innerText = fmtMoeda(saldoErivania);
 
@@ -101,7 +140,7 @@ async function carregarDados() {
         renderizarGrafico(data);
     } catch (error) {
         console.error(error);
-        Swal.fire({icon:'error', title:'Erro', text:'O Java está rodando?', background:'#222', color:'#fff'});
+        DarkSwal.fire({icon:'error', title:'Erro', text:'O Java está rodando?'});
     }
 }
 
@@ -114,7 +153,7 @@ async function enviarLancamento(payload) {
         });
         if (response.ok) {
             carregarDados();
-            Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Salvo no MySQL!', showConfirmButton: false, timer: 1500});
+            DarkToast.fire({icon: 'success', title: 'Salvo no PostgreSQL!'});
         }
     } catch (error) {
         erro("Erro ao conectar com o Java.");
@@ -122,7 +161,7 @@ async function enviarLancamento(payload) {
 }
 
 async function resetarBanco() {
-    Swal.fire({
+    DarkSwal.fire({
         title: 'Apagar?',
         text: "Vai apagar TODOS os dados do BD",
         icon: 'warning',
@@ -130,15 +169,13 @@ async function resetarBanco() {
         confirmButtonColor: '#8A00C4',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Sim',
-        background: '#222',
-        color: '#fff'
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
                 const response = await fetch(API_URL, { method: 'DELETE' });
 
                 if (response.ok) {
-                    Swal.fire({title: 'Apagado!', text: 'Banco de dados reiniciado.', icon: 'success', background:'#222', color:'#fff'});
+                    DarkSwal.fire({title: 'Apagado!', text: 'Banco de dados reiniciado.', icon: 'success'});
                     carregarDados();
                 } else {
                     erro("Erro ao tentar resetar o banco.");
@@ -172,12 +209,10 @@ async function baixarBackup() {
         link.remove();
         URL.revokeObjectURL(blobUrl);
     } catch (error) {
-        Swal.fire({
+        DarkSwal.fire({
             icon:'error',
             title:'Erro no backup',
             text:`Nao foi possivel baixar o arquivo agora (${error.message}).`,
-            background:'#222',
-            color:'#fff'
         });
     }
 }
@@ -190,7 +225,7 @@ async function restaurarBackupJson() {
         return erro('Selecione um arquivo JSON para restaurar.');
     }
 
-    const confirmacao = await Swal.fire({
+    const confirmacao = await DarkSwal.fire({
         title: 'Restaurar Backup?',
         html: `<span style="color:#ccc">Arquivo: <b style="color:#fff">${arquivo.name}</b></span>`,
         icon: 'question',
@@ -201,8 +236,6 @@ async function restaurarBackupJson() {
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#00bcd4',
         denyButtonColor: '#ff9800',
-        background: '#222',
-        color: '#fff'
     });
 
     if (confirmacao.isDismissed) { arquivoInput.value = ''; return; }
@@ -231,22 +264,18 @@ async function restaurarBackupJson() {
             throw new Error(`${payload?.erro || `HTTP ${response.status}`}${detalhes ? ` - ${detalhes}` : ''}`);
         }
 
-        Swal.fire({
+        DarkSwal.fire({
             icon: 'success',
             title: 'Restore concluido',
             text: `${payload?.importados || lancamentos.length} registros importados.`,
-            background: '#222',
-            color: '#fff'
         });
         arquivoInput.value = '';
         carregarDados();
     } catch (error) {
-        Swal.fire({
+        DarkSwal.fire({
             icon:'error',
             title:'Erro na restauracao',
             text: `Nao foi possivel restaurar (${error.message}).`,
-            background:'#222',
-            color:'#fff'
         });
     }
 }
@@ -267,12 +296,10 @@ function fazerLogin() {
         localStorage.setItem("usuario_logado", "ADMIN");
         iniciarSistema(true);
     } else {
-        Swal.fire({
+        DarkSwal.fire({
             icon:'error',
             title:'Login Errado',
             text:'Tente Novamente',
-            background:'#222',
-            zIndex: 20001
         });
     }
 }
@@ -297,7 +324,7 @@ function iniciarSistema(isAdmin) {
 function sair() { localStorage.removeItem("usuario_logado"); location.reload(); }
 
 function venderQtd(tipo, preco, idQtd, idData) {
-    const qtd = document.getElementById(idQtd).value;
+    const qtd = parseInt(document.getElementById(idQtd).value);
     const data = document.getElementById(idData).value;
     if(!qtd || qtd <= 0) return erro("Qtd inválida");
     enviarLancamento({ tipo, descricao: `Venda ${qtd}x ${tipo}`, valor: (qtd * preco), dataLancamento: data });
@@ -305,7 +332,7 @@ function venderQtd(tipo, preco, idQtd, idData) {
 }
 
 function lancarGastoQtd(tipo, custo, idQtd, idData) {
-    const qtd = document.getElementById(idQtd).value;
+    const qtd = parseInt(document.getElementById(idQtd).value);
     const data = document.getElementById(idData).value;
     if(!qtd || qtd <= 0) return erro("Qtd inválida");
     enviarLancamento({ tipo, descricao: `Compra Estoque ${qtd}x`, valor: -(qtd * custo), dataLancamento: data });
@@ -313,15 +340,15 @@ function lancarGastoQtd(tipo, custo, idQtd, idData) {
 }
 
 function lancarGenerico(tipo, idValor, desc, idData) {
-    const val = document.getElementById(idValor).value;
+    const val = parseFloat(document.getElementById(idValor).value);
     const data = document.getElementById(idData).value;
     if(!val || val <= 0) return erro("Valor inválido");
-    enviarLancamento({ tipo, descricao: desc, valor: parseFloat(val), dataLancamento: data });
+    enviarLancamento({ tipo, descricao: desc, valor: val, dataLancamento: data });
     document.getElementById(idValor).value = '';
 }
 
 function lancarGastoGenerico() {
-    const val = document.getElementById('valor-outros').value;
+    const val = parseFloat(document.getElementById('valor-outros').value);
     const desc = document.getElementById('desc-outros').value || 'Despesa';
     const data = document.getElementById('data-outros').value;
     if(!val || val <= 0) return erro("Valor inválido");
@@ -331,7 +358,13 @@ function lancarGastoGenerico() {
 }
 
 function renderizarHistorico(lista) {
-    historicoOriginal = [...lista].sort((a, b) => a.dataLancamento > b.dataLancamento ? -1 : 1);
+    historicoOriginal = [...lista].sort((a, b) => {
+        if (a.dataLancamento !== b.dataLancamento) return a.dataLancamento > b.dataLancamento ? -1 : 1;
+        const horaA = a.horaLancamento || '';
+        const horaB = b.horaLancamento || '';
+        if (horaA !== horaB) return horaA > horaB ? -1 : 1;
+        return (b.id || 0) - (a.id || 0);
+    });
     historicoPaginaAtual = 1;
     aplicarFiltrosHistorico(false);
 }
@@ -381,9 +414,16 @@ function renderizarHistoricoPaginado() {
             const btnDesfazer = isAdminLogado
                 ? `<td style="width:40px;text-align:center"><button onclick="desfazerLancamento(${i.id}, '${i.descricao.replace(/'/g, "\\'")}')" style="background:rgba(255,23,68,0.15); border:1px solid var(--red); color:var(--red); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:0.75rem;" title="Desfazer"><i class="fas fa-undo"></i></button></td>`
                 : '';
+            const obsTexto = i.observacao ? i.observacao : '';
+            const obsHtml = obsTexto
+                ? `<div class="obs-display">${obsTexto}</div>`
+                : '';
+            const btnObs = isAdminLogado
+                ? `<span class="obs-btn ${obsTexto ? 'obs-btn-filled' : ''}" onclick="editarObservacao(${i.id}, '${(obsTexto).replace(/'/g, "\\'").replace(/\n/g, '\\n')}')" title="${obsTexto ? 'Editar observação' : 'Adicionar observação'}"><i class="fas ${obsTexto ? 'fa-comment-dots' : 'fa-plus-circle'}"></i></span>`
+                : '';
             tb.innerHTML += `<tr>
                 <td style="width:40px;text-align:center"><i class="fas ${isPos ? 'fa-arrow-up txt-verde' : 'fa-arrow-down txt-vermelho'}"></i></td>
-                <td style="font-weight:600">${i.descricao}</td>
+                <td style="font-weight:600"><div class="desc-cell">${i.descricao}${btnObs}</div>${obsHtml}</td>
                 ${dataEditavel}
                 <td style="text-align:right;font-weight:800" class="${isPos ? 'txt-verde' : 'txt-vermelho'}">${fmtMoeda(i.valor)}</td>
                 ${btnDesfazer}
@@ -417,66 +457,255 @@ function limparFiltrosHistorico() {
     aplicarFiltrosHistorico();
 }
 
+let chartFullscreenInstance = null;
+let ultimoHistoricoGrafico = [];
+
 function renderizarGrafico(historico) {
+    ultimoHistoricoGrafico = historico;
     const ctx = document.getElementById('graficoEvolucao').getContext('2d');
+    const config = criarConfigGrafico(historico, ctx, false);
+    if(chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, config);
+}
+
+function abrirGraficoFullscreen() {
+    const overlay = document.getElementById('chart-fullscreen-overlay');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Render stats bar
+    renderizarStatsBar(ultimoHistoricoGrafico);
+
+    setTimeout(() => {
+        const ctx = document.getElementById('graficoFullscreen').getContext('2d');
+        const config = criarConfigGrafico(ultimoHistoricoGrafico, ctx, true);
+        if(chartFullscreenInstance) chartFullscreenInstance.destroy();
+        chartFullscreenInstance = new Chart(ctx, config);
+    }, 80);
+}
+
+function renderizarStatsBar(historico) {
+    const statsBar = document.getElementById('chart-stats-bar');
+    if (!statsBar) return;
+
     const semErivania = historico.filter(i => i.tipo !== 'ERIVANIA');
-    const ordenado = [...semErivania].sort((a,b) => a.dataLancamento > b.dataLancamento ? 1 : -1);
+    const saldoAtual = semErivania.reduce((acc, i) => acc + i.valor, 0);
+    const entradas = semErivania.filter(i => i.valor > 0).reduce((acc, i) => acc + i.valor, 0);
+    const saidas = semErivania.filter(i => i.valor < 0).reduce((acc, i) => acc + i.valor, 0);
+    const totalLancamentos = semErivania.length;
+
+    const saldoClass = saldoAtual >= 0 ? 'positive' : 'negative';
+
+    statsBar.innerHTML = `
+        <div class="chart-stat-item">
+            <span class="chart-stat-label">Saldo Atual</span>
+            <span class="chart-stat-value ${saldoClass}">${fmtMoeda(saldoAtual)}</span>
+        </div>
+        <div class="chart-stat-item">
+            <span class="chart-stat-label">Total Entradas</span>
+            <span class="chart-stat-value positive">${fmtMoeda(entradas)}</span>
+        </div>
+        <div class="chart-stat-item">
+            <span class="chart-stat-label">Total Saídas</span>
+            <span class="chart-stat-value negative">${fmtMoeda(saidas)}</span>
+        </div>
+        <div class="chart-stat-item">
+            <span class="chart-stat-label">Lançamentos</span>
+            <span class="chart-stat-value neutral">${totalLancamentos}</span>
+        </div>
+    `;
+}
+
+function fecharGraficoFullscreen() {
+    const overlay = document.getElementById('chart-fullscreen-overlay');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    if(chartFullscreenInstance) { chartFullscreenInstance.destroy(); chartFullscreenInstance = null; }
+}
+
+function criarConfigGrafico(historico, ctx, isFullscreen) {
+    const semErivania = historico.filter(i => i.tipo !== 'ERIVANIA');
+    const ordenado = [...semErivania].sort((a,b) => {
+        if (a.dataLancamento !== b.dataLancamento) return a.dataLancamento > b.dataLancamento ? 1 : -1;
+        const horaA = a.horaLancamento || '';
+        const horaB = b.horaLancamento || '';
+        if (horaA !== horaB) return horaA > horaB ? 1 : -1;
+        return (a.id || 0) - (b.id || 0);
+    });
     let soma = 0;
     const labels = ordenado.map(i => i.dataLancamento.split('-').reverse().join('/'));
     const dados = ordenado.map(i => { soma += i.valor; return soma; });
 
-    function corSegmento(ctx, verde, vermelho) {
-        const v1 = dados[ctx.p1DataIndex];
+    function corSegmento(segCtx, verde, vermelho) {
+        const v1 = dados[segCtx.p1DataIndex];
         return v1 >= 0 ? verde : vermelho;
     }
 
-    if(chartInstance) chartInstance.destroy();
-    chartInstance = new Chart(ctx, {
+    const chartHeight = isFullscreen ? 600 : 220;
+
+    const gradVerde = ctx.createLinearGradient(0, 0, 0, chartHeight);
+    gradVerde.addColorStop(0, 'rgba(0, 230, 118, 0.30)');
+    gradVerde.addColorStop(0.4, 'rgba(0, 230, 118, 0.10)');
+    gradVerde.addColorStop(0.8, 'rgba(0, 230, 118, 0.02)');
+    gradVerde.addColorStop(1, 'rgba(0, 230, 118, 0.0)');
+
+    const gradVermelho = ctx.createLinearGradient(0, 0, 0, chartHeight);
+    gradVermelho.addColorStop(0, 'rgba(255, 23, 68, 0.0)');
+    gradVermelho.addColorStop(0.2, 'rgba(255, 23, 68, 0.02)');
+    gradVermelho.addColorStop(0.6, 'rgba(255, 23, 68, 0.10)');
+    gradVermelho.addColorStop(1, 'rgba(255, 23, 68, 0.28)');
+
+    const pointSize = isFullscreen ? 5 : 3;
+    const lineWidth = isFullscreen ? 3.5 : 2.5;
+    const hoverRadius = isFullscreen ? 12 : 7;
+
+    // Crosshair plugin for fullscreen
+    const crosshairPlugin = isFullscreen ? {
+        id: 'crosshair',
+        afterDraw(chart) {
+            if (chart.tooltip?._active?.length) {
+                const x = chart.tooltip._active[0].element.x;
+                const yAxis = chart.scales.y;
+                const ctx2 = chart.ctx;
+                ctx2.save();
+                ctx2.beginPath();
+                ctx2.setLineDash([4, 4]);
+                ctx2.moveTo(x, yAxis.top);
+                ctx2.lineTo(x, yAxis.bottom);
+                ctx2.lineWidth = 1;
+                ctx2.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+                ctx2.stroke();
+                ctx2.restore();
+            }
+        }
+    } : null;
+
+    // Zero line plugin
+    const zeroLinePlugin = {
+        id: 'zeroLine',
+        afterDraw(chart) {
+            const yScale = chart.scales.y;
+            const yPos = yScale.getPixelForValue(0);
+            if (yPos >= yScale.top && yPos <= yScale.bottom) {
+                const ctx2 = chart.ctx;
+                ctx2.save();
+                ctx2.beginPath();
+                ctx2.setLineDash([6, 4]);
+                ctx2.moveTo(chart.chartArea.left, yPos);
+                ctx2.lineTo(chart.chartArea.right, yPos);
+                ctx2.lineWidth = 1;
+                ctx2.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx2.stroke();
+                ctx2.restore();
+            }
+        }
+    };
+
+    const plugins = [zeroLinePlugin];
+    if (crosshairPlugin) plugins.push(crosshairPlugin);
+
+    return {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 data: dados,
                 segment: {
-                    borderColor: ctx => corSegmento(ctx, '#00e676', '#ff1744'),
-                    backgroundColor: ctx => corSegmento(ctx, 'rgba(0, 230, 118, 0.1)', 'rgba(255, 23, 68, 0.1)')
+                    borderColor: segCtx => corSegmento(segCtx, '#00e676', '#ff1744'),
+                    backgroundColor: segCtx => corSegmento(segCtx, gradVerde, gradVermelho)
                 },
                 borderColor: '#00e676',
-                backgroundColor: 'rgba(0, 230, 118, 0.1)',
+                backgroundColor: gradVerde,
                 fill: true,
                 tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 3,
-                pointBackgroundColor: dados.map(v => v >= 0 ? '#00e676' : '#ff1744')
+                borderWidth: lineWidth,
+                pointRadius: pointSize,
+                pointHoverRadius: hoverRadius,
+                pointBackgroundColor: dados.map(v => v >= 0 ? '#00e676' : '#ff1744'),
+                pointBorderColor: dados.map(v => v >= 0 ? 'rgba(0,230,118,0.3)' : 'rgba(255,23,68,0.3)'),
+                pointBorderWidth: isFullscreen ? 3 : 2,
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderWidth: isFullscreen ? 4 : 3,
+                pointHoverBorderColor: dados.map(v => v >= 0 ? '#00e676' : '#ff1744'),
             }]
         },
+        plugins: plugins,
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+                duration: isFullscreen ? 1000 : 600,
+                easing: 'easeOutQuart',
+                delay: (context) => {
+                    if (context.type === 'data' && context.mode === 'default') {
+                        return context.dataIndex * (isFullscreen ? 15 : 8);
+                    }
+                    return 0;
+                }
+            },
+            interaction: { mode: 'index', intersect: false },
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    backgroundColor: 'rgba(10, 10, 15, 0.95)',
+                    titleColor: '#999',
+                    titleFont: { size: isFullscreen ? 13 : 11, weight: '600', family: 'Inter' },
+                    bodyColor: '#fff',
+                    bodyFont: { size: isFullscreen ? 17 : 13, weight: '800', family: 'Inter' },
+                    borderColor: 'rgba(255,255,255,0.06)',
+                    borderWidth: 1,
+                    cornerRadius: 14,
+                    padding: isFullscreen ? 18 : 10,
+                    displayColors: false,
+                    caretSize: isFullscreen ? 8 : 6,
                     callbacks: {
-                        label: context => `Saldo: ${fmtMoeda(context.parsed.y)}`
+                        title: items => items[0] ? `📅 ${items[0].label}` : '',
+                        label: context => {
+                            const val = context.parsed.y;
+                            const emoji = val >= 0 ? '🟢' : '🔴';
+                            return `${emoji}  ${fmtMoeda(val)}`;
+                        }
                     }
                 }
             },
             scales: {
                 y: {
-                    grid: { color: 'rgba(255,255,255,0.05)' },
-                    ticks: { color: '#888' }
+                    grid: {
+                        color: isFullscreen ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.04)',
+                        drawBorder: false,
+                        lineWidth: 0.5
+                    },
+                    border: { display: false },
+                    ticks: {
+                        color: '#555',
+                        font: { size: isFullscreen ? 13 : 10, weight: '600', family: 'Inter' },
+                        padding: isFullscreen ? 14 : 6,
+                        callback: val => fmtMoeda(val)
+                    }
                 },
                 x: {
-                    grid: { color: 'rgba(255,255,255,0.05)' },
-                    ticks: { color: '#888' }
+                    grid: {
+                        color: isFullscreen ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.02)',
+                        drawBorder: false,
+                        lineWidth: 0.5
+                    },
+                    border: { display: false },
+                    ticks: {
+                        color: '#555',
+                        font: { size: isFullscreen ? 12 : 9, weight: '600', family: 'Inter' },
+                        padding: isFullscreen ? 12 : 4,
+                        maxRotation: isFullscreen ? 45 : 60,
+                        autoSkip: true,
+                        maxTicksLimit: isFullscreen ? 35 : 12
+                    }
                 }
             }
         }
-    });
+    };
 }
 
 function fmtMoeda(val) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(val); }
-function erro(msg) { Swal.fire({icon:'warning', title:'Ops', text:msg, background:'#222', color:'#fff', toast:true, position:'top-end', showConfirmButton:false, timer:2000}); }
+function erro(msg) { DarkToast.fire({icon:'warning', title:'Ops', text:msg}); }
 
 function editarData(td, id, dataAtual) {
     if (td.querySelector('input')) return;
@@ -520,7 +749,7 @@ async function salvarData(id, novaData) {
             body: JSON.stringify({ dataLancamento: novaData })
         });
         if (response.ok) {
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Data atualizada!', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff' });
+            DarkToast.fire({icon: 'success', title: 'Data atualizada!'});
             carregarDados();
         } else {
             erro('Erro ao atualizar a data.');
@@ -531,7 +760,7 @@ async function salvarData(id, novaData) {
 }
 
 async function desfazerLancamento(id, descricao) {
-    const resultado = await Swal.fire({
+    const resultado = await DarkSwal.fire({
         title: 'Desfazer lançamento?',
         html: `<span style="color:#ccc">Tem certeza que deseja remover:<br><b style="color:#fff">${descricao}</b></span>`,
         icon: 'warning',
@@ -540,8 +769,6 @@ async function desfazerLancamento(id, descricao) {
         cancelButtonColor: '#555',
         confirmButtonText: 'Sim, desfazer',
         cancelButtonText: 'Cancelar',
-        background: '#222',
-        color: '#fff'
     });
 
     if (!resultado.isConfirmed) return;
@@ -549,7 +776,7 @@ async function desfazerLancamento(id, descricao) {
     try {
         const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         if (response.ok) {
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Lançamento desfeito!', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff' });
+            DarkToast.fire({icon: 'success', title: 'Lançamento desfeito!'});
             carregarDados();
         } else if (response.status === 404) {
             erro('Lançamento não encontrado (já removido?).');
@@ -561,3 +788,51 @@ async function desfazerLancamento(id, descricao) {
         erro('Erro de conexão com o servidor.');
     }
 }
+
+async function editarObservacao(id, obsAtual) {
+    const resultado = await DarkSwal.fire({
+        title: 'Observação',
+        input: 'textarea',
+        inputLabel: 'Adicione um detalhe ao lançamento',
+        inputPlaceholder: 'Ex: 100 Pix + 100 Espécie',
+        inputValue: obsAtual || '',
+        showCancelButton: true,
+        confirmButtonText: 'Salvar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#2979ff',
+        inputAttributes: {
+            style: 'background:rgba(255,255,255,0.08); color:#fff; border:1px solid #444; border-radius:8px; font-size:0.95rem;'
+        },
+        showDenyButton: obsAtual ? true : false,
+        denyButtonText: 'Remover',
+        denyButtonColor: '#ff1744'
+    });
+
+    if (resultado.isDismissed) return;
+    if (resultado.isDenied) {
+        await salvarObservacao(id, '');
+        return;
+    }
+    if (resultado.isConfirmed) {
+        await salvarObservacao(id, resultado.value);
+    }
+}
+
+async function salvarObservacao(id, obs) {
+    try {
+        const response = await fetch(`${API_URL}/${id}/observacao`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ observacao: obs || null })
+        });
+        if (response.ok) {
+            DarkToast.fire({icon: 'success', title: 'Observação salva!'});
+            carregarDados();
+        } else {
+            erro('Erro ao salvar observação.');
+        }
+    } catch (e) {
+        erro('Erro de conexão com o servidor.');
+    }
+}
+
