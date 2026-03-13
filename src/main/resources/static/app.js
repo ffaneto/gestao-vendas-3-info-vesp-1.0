@@ -38,7 +38,15 @@ const DarkToast = Swal.mixin({
 window.onload = async () => {
     configurarEventos();
     const hoje = new Date().toISOString().split('T')[0];
-    document.querySelectorAll('input[type="date"]').forEach(el => el.value = hoje);
+    // Preenche apenas os campos de data de lançamento, deixando os filtros do histórico vazios
+    const camposDataLancamento = [
+        'data-aporte', 'data-erivania', 'data-trufa', 'data-bolo', 'data-acai',
+        'data-trufa-compra', 'data-bolo-compra', 'data-outros'
+    ];
+    camposDataLancamento.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = hoje;
+    });
     document.getElementById('data-global').value = hoje;
 
     const usuarioPreferido = localStorage.getItem("usuario_logado");
