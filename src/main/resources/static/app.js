@@ -12,6 +12,145 @@ let historicoPaginaAtual = 1;
 const historicoItensPorPagina = 15;
 let isAdminLogado = false;
 
+const CONTA_DESTINO = Object.freeze({
+    ANA: 'ANA',
+    IZABELLY: 'IZABELLY',
+    PEDRO: 'PEDRO',
+    ERIVANIA: 'ERIVANIA'
+});
+
+function normalizarContaDestino(conta) {
+    const valor = String(conta || '').trim().toUpperCase();
+    if (valor === 'BOLSINHA') return CONTA_DESTINO.ANA;
+    return Object.values(CONTA_DESTINO).includes(valor) ? valor : null;
+}
+
+function normalizarTexto(texto) {
+    return String(texto || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+}
+
+function contaPadraoPorTipo(tipo) {
+    const tipoNorm = String(tipo || '').toUpperCase();
+    if (tipoNorm === 'ERIVANIA') return CONTA_DESTINO.ERIVANIA;
+    if (tipoNorm === 'ACAI') return CONTA_DESTINO.IZABELLY;
+    if (tipoNorm.startsWith('CARNE')) return CONTA_DESTINO.PEDRO;
+    if (tipoNorm === 'TRUFA' || tipoNorm === 'BOLO' || tipoNorm === 'TRUFA_COMPRA' || tipoNorm === 'BOLO_COMPRA') {
+        return CONTA_DESTINO.ANA;
+    }
+    return null;
+}
+
+function determinarContaLancamento(lancamento) {
+    const contaExplicita = normalizarContaDestino(lancamento?.contaDestino);
+    if (contaExplicita) return contaExplicita;
+
+    const tipo = String(lancamento?.tipo || '').toUpperCase();
+    const porTipo = contaPadraoPorTipo(tipo);
+    if (porTipo) return porTipo;
+
+    const descricao = normalizarTexto(lancamento?.descricao);
+
+    // Regras para tipos ambiguos (OUTROS/SALDO_INICIAL): tenta inferir pelo texto.
+    if (descricao.includes('erivania')) return CONTA_DESTINO.ERIVANIA;
+    if (
+        descricao.includes('izabelly') ||
+        descricao.includes('acai') ||
+        descricao.includes('complemento')
+    ) {
+        return CONTA_DESTINO.IZABELLY;
+    }
+    if (descricao.includes('carne') || descricao.includes('carnes')) {
+        return CONTA_DESTINO.PEDRO;
+    }
+    if (descricao.includes('bolsinha') || descricao.includes('especie') || descricao.includes('moeda') || descricao.includes('nota')) {
+        return CONTA_DESTINO.ANA;
+    }
+
+    // Fallback seguro para manter compatibilidade com dados antigos.
+    return CONTA_DESTINO.ANA;
+}
+
+function nomeConta(contaDestino) {
+    if (contaDestino === CONTA_DESTINO.ERIVANIA) return 'Erivânia';
+    if (contaDestino === CONTA_DESTINO.IZABELLY) return 'Izabelly';
+    if (contaDestino === CONTA_DESTINO.PEDRO) return 'Pedro';
+    return 'Ana';
+}
+
+function classeConta(contaDestino) {
+    if (contaDestino === CONTA_DESTINO.ERIVANIA) return 'conta-erivania';
+    if (contaDestino === CONTA_DESTINO.IZABELLY) return 'conta-izabelly';
+    if (contaDestino === CONTA_DESTINO.PEDRO) return 'conta-pedro';
+    return 'conta-ana';
+}
+
+function ordenarLancamentosAsc(a, b) {
+    if (a.dataLancamento !== b.dataLancamento) return a.dataLancamento > b.dataLancamento ? 1 : -1;
+    const horaA = a.horaLancamento || '';
+    const horaB = b.horaLancamento || '';
+    if (horaA !== horaB) return horaA > horaB ? 1 : -1;
+    return (a.id || 0) - (b.id || 0);
+}
+
+function calcularResumoFinanceiro(lancamentos) {
+    const resumo = {
+        saldoAna: 0,
+        saldoIzabelly: 0,
+        saldoPedro: 0,
+        saldoErivania: 0,
+        lucroAcai: 0,
+        caixaTotal: 0,
+        historicoProjecao: []
+    };
+
+    const ordenado = [...(lancamentos || [])].sort(ordenarLancamentosAsc);
+    let acumuladoProjecao = 0;
+
+    ordenado.forEach(item => {
+        const valor = Number(item?.valor) || 0;
+        const conta = determinarContaLancamento(item);
+
+        if (conta === CONTA_DESTINO.ANA) resumo.saldoAna += valor;
+        else if (conta === CONTA_DESTINO.IZABELLY) resumo.saldoIzabelly += valor;
+        else if (conta === CONTA_DESTINO.PEDRO) resumo.saldoPedro += valor;
+        else if (conta === CONTA_DESTINO.ERIVANIA) resumo.saldoErivania += valor;
+
+        if (String(item?.tipo || '').toUpperCase() === 'ACAI') {
+            resumo.lucroAcai += valor;
+        }
+
+        // Projecao operacional: sem conta da Erivania.
+        if (conta !== CONTA_DESTINO.ERIVANIA) {
+            acumuladoProjecao += valor;
+            resumo.historicoProjecao.push({
+                ...item,
+                contaDestino: conta,
+                saldoAcumulado: acumuladoProjecao
+            });
+        }
+    });
+
+    resumo.caixaTotal = resumo.saldoAna + resumo.saldoIzabelly + resumo.saldoPedro + resumo.saldoErivania;
+    return resumo;
+}
+
+function escapeHtml(texto) {
+    return String(texto || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function setTextIfExists(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+}
+
 /* SweetAlert2 dark theme global */
 const DarkSwal = Swal.mixin({
     background: '#1a1a1e',
@@ -37,6 +176,7 @@ const DarkToast = Swal.mixin({
 
 window.onload = async () => {
     configurarEventos();
+    inicializarContaSegments();
     const hoje = new Date().toISOString().split('T')[0];
     // Preenche apenas os campos de data de lançamento, deixando os filtros do histórico vazios
     const camposDataLancamento = [
@@ -106,8 +246,14 @@ function configurarEventos() {
     document.getElementById('login-pass')?.addEventListener('keydown', verificarEnter);
     document.getElementById('btn-sair')?.addEventListener('click', sair);
 
-    document.getElementById('btn-aporte')?.addEventListener('click', () => lancarGenerico('SALDO_INICIAL', 'valor-aporte', 'Aporte', 'data-aporte'));
-    document.getElementById('btn-erivania')?.addEventListener('click', () => lancarGenerico('ERIVANIA', 'valor-erivania', 'Aporte Erivânia', 'data-erivania'));
+    document.getElementById('btn-aporte')?.addEventListener('click', () => lancarGenerico(
+        'SALDO_INICIAL',
+        'valor-aporte',
+        'Aporte',
+        'data-aporte',
+        contaSelecionada('conta-aporte', CONTA_DESTINO.ANA)
+    ));
+    document.getElementById('btn-erivania')?.addEventListener('click', () => lancarGenerico('ERIVANIA', 'valor-erivania', 'Aporte Erivânia', 'data-erivania', CONTA_DESTINO.ERIVANIA));
     document.getElementById('btn-vender-trufa')?.addEventListener('click', () => venderQtd('TRUFA', 2.50, 'qtd-trufa', 'data-trufa'));
     document.getElementById('btn-vender-bolo')?.addEventListener('click', () => venderQtd('BOLO', 3.50, 'qtd-bolo', 'data-bolo'));
     document.getElementById('btn-vender-acai')?.addEventListener('click', () => lancarGenerico('ACAI', 'valor-acai', 'Venda Açaí', 'data-acai'));
@@ -164,32 +310,64 @@ function sincronizarDatas(valor) {
     });
 }
 
+function inicializarContaSegments() {
+    document.querySelectorAll('.conta-segment').forEach(segment => {
+        const targetId = segment.getAttribute('data-target-input');
+        if (!targetId) return;
+        const hidden = document.getElementById(targetId);
+        if (!hidden) return;
+
+        const marcarAtivo = (valor) => {
+            hidden.value = valor;
+            segment.querySelectorAll('.conta-chip').forEach(btn => {
+                const ativo = btn.getAttribute('data-value') === valor;
+                btn.classList.toggle('active', ativo);
+                btn.setAttribute('aria-pressed', ativo ? 'true' : 'false');
+            });
+        };
+
+        const valorInicial = normalizarContaDestino(hidden.value) || normalizarContaDestino(segment.querySelector('.conta-chip.active')?.getAttribute('data-value')) || CONTA_DESTINO.ANA;
+        marcarAtivo(valorInicial);
+
+        segment.querySelectorAll('.conta-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const valor = normalizarContaDestino(btn.getAttribute('data-value'));
+                if (valor) marcarAtivo(valor);
+            });
+        });
+    });
+}
+
+function contaSelecionada(idSelect, fallbackConta) {
+    const el = document.getElementById(idSelect);
+    const conta = normalizarContaDestino(el?.value);
+    return conta || fallbackConta;
+}
+
 async function carregarDados() {
     try {
         const response = await fetch(API_URL);
         if (!response.ok) throw new Error('Servidor offline');
         const data = await response.json();
 
-        const saldoAna = data
-            .filter(i => i.tipo !== 'ERIVANIA')
-            .reduce((acc, i) => acc + i.valor, 0);
-        const lucroAcai = data
-            .filter(i => i.tipo === 'ACAI')
-            .reduce((acc, i) => acc + i.valor, 0);
-        const saldoErivania = data
-            .filter(i => i.tipo === 'ERIVANIA')
-            .reduce((acc, i) => acc + i.valor, 0);
-        const caixaTotal = saldoAna + saldoErivania;
+        const resumo = calcularResumoFinanceiro(data);
 
-        document.getElementById('admin-caixa-total').innerText = fmtMoeda(caixaTotal);
-        document.getElementById('saldo').innerText = fmtMoeda(saldoAna);
-        document.getElementById('lucro-acai').innerText = fmtMoeda(lucroAcai);
-        document.getElementById('saldo-erivania').innerText = fmtMoeda(saldoErivania);
+        // Compatibilidade: preenche tanto IDs antigos quanto novos, se existirem.
+        setTextIfExists('admin-caixa-total', fmtMoeda(resumo.caixaTotal));
+        setTextIfExists('saldo', fmtMoeda(resumo.saldoAna));
+        setTextIfExists('lucro-acai', fmtMoeda(resumo.lucroAcai));
+        setTextIfExists('saldo-erivania', fmtMoeda(resumo.saldoErivania));
 
-        document.getElementById('saldo-total').innerText = fmtMoeda(caixaTotal);
-        document.getElementById('est-saldo-ana').innerText = fmtMoeda(saldoAna);
-        document.getElementById('est-lucro-acai').innerText = fmtMoeda(lucroAcai);
-        document.getElementById('est-saldo-erivania').innerText = fmtMoeda(saldoErivania);
+        setTextIfExists('saldo-izabelly', fmtMoeda(resumo.saldoIzabelly));
+        setTextIfExists('saldo-pedro', fmtMoeda(resumo.saldoPedro));
+
+        setTextIfExists('saldo-total', fmtMoeda(resumo.caixaTotal));
+        setTextIfExists('est-saldo-ana', fmtMoeda(resumo.saldoAna));
+        setTextIfExists('est-lucro-acai', fmtMoeda(resumo.lucroAcai));
+        setTextIfExists('est-saldo-erivania', fmtMoeda(resumo.saldoErivania));
+
+        setTextIfExists('est-saldo-izabelly', fmtMoeda(resumo.saldoIzabelly));
+        setTextIfExists('est-saldo-pedro', fmtMoeda(resumo.saldoPedro));
 
         renderizarHistorico(data);
         renderizarGrafico(data);
@@ -422,7 +600,13 @@ function venderQtd(tipo, preco, idQtd, idData) {
     const qtd = parseInt(document.getElementById(idQtd).value);
     const data = document.getElementById(idData).value;
     if(!qtd || qtd <= 0) return erro("Qtd inválida");
-    enviarLancamento({ tipo, descricao: `Venda ${qtd}x ${tipo}`, valor: (qtd * preco), dataLancamento: data });
+    enviarLancamento({
+        tipo,
+        descricao: `Venda ${qtd}x ${tipo}`,
+        valor: (qtd * preco),
+        dataLancamento: data,
+        contaDestino: contaPadraoPorTipo(tipo)
+    });
     document.getElementById(idQtd).value = '';
 }
 
@@ -430,15 +614,24 @@ function lancarGastoQtd(tipo, custo, idQtd, idData) {
     const qtd = parseInt(document.getElementById(idQtd).value);
     const data = document.getElementById(idData).value;
     if(!qtd || qtd <= 0) return erro("Qtd inválida");
-    enviarLancamento({ tipo, descricao: `Compra Estoque ${qtd}x`, valor: -(qtd * custo), dataLancamento: data });
+    enviarLancamento({
+        tipo,
+        descricao: `Compra Estoque ${qtd}x`,
+        valor: -(qtd * custo),
+        dataLancamento: data,
+        contaDestino: contaPadraoPorTipo(tipo)
+    });
     document.getElementById(idQtd).value = '';
 }
 
-function lancarGenerico(tipo, idValor, desc, idData) {
+function lancarGenerico(tipo, idValor, desc, idData, contaDestino = null) {
     const val = parseFloat(document.getElementById(idValor).value);
     const data = document.getElementById(idData).value;
     if(!val || val <= 0) return erro("Valor inválido");
-    enviarLancamento({ tipo, descricao: desc, valor: val, dataLancamento: data });
+    const payload = { tipo, descricao: desc, valor: val, dataLancamento: data };
+    const conta = normalizarContaDestino(contaDestino) || contaPadraoPorTipo(tipo);
+    if (conta) payload.contaDestino = conta;
+    enviarLancamento(payload);
     document.getElementById(idValor).value = '';
 }
 
@@ -446,8 +639,15 @@ function lancarGastoGenerico() {
     const val = parseFloat(document.getElementById('valor-outros').value);
     const desc = document.getElementById('desc-outros').value || 'Despesa';
     const data = document.getElementById('data-outros').value;
+    const contaDestino = contaSelecionada('conta-outros', CONTA_DESTINO.ANA);
     if(!val || val <= 0) return erro("Valor inválido");
-    enviarLancamento({ tipo: 'OUTROS', descricao: desc, valor: -Math.abs(val), dataLancamento: data });
+    enviarLancamento({
+        tipo: 'OUTROS',
+        descricao: desc,
+        valor: -Math.abs(val),
+        dataLancamento: data,
+        contaDestino
+    });
     document.getElementById('valor-outros').value = '';
     document.getElementById('desc-outros').value = '';
 }
@@ -475,7 +675,8 @@ function aplicarFiltrosHistorico(resetPagina = true) {
     historicoFiltrado = historicoOriginal.filter(i => {
         const descricao = (i.descricao || '').toLowerCase();
         const tipo = (i.tipo || '').toLowerCase();
-        const textoOk = !filtroTexto || descricao.includes(filtroTexto) || tipo.includes(filtroTexto);
+        const conta = nomeConta(determinarContaLancamento(i)).toLowerCase();
+        const textoOk = !filtroTexto || descricao.includes(filtroTexto) || tipo.includes(filtroTexto) || conta.includes(filtroTexto);
         const data = i.dataLancamento || '';
         const inicioOk = !dataInicio || data >= dataInicio;
         const fimOk = !dataFim || data <= dataFim;
@@ -502,23 +703,27 @@ function renderizarHistoricoPaginado() {
     } else {
         pagina.forEach(i => {
             const isPos = i.valor >= 0;
+            const contaDestino = determinarContaLancamento(i);
+            const contaBadge = `<span class="conta-badge ${classeConta(contaDestino)}">${nomeConta(contaDestino)}</span>`;
             const dataFmt = i.dataLancamento ? i.dataLancamento.split('-').reverse().join('/') : '--';
             const dataEditavel = isAdminLogado
                 ? `<td style="text-align:right;opacity:0.7;cursor:pointer;position:relative;" title="Clique para alterar a data" onclick="editarData(this, ${i.id}, '${i.dataLancamento || ''}')"><span style="border-bottom:1px dashed #555;">${dataFmt}</span></td>`
                 : `<td style="text-align:right;opacity:0.5">${dataFmt}</td>`;
+            const descricaoEscapada = escapeHtml(i.descricao || '');
+            const obsTexto = i.observacao ? String(i.observacao) : '';
+            const obsEscapada = escapeHtml(obsTexto);
             const btnDesfazer = isAdminLogado
-                ? `<td style="width:40px;text-align:center"><button onclick="desfazerLancamento(${i.id}, '${i.descricao.replace(/'/g, "\\'")}')" style="background:rgba(255,23,68,0.15); border:1px solid var(--red); color:var(--red); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:0.75rem;" title="Desfazer"><i class="fas fa-undo"></i></button></td>`
+                ? `<td style="width:40px;text-align:center"><button onclick="desfazerLancamento(${i.id}, '${(i.descricao || '').replace(/'/g, "\\'")}')" style="background:rgba(255,23,68,0.15); border:1px solid var(--red); color:var(--red); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:0.75rem;" title="Desfazer"><i class="fas fa-undo"></i></button></td>`
                 : '';
-            const obsTexto = i.observacao ? i.observacao : '';
             const obsHtml = obsTexto
-                ? `<div class="obs-display">${obsTexto}</div>`
+                ? `<div class="obs-display">${obsEscapada}</div>`
                 : '';
             const btnObs = isAdminLogado
-                ? `<span class="obs-btn ${obsTexto ? 'obs-btn-filled' : ''}" onclick="editarObservacao(${i.id}, '${(obsTexto).replace(/'/g, "\\'").replace(/\n/g, '\\n')}')" title="${obsTexto ? 'Editar observação' : 'Adicionar observação'}"><i class="fas ${obsTexto ? 'fa-comment-dots' : 'fa-plus-circle'}"></i></span>`
+                ? `<span class="obs-btn ${obsTexto ? 'obs-btn-filled' : ''}" onclick="editarObservacao(${i.id}, '${obsTexto.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')" title="${obsTexto ? 'Editar observação' : 'Adicionar observação'}"><i class="fas ${obsTexto ? 'fa-comment-dots' : 'fa-plus-circle'}"></i></span>`
                 : '';
             tb.innerHTML += `<tr>
                 <td style="width:40px;text-align:center"><i class="fas ${isPos ? 'fa-arrow-up txt-verde' : 'fa-arrow-down txt-vermelho'}"></i></td>
-                <td style="font-weight:600"><div class="desc-cell">${i.descricao}${btnObs}</div>${obsHtml}</td>
+                <td style="font-weight:600"><div class="desc-cell">${descricaoEscapada}${contaBadge}${btnObs}</div>${obsHtml}</td>
                 ${dataEditavel}
                 <td style="text-align:right;font-weight:800" class="${isPos ? 'txt-verde' : 'txt-vermelho'}">${fmtMoeda(i.valor)}</td>
                 ${btnDesfazer}
@@ -565,17 +770,26 @@ function renderizarGrafico(historico) {
 
 function abrirGraficoFullscreen() {
     const overlay = document.getElementById('chart-fullscreen-overlay');
+    if (!overlay) return;
+
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Render stats bar
     renderizarStatsBar(ultimoHistoricoGrafico);
 
     setTimeout(() => {
-        const ctx = document.getElementById('graficoFullscreen').getContext('2d');
-        const config = criarConfigGrafico(ultimoHistoricoGrafico, ctx, true);
-        if(chartFullscreenInstance) chartFullscreenInstance.destroy();
-        chartFullscreenInstance = new Chart(ctx, config);
+        try {
+            const canvas = document.getElementById('graficoFullscreen');
+            if (!canvas) throw new Error('Canvas fullscreen nao encontrado.');
+            const ctx = canvas.getContext('2d');
+            const config = criarConfigGrafico(ultimoHistoricoGrafico, ctx, true);
+            if(chartFullscreenInstance) chartFullscreenInstance.destroy();
+            chartFullscreenInstance = new Chart(ctx, config);
+        } catch (e) {
+            console.error(e);
+            fecharGraficoFullscreen();
+            erro('Nao foi possivel ampliar o grafico agora.');
+        }
     }, 80);
 }
 
@@ -583,11 +797,12 @@ function renderizarStatsBar(historico) {
     const statsBar = document.getElementById('chart-stats-bar');
     if (!statsBar) return;
 
-    const semErivania = historico.filter(i => i.tipo !== 'ERIVANIA');
-    const saldoAtual = semErivania.reduce((acc, i) => acc + i.valor, 0);
-    const entradas = semErivania.filter(i => i.valor > 0).reduce((acc, i) => acc + i.valor, 0);
-    const saidas = semErivania.filter(i => i.valor < 0).reduce((acc, i) => acc + i.valor, 0);
-    const totalLancamentos = semErivania.length;
+    const resumo = calcularResumoFinanceiro(historico);
+    const projecao = resumo.historicoProjecao;
+    const saldoAtual = projecao.length ? projecao[projecao.length - 1].saldoAcumulado : 0;
+    const entradas = projecao.filter(i => i.valor > 0).reduce((acc, i) => acc + i.valor, 0);
+    const saidas = projecao.filter(i => i.valor < 0).reduce((acc, i) => acc + i.valor, 0);
+    const totalLancamentos = projecao.length;
 
     const saldoClass = saldoAtual >= 0 ? 'positive' : 'negative';
 
@@ -613,23 +828,19 @@ function renderizarStatsBar(historico) {
 
 function fecharGraficoFullscreen() {
     const overlay = document.getElementById('chart-fullscreen-overlay');
-    overlay.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
     document.body.style.overflow = '';
-    if(chartFullscreenInstance) { chartFullscreenInstance.destroy(); chartFullscreenInstance = null; }
+    if(chartFullscreenInstance) {
+        chartFullscreenInstance.destroy();
+        chartFullscreenInstance = null;
+    }
 }
 
 function criarConfigGrafico(historico, ctx, isFullscreen) {
-    const semErivania = historico.filter(i => i.tipo !== 'ERIVANIA');
-    const ordenado = [...semErivania].sort((a,b) => {
-        if (a.dataLancamento !== b.dataLancamento) return a.dataLancamento > b.dataLancamento ? 1 : -1;
-        const horaA = a.horaLancamento || '';
-        const horaB = b.horaLancamento || '';
-        if (horaA !== horaB) return horaA > horaB ? 1 : -1;
-        return (a.id || 0) - (b.id || 0);
-    });
-    let soma = 0;
-    const labels = ordenado.map(i => i.dataLancamento.split('-').reverse().join('/'));
-    const dados = ordenado.map(i => { soma += i.valor; return soma; });
+    const resumo = calcularResumoFinanceiro(historico);
+    const projecao = resumo.historicoProjecao;
+    const labels = projecao.map(i => i.dataLancamento.split('-').reverse().join('/'));
+    const dados = projecao.map(i => i.saldoAcumulado);
 
     function corSegmento(segCtx, verde, vermelho) {
         const v1 = dados[segCtx.p1DataIndex];

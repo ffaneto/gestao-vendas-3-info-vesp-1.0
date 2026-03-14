@@ -224,6 +224,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .card-balances-row { display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap; }
 .balance-highlight-green { font-weight: 800; font-size: 1.4rem; color: var(--green); }
 .balance-highlight-purple { font-weight: 800; font-size: 1.4rem; }
+.balance-highlight-cyan { font-weight: 800; font-size: 1.4rem; color: #66c7ff; }
 .balance-highlight-yellow { font-weight: 800; font-size: 1.4rem; color: #ffc107; }
 .card-section-divider { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; }
 .row-between-center { display: flex; justify-content: space-between; width: 100%; align-items: center; }
@@ -255,12 +256,21 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .student-value { font-size: 0.95rem; font-weight: 700; }
 .student-value-green { color: var(--green); }
 .student-value-purple { color: var(--purple); }
+.student-value-cyan { color: #66c7ff; }
 .student-value-yellow { color: #ffc107; }
 .icon-gap { margin-right: 6px; }
 .icon-blue { color: var(--blue); }
 .icon-green { color: var(--green); }
 .icon-purple { color: var(--purple); }
+.icon-cyan { color: #66c7ff; }
 .icon-yellow { color: #ffc107; }
+
+.student-contas-legend {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
 
 /* Toolbar (Backup/Calendar) - z-index below SweetAlert toasts */
 .card-title-center { text-align: center; }
@@ -290,59 +300,111 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .btn-roxo-strong { border-color: var(--purple); color: var(--purple); }
 .small-red { color: var(--red); }
 .desc-outros-input { background: rgba(0,0,0,0.3); border: none; padding: 8px; color: #fff; border-radius: 6px; margin: 5px 0; }
-.card-top-gap { margin-top: 10px; }
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.page-info { font-size: 0.8rem; color: #888; }
-.danger-card {
-    border: 1px solid var(--red); background: rgba(255, 23, 68, 0.05); margin-top: 25px;
-    transition: border-color 0.3s ease, background 0.3s ease;
+
+.conta-segment {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
 }
-.danger-card:hover { background: rgba(255, 23, 68, 0.08); border-color: rgba(255, 23, 68, 0.5); }
-.danger-title { color: var(--red); margin-bottom: 10px; font-weight: 800; }
-.btn-full-danger { width: 100%; background: var(--red); color: white; }
-.btn-full-danger:hover { background: #ff2d58; box-shadow: 0 6px 30px rgba(255,23,68,0.3); }
-.hidden-input { display: none; }
+
+.conta-chip {
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.04);
+    color: #c7c7c7;
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0.2px;
+}
+
+.conta-chip:hover {
+    border-color: rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.08);
+}
+
+.conta-chip.active {
+    color: #fff;
+    border-color: rgba(94,162,255,0.55);
+    background: linear-gradient(180deg, rgba(41,121,255,0.28), rgba(41,121,255,0.14));
+    box-shadow: 0 0 16px rgba(41,121,255,0.18);
+}
+
+.conta-chip-static {
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.conta-chip-ana {
+    border-color: rgba(0,230,118,0.4);
+    color: #00e676;
+    background: rgba(0,230,118,0.1);
+}
+
+.conta-chip-izabelly {
+    border-color: rgba(213,0,249,0.35);
+    color: #d500f9;
+    background: rgba(213,0,249,0.1);
+}
+
+.conta-chip-pedro {
+    border-color: rgba(102,199,255,0.45);
+    color: #66c7ff;
+    background: rgba(102,199,255,0.14);
+}
+
+.conta-chip-erivania {
+    border-color: rgba(255,193,7,0.4);
+    color: #ffc107;
+    background: rgba(255,193,7,0.12);
+}
+
+.conta-segment-sm .conta-chip {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+}
 
 /* Observacoes */
-.desc-cell { display: flex; align-items: center; gap: 8px; }
-.obs-btn {
-    cursor: pointer; font-size: 0.75rem; color: #555;
-    transition: all 0.25s ease; flex-shrink: 0;
-}
-.obs-btn:hover { color: var(--blue); transform: scale(1.2); }
-.obs-btn-filled { color: var(--blue); }
-.obs-display {
-    font-size: 0.75rem; color: #999; margin-top: 4px; font-weight: 400; font-style: italic;
-    padding: 4px 8px; background: rgba(41, 121, 255, 0.06);
-    border-left: 2px solid var(--blue); border-radius: 0 6px 6px 0;
+.desc-cell { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.conta-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    border: 1px solid transparent;
+    opacity: 0.95;
 }
 
-/* Projecao card premium */
-.card-projecao { overflow: hidden; border: 1px solid rgba(0,230,118,0.12); }
-.card-projecao::before {
-    content: ""; position: absolute; top: -60%; left: -30%; width: 160%; height: 160%;
-    background: radial-gradient(circle, rgba(0,230,118,0.06) 0%, transparent 70%);
-    pointer-events: none;
-}
-.card-projecao::after {
-    content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,230,118,0.3), transparent);
-    pointer-events: none;
-}
-.projecao-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.projecao-header .label { margin: 0; font-size: 0.85rem; letter-spacing: 2px; }
-.btn-expand-chart {
-    background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2);
-    color: var(--green); width: 36px; height: 36px; border-radius: 10px; padding: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
-}
-.btn-expand-chart:hover {
-    color: #fff; background: rgba(0,230,118,0.18); border-color: rgba(0,230,118,0.5);
-    transform: scale(1.12); box-shadow: 0 0 20px rgba(0,230,118,0.15);
+.conta-ana {
+    color: #00e676;
+    border-color: rgba(0,230,118,0.35);
+    background: rgba(0,230,118,0.08);
 }
 
-.chart-container { height: 220px; }
+.conta-izabelly {
+    color: #d500f9;
+    border-color: rgba(213,0,249,0.35);
+    background: rgba(213,0,249,0.1);
+}
+
+.conta-pedro {
+    color: #66c7ff;
+    border-color: rgba(102,199,255,0.45);
+    background: rgba(102,199,255,0.14);
+}
+
+.conta-erivania {
+    color: #ffc107;
+    border-color: rgba(255,193,7,0.4);
+    background: rgba(255,193,7,0.12);
+}
 
 /* Fullscreen overlay */
 .chart-fullscreen-overlay {
@@ -488,8 +550,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     table { font-size: 0.78rem; }
     td { padding: 10px 6px; }
     .card-top-gap { margin-top: 8px; }
-    .obs-display { font-size: 0.68rem; }
-    .obs-btn { font-size: 0.7rem; }
+    .obs-display { font-size: 0.75rem; color: #cfe9ff; margin-top: 6px; font-weight: 500; font-style: normal; padding: 6px 10px; background: rgba(102, 199, 255, 0.16); border: 1px solid rgba(102, 199, 255, 0.45); border-radius: 8px; display: inline-block; max-width: 100%; }
 
     /* Danger zone */
     .danger-card { margin-top: 16px; }
@@ -558,3 +619,31 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .swal2-deny { border-radius: 10px !important; font-weight: 700 !important; }
 .swal2-timer-progress-bar { background: rgba(255,255,255,0.15) !important; }
 
+.projecao-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.projecao-header .label { margin: 0; font-size: 0.85rem; letter-spacing: 2px; }
+.btn-expand-chart {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    padding: 0;
+    border: 1px solid rgba(102, 199, 255, 0.35);
+    background: linear-gradient(180deg, rgba(102, 199, 255, 0.18), rgba(41, 121, 255, 0.08));
+    color: #8fd9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.14);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+    cursor: pointer;
+}
+.btn-expand-chart:hover {
+    color: #d7f3ff;
+    border-color: rgba(102, 199, 255, 0.6);
+    background: linear-gradient(180deg, rgba(102, 199, 255, 0.28), rgba(41, 121, 255, 0.16));
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(102, 199, 255, 0.2);
+}
+.btn-expand-chart:active {
+    transform: translateY(0) scale(0.97);
+}

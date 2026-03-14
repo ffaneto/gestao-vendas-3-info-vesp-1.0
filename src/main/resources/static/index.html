@@ -62,8 +62,12 @@
                     <div class="balance-highlight-green" id="saldo">R$ 0,00</div>
                 </div>
                 <div>
-                    <div class="label">Lucro Açaí <span class="label-subinfo">(Izabelly)</span></div>
-                    <div class="txt-roxo balance-highlight-purple" id="lucro-acai">R$ 0,00</div>
+                    <div class="label">Caixa Izabelly <span class="label-subinfo">(Pix + Espécie + Lucro Açaí)</span></div>
+                    <div class="txt-roxo balance-highlight-purple" id="saldo-izabelly">R$ 0,00</div>
+                </div>
+                <div>
+                    <div class="label">Caixa Pedro <span class="label-subinfo">(Carnês)</span></div>
+                    <div class="balance-highlight-cyan" id="saldo-pedro">R$ 0,00</div>
                 </div>
                 <div>
                     <div class="label">Caixa Madrinha <span class="label-subinfo">(Erivânia)</span></div>
@@ -74,13 +78,19 @@
             <div class="card-section-divider">
                 <div class="input-group">
                     <div class="row-between-center">
-                        <span class="label label-light">Aporte (Ana Thays)</span>
+                        <span class="label label-light">Aporte</span>
                         <input type="date" id="data-aporte">
+                    </div>
+                    <div class="conta-segment" data-target-input="conta-aporte" role="group" aria-label="Conta de destino do aporte">
+                        <button type="button" class="conta-chip active" data-value="ANA">Ana</button>
+                        <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
+                        <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
                     </div>
                     <div class="input-row">
                         <input type="number" id="valor-aporte" placeholder="R$ Valor">
                         <button class="btn-verde btn-compact" id="btn-aporte"><i class="fas fa-plus"></i></button>
                     </div>
+                    <input type="hidden" id="conta-aporte" value="ANA">
                 </div>
                 <div class="input-group input-group-erivania">
                     <div class="row-between-center">
@@ -105,12 +115,22 @@
                     <span class="student-value student-value-green" id="est-saldo-ana">R$ 0,00</span>
                 </div>
                 <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-ice-cream icon-purple icon-gap"></i>Lucro Açaí (Izabelly)</span>
-                    <span class="student-value student-value-purple" id="est-lucro-acai">R$ 0,00</span>
+                    <span class="student-label"><i class="fas fa-user icon-purple icon-gap"></i>Caixa Izabelly (inclui lucro açaí)</span>
+                    <span class="student-value student-value-purple" id="est-saldo-izabelly">R$ 0,00</span>
+                </div>
+                <div class="student-row student-row-border">
+                    <span class="student-label"><i class="fas fa-file-invoice-dollar icon-cyan icon-gap"></i>Caixa Pedro (Carnês)</span>
+                    <span class="student-value student-value-cyan" id="est-saldo-pedro">R$ 0,00</span>
                 </div>
                 <div class="student-row">
                     <span class="student-label"><i class="fas fa-hand-holding-heart icon-yellow icon-gap"></i>Madrinha (Erivânia)</span>
                     <span class="student-value student-value-yellow" id="est-saldo-erivania">R$ 0,00</span>
+                </div>
+                <div class="student-contas-legend">
+                    <span class="conta-chip conta-chip-static conta-chip-ana">Ana</span>
+                    <span class="conta-chip conta-chip-static conta-chip-izabelly">Izabelly</span>
+                    <span class="conta-chip conta-chip-static conta-chip-pedro">Pedro</span>
+                    <span class="conta-chip conta-chip-static conta-chip-erivania">Erivânia</span>
                 </div>
             </div>
         </div>
@@ -232,10 +252,17 @@
                     <input type="date" id="data-outros" class="date-input-compact">
                 </div>
                 <input type="text" id="desc-outros" placeholder="Descrição do gasto" class="desc-outros-input">
+                <div class="conta-segment conta-segment-sm" data-target-input="conta-outros" role="group" aria-label="Conta afetada pela despesa">
+                    <button type="button" class="conta-chip active" data-value="ANA">Ana</button>
+                    <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
+                    <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
+                    <button type="button" class="conta-chip" data-value="ERIVANIA">Erivânia</button>
+                </div>
                 <div class="input-row">
                     <input type="number" id="valor-outros" placeholder="R$ Valor Gasto">
                     <button class="btn-vermelho" id="btn-lancar-gasto">Lançar Gasto</button>
                 </div>
+                <input type="hidden" id="conta-outros" value="ANA">
             </div>
         </div>
     </div>
@@ -268,10 +295,12 @@
         </button>
     </div>
 
-    <input id="arquivo-backup" class="hidden-input" type="file" accept=".json,application/json">
 
 </div>
 
 <script src="app.js"></script>
 </body>
 </html>
+
+
+

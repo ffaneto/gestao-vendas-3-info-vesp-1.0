@@ -17,6 +17,7 @@ public class Lancamento {
     private LocalDate dataLancamento;
     private LocalTime horaLancamento;
     private String observacao;
+    private String contaDestino;
 
     public Lancamento() {} 
     
@@ -82,5 +83,13 @@ public class Lancamento {
 
     public void setObservacao(String observacao) {
     	this.observacao = observacao;
+    }
+
+    public String getContaDestino() {
+        return contaDestino;
+    }
+
+    public void setContaDestino(String contaDestino) {
+        this.contaDestino = contaDestino == null ? null : contaDestino.trim().toUpperCase();
     }
 }

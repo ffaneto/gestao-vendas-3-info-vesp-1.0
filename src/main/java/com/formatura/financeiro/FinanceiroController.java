@@ -23,6 +23,10 @@ import java.util.Map;
 public class FinanceiroController {
 
     private static final String ADMIN_SESSION_KEY = "ADMIN_AUTH";
+    private static final String CONTA_ANA = "ANA";
+    private static final String CONTA_IZABELLY = "IZABELLY";
+    private static final String CONTA_PEDRO = "PEDRO";
+    private static final String CONTA_ERIVANIA = "ERIVANIA";
 
     @Autowired
     private LancamentoRepository repository;
@@ -49,9 +53,25 @@ public class FinanceiroController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Acesso negado."));
         }
 
-        String descricao = (String) payload.get("descricao");
-        String tipo = (String) payload.get("tipo");
-        BigDecimal valor = new BigDecimal(payload.get("valor").toString());
+        String descricao = payload.get("descricao") == null ? "" : payload.get("descricao").toString().trim();
+        String tipo = payload.get("tipo") == null ? "" : payload.get("tipo").toString().trim().toUpperCase();
+
+        if (descricao.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Descricao obrigatoria."));
+        }
+        if (tipo.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Tipo obrigatorio."));
+        }
+        if (payload.get("valor") == null) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Valor obrigatorio."));
+        }
+
+        BigDecimal valor;
+        try {
+            valor = new BigDecimal(payload.get("valor").toString());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Valor invalido."));
+        }
 
         LocalDate dataFinal = LocalDate.now();
         if (payload.get("dataLancamento") != null && !payload.get("dataLancamento").toString().isEmpty()) {
@@ -60,10 +80,19 @@ public class FinanceiroController {
             dataFinal = LocalDate.parse(payload.get("data").toString());
         }
 
+        String contaInformada = payload.get("contaDestino") == null ? null : payload.get("contaDestino").toString();
+        String contaDestino;
+        try {
+            contaDestino = resolverContaDestino(tipo, descricao, contaInformada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        }
+
         Lancamento novo = new Lancamento();
         novo.setDescricao(descricao);
         novo.setValor(valor);
         novo.setTipo(tipo);
+        novo.setContaDestino(contaDestino);
         novo.setDataLancamento(dataFinal);
         novo.setHoraLancamento(LocalTime.now());
 
@@ -206,9 +235,20 @@ public class FinanceiroController {
                 continue;
             }
 
+            String tipoNormalizado = item.getTipo().trim().toUpperCase();
+            String descricaoNormalizada = item.getDescricao().trim();
+            String contaDestino;
+            try {
+                contaDestino = resolverContaDestino(tipoNormalizado, descricaoNormalizada, item.getContaDestino());
+            } catch (IllegalArgumentException e) {
+                erros.add(prefixo + e.getMessage());
+                continue;
+            }
+
             Lancamento novo = new Lancamento();
-            novo.setDescricao(item.getDescricao().trim());
-            novo.setTipo(item.getTipo().trim());
+            novo.setDescricao(descricaoNormalizada);
+            novo.setTipo(tipoNormalizado);
+            novo.setContaDestino(contaDestino);
             novo.setValor(item.getValor());
             novo.setDataLancamento(item.getDataLancamento() != null ? item.getDataLancamento() : LocalDate.now());
             novo.setHoraLancamento(item.getHoraLancamento() != null ? item.getHoraLancamento() : LocalTime.now());
@@ -249,5 +289,67 @@ public class FinanceiroController {
         }
 
         return adminPassword != null && !adminPassword.isBlank() && adminPassword.equals(pass);
+    }
+
+    private String resolverContaDestino(String tipo, String descricao, String contaInformada) {
+        String tipoNormalizado = tipo == null ? "" : tipo.trim().toUpperCase();
+        String contaNormalizada = contaInformada == null ? "" : contaInformada.trim().toUpperCase();
+
+        if ("BOLSINHA".equals(contaNormalizada)) {
+            contaNormalizada = CONTA_ANA;
+        }
+
+        String contaForcadaPorTipo = contaPadraoPorTipo(tipoNormalizado);
+        if (contaForcadaPorTipo != null) {
+            if (!contaNormalizada.isBlank() && !contaForcadaPorTipo.equals(contaNormalizada)) {
+                throw new IllegalArgumentException("contaDestino inconsistente com o tipo " + tipoNormalizado + ".");
+            }
+            return contaForcadaPorTipo;
+        }
+
+        if (isContaValida(contaNormalizada)) {
+            return contaNormalizada;
+        }
+
+        String descricaoNormalizada = normalizarTexto(descricao);
+        if (descricaoNormalizada.contains("erivania")) return CONTA_ERIVANIA;
+        if (descricaoNormalizada.contains("izabelly") || descricaoNormalizada.contains("acai") || descricaoNormalizada.contains("complemento")) {
+            return CONTA_IZABELLY;
+        }
+        if (descricaoNormalizada.contains("carne") || descricaoNormalizada.contains("carnes")) {
+            return CONTA_PEDRO;
+        }
+        if (descricaoNormalizada.contains("bolsinha") || descricaoNormalizada.contains("especie")
+                || descricaoNormalizada.contains("moeda") || descricaoNormalizada.contains("nota")) {
+            return CONTA_ANA;
+        }
+
+        return CONTA_ANA;
+    }
+
+    private String contaPadraoPorTipo(String tipoNormalizado) {
+        if ("ERIVANIA".equals(tipoNormalizado)) return CONTA_ERIVANIA;
+        if ("ACAI".equals(tipoNormalizado)) return CONTA_IZABELLY;
+        if (tipoNormalizado.startsWith("CARNE")) return CONTA_PEDRO;
+        if ("TRUFA".equals(tipoNormalizado) || "BOLO".equals(tipoNormalizado)
+                || "TRUFA_COMPRA".equals(tipoNormalizado) || "BOLO_COMPRA".equals(tipoNormalizado)) {
+            return CONTA_ANA;
+        }
+        return null;
+    }
+
+    private boolean isContaValida(String conta) {
+        return CONTA_ANA.equals(conta)
+                || CONTA_IZABELLY.equals(conta)
+                || CONTA_PEDRO.equals(conta)
+                || CONTA_ERIVANIA.equals(conta)
+                || "BOLSINHA".equals(conta);
+    }
+
+    private String normalizarTexto(String texto) {
+        if (texto == null) return "";
+        return java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .toLowerCase();
     }
 }
