@@ -274,7 +274,14 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
 /* Toolbar (Backup/Calendar) - z-index below SweetAlert toasts */
 .card-title-center { text-align: center; }
-.toolbar-floating { position: fixed; top: 12px; right: 12px; z-index: 900; display: flex; gap: 8px; align-items: center; }
+.toolbar-floating { position: fixed; top: 12px; right: 12px; z-index: 900; display: none; gap: 8px; align-items: center; }
+
+/* Exibe a toolbar somente quando o JS marcar o body como modo admin. */
+body.admin-mode #data-global-wrapper { display: flex !important; }
+
+/* Mantem fallback para elementos admin-only. */
+.admin-only.toolbar-floating { display: none; }
+
 .toolbar-icon-btn {
     background: rgba(20,20,20,0.9); backdrop-filter: blur(10px); border: 1px solid var(--border);
     width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center;
@@ -646,4 +653,9 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 }
 .btn-expand-chart:active {
     transform: translateY(0) scale(0.97);
+}
+
+/* Input de arquivo usado no import JSON  */
+.hidden-input {
+    display: none !important;
 }
