@@ -70,45 +70,8 @@ O sistema foi desenhado seguindo o padrão arquitetural em camadas do Spring Boo
 
 ### Diagrama de Classe (Domínio)
 
-classDiagram
-    class Lancamento {
-        -Long id
-        -String descricao
-        -String tipo
-        -BigDecimal valor
-        -LocalDate dataLancamento
-        -LocalTime horaLancamento
-        -String contaDestino
-        -String observacao
-    }
+<img width="6255" height="1926" alt="Untitled diagram-2026-03-17-033833" src="https://github.com/user-attachments/assets/657d7eec-a9ff-465f-9f57-b60e9b7eb870" />
 
-    class LancamentoRepository {
-        <<interface>>
-        +findAll() List
-        +findById(id) Optional
-        +save(Lancamento) Lancamento
-        +saveAll(List) List
-        +deleteById(id) void
-        +deleteAll() void
-    }
-
-    class FinanceiroController {
-        -LancamentoRepository repository
-        -BCryptPasswordEncoder passwordEncoder
-        +listarTodasVendas() List
-        +salvar(payload) ResponseEntity
-        +login(credenciais) ResponseEntity
-        +sessao() ResponseEntity
-        +logout() ResponseEntity
-        +apagarTudo() ResponseEntity
-        +apagarPorId(id) ResponseEntity
-        +baixarBackupJson() ResponseEntity
-        +restaurarBackup(lista) ResponseEntity
-    }
-
-    FinanceiroController --> LancamentoRepository : @Autowired
-    LancamentoRepository ..> Lancamento : Persiste
-    FinanceiroController ..> Lancamento : Manipula
 ## Estrutura do Projeto
 
 ```text
