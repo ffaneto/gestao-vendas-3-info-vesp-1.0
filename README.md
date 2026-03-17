@@ -152,4 +152,4 @@ A autenticação da comissão é validada no backend por sessão HTTP. Dessa for
 
 - 3º ano - Informática Integrado ao Ensino Médio
 - IFPB Campus Itaporanga
-- Projeto atualmente utilizado como tema de TCC.
+- Projeto atualmente utilizado como tema de TCC
