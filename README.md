@@ -21,6 +21,9 @@ A plataforma permite registrar entradas e saídas, acompanhar o histórico compl
 
 O sistema foi concebido inicialmente em 26/02/2026 e evoluiu para uma versão em produção. Atualmente, o projeto está em uso como tema de Trabalho de Conclusão de Curso (TCC) no IFPB, no Curso Técnico em Informática.
 
+
+https://github.com/user-attachments/assets/8e627be9-f217-43a9-95a0-1481d30252f7
+
 ## Ambiente em Produção
 
 - **Hospedagem:** DigitalOcean
