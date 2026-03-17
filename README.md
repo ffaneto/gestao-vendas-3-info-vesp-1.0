@@ -68,7 +68,7 @@ https://github.com/user-attachments/assets/138125f8-b6b7-40b6-9410-a80b49664d06
 
 O sistema foi desenhado seguindo o padrão arquitetural em camadas do Spring Boot, garantindo a separação de responsabilidades entre o controle das requisições REST (Controller), a regra de acesso a dados (Repository) e o modelo de domínio (Entity).
 
-### Diagrama de Classe (Domínio)
+### Diagrama de Classe 
 
 <img width="6255" height="1926" alt="Untitled diagram-2026-03-17-033833" src="https://github.com/user-attachments/assets/657d7eec-a9ff-465f-9f57-b60e9b7eb870" />
 
