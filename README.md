@@ -70,7 +70,6 @@ O sistema foi desenhado seguindo o padrão arquitetural em camadas do Spring Boo
 
 ### Diagrama de Classe (Domínio)
 
-```mermaid
 classDiagram
     class Lancamento {
         -Long id
@@ -81,42 +80,35 @@ classDiagram
         -LocalTime horaLancamento
         -String contaDestino
         -String observacao
-        +getters()
-        +setters()
     }
 
     class LancamentoRepository {
         <<interface>>
-        +findAll() List~Lancamento~
-        +findById(Long) Optional~Lancamento~
+        +findAll() List
+        +findById(id) Optional
         +save(Lancamento) Lancamento
-        +saveAll(List~Lancamento~) List~Lancamento~
-        +deleteById(Long) void
+        +saveAll(List) List
+        +deleteById(id) void
         +deleteAll() void
-        +deleteAllInBatch() void
-        +existsById(Long) boolean
     }
 
     class FinanceiroController {
         -LancamentoRepository repository
         -BCryptPasswordEncoder passwordEncoder
-        +listarTodasVendas() List~Lancamento~
-        +salvar(Map, HttpServletRequest) ResponseEntity
-        +login(Map, HttpServletRequest) ResponseEntity
-        +sessao(HttpServletRequest) ResponseEntity
-        +logout(HttpServletRequest) ResponseEntity
-        +apagarTudo(HttpServletRequest) ResponseEntity
-        +apagarPorId(Long, HttpServletRequest) ResponseEntity
-        +atualizarData(Long, Map, HttpServletRequest) ResponseEntity
-        +atualizarObservacao(Long, Map, HttpServletRequest) ResponseEntity
-        +baixarBackupJson(HttpServletRequest) ResponseEntity
-        +restaurarBackup(List, boolean, HttpServletRequest) ResponseEntity
+        +listarTodasVendas() List
+        +salvar(payload) ResponseEntity
+        +login(credenciais) ResponseEntity
+        +sessao() ResponseEntity
+        +logout() ResponseEntity
+        +apagarTudo() ResponseEntity
+        +apagarPorId(id) ResponseEntity
+        +baixarBackupJson() ResponseEntity
+        +restaurarBackup(lista) ResponseEntity
     }
 
-    FinanceiroController --> LancamentoRepository : Injeta dependência
-    LancamentoRepository ..> Lancamento : Persiste no BD
+    FinanceiroController --> LancamentoRepository : @Autowired
+    LancamentoRepository ..> Lancamento : Persiste
     FinanceiroController ..> Lancamento : Manipula
-
 ## Estrutura do Projeto
 
 ```text
