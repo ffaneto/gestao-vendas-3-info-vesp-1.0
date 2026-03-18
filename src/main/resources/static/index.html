@@ -61,8 +61,16 @@
                     <div class="balance-highlight-green" id="saldo">R$ 0,00</div>
                 </div>
                 <div>
-                    <div class="label">Caixa Izabelly <span class="label-subinfo">(Pix + Espécie + Lucro Açaí)</span></div>
+                    <div class="label">Bolsinha Ana <span class="label-subinfo">(Notas e moedas)</span></div>
+                    <div class="balance-highlight-orange" id="saldo-bolsinha">R$ 0,00</div>
+                </div>
+                <div>
+                    <div class="label">Caixa Izabelly <span class="label-subinfo">(Pix + Lucro Açaí)</span></div>
                     <div class="txt-roxo balance-highlight-purple" id="saldo-izabelly">R$ 0,00</div>
+                </div>
+                <div>
+                    <div class="label">Bolsinha Izabelly <span class="label-subinfo">(Espécie do açaí)</span></div>
+                    <div class="balance-highlight-pink" id="saldo-bolsinha-izabelly">R$ 0,00</div>
                 </div>
                 <div>
                     <div class="label">Caixa Pedro <span class="label-subinfo">(Carnês)</span></div>
@@ -82,7 +90,9 @@
                     </div>
                     <div class="conta-segment" data-target-input="conta-aporte" role="group" aria-label="Conta de destino do aporte">
                         <button type="button" class="conta-chip active" data-value="ANA">Ana</button>
+                        <button type="button" class="conta-chip" data-value="BOLSINHA">Bolsinha Ana</button>
                         <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
+                        <button type="button" class="conta-chip" data-value="BOLSINHA_IZABELLY">Bolsinha Izabelly</button>
                         <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
                     </div>
                     <div class="input-row">
@@ -114,8 +124,16 @@
                     <span class="student-value student-value-green" id="est-saldo-ana">R$ 0,00</span>
                 </div>
                 <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-user icon-purple icon-gap"></i>Caixa Izabelly (inclui lucro açaí)</span>
+                    <span class="student-label"><i class="fas fa-coins icon-orange icon-gap"></i>Bolsinha Ana</span>
+                    <span class="student-value student-value-orange" id="est-saldo-bolsinha">R$ 0,00</span>
+                </div>
+                <div class="student-row student-row-border">
+                    <span class="student-label"><i class="fas fa-user icon-purple icon-gap"></i>Caixa Izabelly (Pix + lucro açaí)</span>
                     <span class="student-value student-value-purple" id="est-saldo-izabelly">R$ 0,00</span>
+                </div>
+                <div class="student-row student-row-border">
+                    <span class="student-label"><i class="fas fa-piggy-bank icon-pink icon-gap"></i>Bolsinha Izabelly</span>
+                    <span class="student-value student-value-pink" id="est-saldo-bolsinha-izabelly">R$ 0,00</span>
                 </div>
                 <div class="student-row student-row-border">
                     <span class="student-label"><i class="fas fa-file-invoice-dollar icon-cyan icon-gap"></i>Caixa Pedro (Carnês)</span>
@@ -127,14 +145,16 @@
                 </div>
                 <div class="student-contas-legend">
                     <span class="conta-chip conta-chip-static conta-chip-ana">Ana</span>
+                    <span class="conta-chip conta-chip-static conta-chip-bolsinha">Bolsinha Ana</span>
                     <span class="conta-chip conta-chip-static conta-chip-izabelly">Izabelly</span>
+                    <span class="conta-chip conta-chip-static conta-chip-bolsinha-izabelly">Bolsinha Izabelly</span>
                     <span class="conta-chip conta-chip-static conta-chip-pedro">Pedro</span>
                     <span class="conta-chip conta-chip-static conta-chip-erivania">Erivânia</span>
                 </div>
             </div>
         </div>
 
-        <div class="card card-align-start card-projecao">
+        <div class="card card-projecao">
             <div class="projecao-header">
                 <div class="label card-title-center">Projeção</div>
                 <button id="btn-expand-chart" class="btn-expand-chart" title="Ampliar gráfico">
@@ -253,7 +273,9 @@
                 <input type="text" id="desc-outros" placeholder="Descrição do gasto" class="desc-outros-input">
                 <div class="conta-segment conta-segment-sm" data-target-input="conta-outros" role="group" aria-label="Conta afetada pela despesa">
                     <button type="button" class="conta-chip active" data-value="ANA">Ana</button>
+                    <button type="button" class="conta-chip" data-value="BOLSINHA">Bolsinha Ana</button>
                     <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
+                    <button type="button" class="conta-chip" data-value="BOLSINHA_IZABELLY">Bolsinha Izabelly</button>
                     <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
                     <button type="button" class="conta-chip" data-value="ERIVANIA">Erivânia</button>
                 </div>

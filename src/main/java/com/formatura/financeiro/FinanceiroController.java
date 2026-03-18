@@ -24,7 +24,9 @@ public class FinanceiroController {
 
     private static final String ADMIN_SESSION_KEY = "ADMIN_AUTH";
     private static final String CONTA_ANA = "ANA";
+    private static final String CONTA_BOLSINHA = "BOLSINHA";
     private static final String CONTA_IZABELLY = "IZABELLY";
+    private static final String CONTA_BOLSINHA_IZABELLY = "BOLSINHA_IZABELLY";
     private static final String CONTA_PEDRO = "PEDRO";
     private static final String CONTA_ERIVANIA = "ERIVANIA";
 
@@ -295,10 +297,6 @@ public class FinanceiroController {
         String tipoNormalizado = tipo == null ? "" : tipo.trim().toUpperCase();
         String contaNormalizada = contaInformada == null ? "" : contaInformada.trim().toUpperCase();
 
-        if ("BOLSINHA".equals(contaNormalizada)) {
-            contaNormalizada = CONTA_ANA;
-        }
-
         String contaForcadaPorTipo = contaPadraoPorTipo(tipoNormalizado);
         if (contaForcadaPorTipo != null) {
             if (!contaNormalizada.isBlank() && !contaForcadaPorTipo.equals(contaNormalizada)) {
@@ -313,6 +311,7 @@ public class FinanceiroController {
 
         String descricaoNormalizada = normalizarTexto(descricao);
         if (descricaoNormalizada.contains("erivania")) return CONTA_ERIVANIA;
+        if (descricaoNormalizada.contains("bolsinha izabelly")) return CONTA_BOLSINHA_IZABELLY;
         if (descricaoNormalizada.contains("izabelly") || descricaoNormalizada.contains("acai") || descricaoNormalizada.contains("complemento")) {
             return CONTA_IZABELLY;
         }
@@ -321,7 +320,7 @@ public class FinanceiroController {
         }
         if (descricaoNormalizada.contains("bolsinha") || descricaoNormalizada.contains("especie")
                 || descricaoNormalizada.contains("moeda") || descricaoNormalizada.contains("nota")) {
-            return CONTA_ANA;
+            return CONTA_BOLSINHA;
         }
 
         return CONTA_ANA;
@@ -340,10 +339,11 @@ public class FinanceiroController {
 
     private boolean isContaValida(String conta) {
         return CONTA_ANA.equals(conta)
+                || CONTA_BOLSINHA.equals(conta)
                 || CONTA_IZABELLY.equals(conta)
+                || CONTA_BOLSINHA_IZABELLY.equals(conta)
                 || CONTA_PEDRO.equals(conta)
-                || CONTA_ERIVANIA.equals(conta)
-                || "BOLSINHA".equals(conta);
+                || CONTA_ERIVANIA.equals(conta);
     }
 
     private String normalizarTexto(String texto) {

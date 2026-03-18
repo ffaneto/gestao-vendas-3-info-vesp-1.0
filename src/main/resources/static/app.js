@@ -14,14 +14,15 @@ let isAdminLogado = false;
 
 const CONTA_DESTINO = Object.freeze({
     ANA: 'ANA',
+    BOLSINHA: 'BOLSINHA',
     IZABELLY: 'IZABELLY',
+    BOLSINHA_IZABELLY: 'BOLSINHA_IZABELLY',
     PEDRO: 'PEDRO',
     ERIVANIA: 'ERIVANIA'
 });
 
 function normalizarContaDestino(conta) {
     const valor = String(conta || '').trim().toUpperCase();
-    if (valor === 'BOLSINHA') return CONTA_DESTINO.ANA;
     return Object.values(CONTA_DESTINO).includes(valor) ? valor : null;
 }
 
@@ -53,37 +54,32 @@ function determinarContaLancamento(lancamento) {
 
     const descricao = normalizarTexto(lancamento?.descricao);
 
-    // Regras para tipos ambiguos (OUTROS/SALDO_INICIAL): tenta inferir pelo texto.
     if (descricao.includes('erivania')) return CONTA_DESTINO.ERIVANIA;
-    if (
-        descricao.includes('izabelly') ||
-        descricao.includes('acai') ||
-        descricao.includes('complemento')
-    ) {
+    if (descricao.includes('carnes') || descricao.includes('carne')) return CONTA_DESTINO.PEDRO;
+    if (descricao.includes('bolsinha izabelly')) return CONTA_DESTINO.BOLSINHA_IZABELLY;
+    if (descricao.includes('bolsinha')) return CONTA_DESTINO.BOLSINHA;
+    if (descricao.includes('izabelly') || descricao.includes('acai') || descricao.includes('complemento')) {
         return CONTA_DESTINO.IZABELLY;
     }
-    if (descricao.includes('carne') || descricao.includes('carnes')) {
-        return CONTA_DESTINO.PEDRO;
-    }
-    if (descricao.includes('bolsinha') || descricao.includes('especie') || descricao.includes('moeda') || descricao.includes('nota')) {
-        return CONTA_DESTINO.ANA;
-    }
 
-    // Fallback seguro para manter compatibilidade com dados antigos.
     return CONTA_DESTINO.ANA;
 }
 
 function nomeConta(contaDestino) {
     if (contaDestino === CONTA_DESTINO.ERIVANIA) return 'Erivânia';
-    if (contaDestino === CONTA_DESTINO.IZABELLY) return 'Izabelly';
     if (contaDestino === CONTA_DESTINO.PEDRO) return 'Pedro';
+    if (contaDestino === CONTA_DESTINO.BOLSINHA_IZABELLY) return 'Bolsinha Izabelly';
+    if (contaDestino === CONTA_DESTINO.IZABELLY) return 'Izabelly';
+    if (contaDestino === CONTA_DESTINO.BOLSINHA) return 'Bolsinha Ana';
     return 'Ana';
 }
 
 function classeConta(contaDestino) {
     if (contaDestino === CONTA_DESTINO.ERIVANIA) return 'conta-erivania';
-    if (contaDestino === CONTA_DESTINO.IZABELLY) return 'conta-izabelly';
     if (contaDestino === CONTA_DESTINO.PEDRO) return 'conta-pedro';
+    if (contaDestino === CONTA_DESTINO.BOLSINHA_IZABELLY) return 'conta-bolsinha-izabelly';
+    if (contaDestino === CONTA_DESTINO.IZABELLY) return 'conta-izabelly';
+    if (contaDestino === CONTA_DESTINO.BOLSINHA) return 'conta-bolsinha';
     return 'conta-ana';
 }
 
@@ -98,7 +94,9 @@ function ordenarLancamentosAsc(a, b) {
 function calcularResumoFinanceiro(lancamentos) {
     const resumo = {
         saldoAna: 0,
+        saldoBolsinha: 0,
         saldoIzabelly: 0,
+        saldoBolsinhaIzabelly: 0,
         saldoPedro: 0,
         saldoErivania: 0,
         lucroAcai: 0,
@@ -114,7 +112,9 @@ function calcularResumoFinanceiro(lancamentos) {
         const conta = determinarContaLancamento(item);
 
         if (conta === CONTA_DESTINO.ANA) resumo.saldoAna += valor;
+        else if (conta === CONTA_DESTINO.BOLSINHA) resumo.saldoBolsinha += valor;
         else if (conta === CONTA_DESTINO.IZABELLY) resumo.saldoIzabelly += valor;
+        else if (conta === CONTA_DESTINO.BOLSINHA_IZABELLY) resumo.saldoBolsinhaIzabelly += valor;
         else if (conta === CONTA_DESTINO.PEDRO) resumo.saldoPedro += valor;
         else if (conta === CONTA_DESTINO.ERIVANIA) resumo.saldoErivania += valor;
 
@@ -122,7 +122,6 @@ function calcularResumoFinanceiro(lancamentos) {
             resumo.lucroAcai += valor;
         }
 
-        // Projecao operacional: sem conta da Erivania.
         if (conta !== CONTA_DESTINO.ERIVANIA) {
             acumuladoProjecao += valor;
             resumo.historicoProjecao.push({
@@ -133,7 +132,14 @@ function calcularResumoFinanceiro(lancamentos) {
         }
     });
 
-    resumo.caixaTotal = resumo.saldoAna + resumo.saldoIzabelly + resumo.saldoPedro + resumo.saldoErivania;
+    resumo.caixaTotal =
+        resumo.saldoAna +
+        resumo.saldoBolsinha +
+        resumo.saldoIzabelly +
+        resumo.saldoBolsinhaIzabelly +
+        resumo.saldoPedro +
+        resumo.saldoErivania;
+
     return resumo;
 }
 
@@ -355,18 +361,22 @@ async function carregarDados() {
         // Compatibilidade: preenche tanto IDs antigos quanto novos, se existirem.
         setTextIfExists('admin-caixa-total', fmtMoeda(resumo.caixaTotal));
         setTextIfExists('saldo', fmtMoeda(resumo.saldoAna));
+        setTextIfExists('saldo-bolsinha', fmtMoeda(resumo.saldoBolsinha));
         setTextIfExists('lucro-acai', fmtMoeda(resumo.lucroAcai));
         setTextIfExists('saldo-erivania', fmtMoeda(resumo.saldoErivania));
 
         setTextIfExists('saldo-izabelly', fmtMoeda(resumo.saldoIzabelly));
+        setTextIfExists('saldo-bolsinha-izabelly', fmtMoeda(resumo.saldoBolsinhaIzabelly));
         setTextIfExists('saldo-pedro', fmtMoeda(resumo.saldoPedro));
 
         setTextIfExists('saldo-total', fmtMoeda(resumo.caixaTotal));
         setTextIfExists('est-saldo-ana', fmtMoeda(resumo.saldoAna));
+        setTextIfExists('est-saldo-bolsinha', fmtMoeda(resumo.saldoBolsinha));
         setTextIfExists('est-lucro-acai', fmtMoeda(resumo.lucroAcai));
         setTextIfExists('est-saldo-erivania', fmtMoeda(resumo.saldoErivania));
 
         setTextIfExists('est-saldo-izabelly', fmtMoeda(resumo.saldoIzabelly));
+        setTextIfExists('est-saldo-bolsinha-izabelly', fmtMoeda(resumo.saldoBolsinhaIzabelly));
         setTextIfExists('est-saldo-pedro', fmtMoeda(resumo.saldoPedro));
 
         renderizarHistorico(data);
@@ -842,24 +852,29 @@ function criarConfigGrafico(historico, ctx, isFullscreen) {
     const labels = projecao.map(i => i.dataLancamento.split('-').reverse().join('/'));
     const dados = projecao.map(i => i.saldoAcumulado);
 
+    function criarGradienteArea(chart, positivo) {
+        const area = chart?.chartArea;
+        if (!area) {
+            return positivo ? 'rgba(0, 230, 118, 0.22)' : 'rgba(255, 23, 68, 0.22)';
+        }
+
+        const grad = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+        if (positivo) {
+            grad.addColorStop(0, 'rgba(0, 230, 118, 0.34)');
+            grad.addColorStop(0.55, 'rgba(0, 230, 118, 0.18)');
+            grad.addColorStop(1, 'rgba(0, 230, 118, 0.10)');
+        } else {
+            grad.addColorStop(0, 'rgba(255, 23, 68, 0.10)');
+            grad.addColorStop(0.45, 'rgba(255, 23, 68, 0.18)');
+            grad.addColorStop(1, 'rgba(255, 23, 68, 0.34)');
+        }
+        return grad;
+    }
+
     function corSegmento(segCtx, verde, vermelho) {
         const v1 = dados[segCtx.p1DataIndex];
         return v1 >= 0 ? verde : vermelho;
     }
-
-    const chartHeight = isFullscreen ? 600 : 220;
-
-    const gradVerde = ctx.createLinearGradient(0, 0, 0, chartHeight);
-    gradVerde.addColorStop(0, 'rgba(0, 230, 118, 0.30)');
-    gradVerde.addColorStop(0.4, 'rgba(0, 230, 118, 0.10)');
-    gradVerde.addColorStop(0.8, 'rgba(0, 230, 118, 0.02)');
-    gradVerde.addColorStop(1, 'rgba(0, 230, 118, 0.0)');
-
-    const gradVermelho = ctx.createLinearGradient(0, 0, 0, chartHeight);
-    gradVermelho.addColorStop(0, 'rgba(255, 23, 68, 0.0)');
-    gradVermelho.addColorStop(0.2, 'rgba(255, 23, 68, 0.02)');
-    gradVermelho.addColorStop(0.6, 'rgba(255, 23, 68, 0.10)');
-    gradVermelho.addColorStop(1, 'rgba(255, 23, 68, 0.28)');
 
     const pointSize = isFullscreen ? 5 : 3;
     const lineWidth = isFullscreen ? 3.5 : 2.5;
@@ -918,10 +933,15 @@ function criarConfigGrafico(historico, ctx, isFullscreen) {
                 data: dados,
                 segment: {
                     borderColor: segCtx => corSegmento(segCtx, '#00e676', '#ff1744'),
-                    backgroundColor: segCtx => corSegmento(segCtx, gradVerde, gradVermelho)
+                    backgroundColor: segCtx => {
+                        const chart = segCtx?.chart;
+                        const verde = criarGradienteArea(chart, true);
+                        const vermelho = criarGradienteArea(chart, false);
+                        return corSegmento(segCtx, verde, vermelho);
+                    }
                 },
                 borderColor: '#00e676',
-                backgroundColor: gradVerde,
+                backgroundColor: (scriptableCtx) => criarGradienteArea(scriptableCtx?.chart, true),
                 fill: true,
                 tension: 0.4,
                 borderWidth: lineWidth,

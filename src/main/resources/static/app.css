@@ -248,6 +248,8 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .card-balances-row { display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap; }
 .balance-highlight-green { font-weight: 800; font-size: 1.4rem; color: var(--green); }
 .balance-highlight-purple { font-weight: 800; font-size: 1.4rem; }
+.balance-highlight-orange { font-weight: 800; font-size: 1.4rem; color: #ffb74d; }
+.balance-highlight-pink { font-weight: 800; font-size: 1.4rem; color: #ff80ab; }
 .balance-highlight-cyan { font-weight: 800; font-size: 1.4rem; color: #66c7ff; }
 .balance-highlight-yellow { font-weight: 800; font-size: 1.4rem; color: #ffc107; }
 .card-section-divider { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; }
@@ -280,12 +282,16 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .student-value { font-size: 0.95rem; font-weight: 700; }
 .student-value-green { color: var(--green); }
 .student-value-purple { color: var(--purple); }
+.student-value-orange { color: #ffb74d; }
+.student-value-pink { color: #ff80ab; }
 .student-value-cyan { color: #66c7ff; }
 .student-value-yellow { color: #ffc107; }
 .icon-gap { margin-right: 6px; }
 .icon-blue { color: var(--blue); }
 .icon-green { color: var(--green); }
 .icon-purple { color: var(--purple); }
+.icon-orange { color: #ffb74d; }
+.icon-pink { color: #ff80ab; }
 .icon-cyan { color: #66c7ff; }
 .icon-yellow { color: #ffc107; }
 
@@ -380,6 +386,18 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
     background: rgba(213,0,249,0.1);
 }
 
+.conta-chip-bolsinha {
+    border-color: rgba(255,183,77,0.45);
+    color: #ffb74d;
+    background: rgba(255,183,77,0.12);
+}
+
+.conta-chip-bolsinha-izabelly {
+    border-color: rgba(255,128,171,0.45);
+    color: #ff80ab;
+    background: rgba(255,128,171,0.12);
+}
+
 .conta-chip-pedro {
     border-color: rgba(102,199,255,0.45);
     color: #66c7ff;
@@ -390,11 +408,6 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
     border-color: rgba(255,193,7,0.4);
     color: #ffc107;
     background: rgba(255,193,7,0.12);
-}
-
-.conta-segment-sm .conta-chip {
-    padding: 6px 10px;
-    font-size: 0.72rem;
 }
 
 /* Observacoes */
@@ -423,6 +436,18 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
     color: #d500f9;
     border-color: rgba(213,0,249,0.35);
     background: rgba(213,0,249,0.1);
+}
+
+.conta-bolsinha {
+    color: #ffb74d;
+    border-color: rgba(255,183,77,0.4);
+    background: rgba(255,183,77,0.12);
+}
+
+.conta-bolsinha-izabelly {
+    color: #ff80ab;
+    border-color: rgba(255,128,171,0.4);
+    background: rgba(255,128,171,0.12);
 }
 
 .conta-pedro {
@@ -522,7 +547,18 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
     .card-balances-row { gap: 20px; }
     .balance-highlight-green,
     .balance-highlight-purple,
+    .balance-highlight-orange,
+    .balance-highlight-pink,
     .balance-highlight-yellow { font-size: 1.2rem; }
+
+    .card-projecao {
+        min-height: 380px;
+    }
+
+    .card-projecao .chart-container {
+        min-height: 280px;
+        height: 280px;
+    }
 }
 
 /* Tela Mobile 600px */
@@ -545,6 +581,8 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
     .card-balances-row { flex-direction: column; gap: 12px; margin-top: 14px; }
     .balance-highlight-green,
     .balance-highlight-purple,
+    .balance-highlight-orange,
+    .balance-highlight-pink,
     .balance-highlight-yellow { font-size: 1.15rem; }
     .label { font-size: 0.72rem; letter-spacing: 1px; }
     .label-subinfo { font-size: 0.6rem; }
@@ -595,6 +633,13 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
 
     /* Grafico */
     .chart-container { height: 180px; }
+    .card-projecao {
+        min-height: 300px;
+    }
+    .card-projecao .chart-container {
+        min-height: 220px;
+        height: 220px;
+    }
     .projecao-header .label { font-size: 0.75rem; }
     .btn-expand-chart { width: 32px; height: 32px; font-size: 0.75rem; }
 
@@ -619,6 +664,8 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
     .big-number { font-size: 1.7rem; }
     .balance-highlight-green,
     .balance-highlight-purple,
+    .balance-highlight-orange,
+    .balance-highlight-pink,
     .balance-highlight-yellow { font-size: 1rem; }
     .header-logo { height: 30px; }
     .app-title { font-size: 0.85rem; }
@@ -682,4 +729,16 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
 /* Input de arquivo usado no import JSON  */
 .hidden-input {
     display: none !important;
+}
+
+.card-projecao {
+    min-height: 470px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-projecao .chart-container {
+    flex: 1;
+    min-height: 360px;
+    height: 360px;
 }
