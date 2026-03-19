@@ -29,6 +29,8 @@ public class FinanceiroController {
     private static final String CONTA_BOLSINHA_IZABELLY = "BOLSINHA_IZABELLY";
     private static final String CONTA_PEDRO = "PEDRO";
     private static final String CONTA_ERIVANIA = "ERIVANIA";
+    private static final String CONTA_BOLSINHA_SALGADOS = "BOLSINHA_SALGADOS";
+    private static final String CONTA_FRANCISCO = "FRANCISCO";
 
     @Autowired
     private LancamentoRepository repository;
@@ -297,6 +299,17 @@ public class FinanceiroController {
         String tipoNormalizado = tipo == null ? "" : tipo.trim().toUpperCase();
         String contaNormalizada = contaInformada == null ? "" : contaInformada.trim().toUpperCase();
 
+        if ("EMPADA".equals(tipoNormalizado) || "ESFIHA".equals(tipoNormalizado)
+                || "EMPADA_COMPRA".equals(tipoNormalizado) || "ESFIHA_COMPRA".equals(tipoNormalizado)) {
+            if (contaNormalizada.isBlank()) {
+                return CONTA_FRANCISCO;
+            }
+            if (CONTA_FRANCISCO.equals(contaNormalizada) || CONTA_BOLSINHA_SALGADOS.equals(contaNormalizada)) {
+                return contaNormalizada;
+            }
+            throw new IllegalArgumentException("contaDestino invalida para " + tipoNormalizado + ". Use FRANCISCO ou BOLSINHA_SALGADOS.");
+        }
+
         String contaForcadaPorTipo = contaPadraoPorTipo(tipoNormalizado);
         if (contaForcadaPorTipo != null) {
             if (!contaNormalizada.isBlank() && !contaForcadaPorTipo.equals(contaNormalizada)) {
@@ -311,6 +324,8 @@ public class FinanceiroController {
 
         String descricaoNormalizada = normalizarTexto(descricao);
         if (descricaoNormalizada.contains("erivania")) return CONTA_ERIVANIA;
+        if (descricaoNormalizada.contains("bolsinha salgados")) return CONTA_BOLSINHA_SALGADOS;
+        if (descricaoNormalizada.contains("francisco")) return CONTA_FRANCISCO;
         if (descricaoNormalizada.contains("bolsinha izabelly")) return CONTA_BOLSINHA_IZABELLY;
         if (descricaoNormalizada.contains("izabelly") || descricaoNormalizada.contains("acai") || descricaoNormalizada.contains("complemento")) {
             return CONTA_IZABELLY;
@@ -343,7 +358,9 @@ public class FinanceiroController {
                 || CONTA_IZABELLY.equals(conta)
                 || CONTA_BOLSINHA_IZABELLY.equals(conta)
                 || CONTA_PEDRO.equals(conta)
-                || CONTA_ERIVANIA.equals(conta);
+                || CONTA_ERIVANIA.equals(conta)
+                || CONTA_BOLSINHA_SALGADOS.equals(conta)
+                || CONTA_FRANCISCO.equals(conta);
     }
 
     private String normalizarTexto(String texto) {

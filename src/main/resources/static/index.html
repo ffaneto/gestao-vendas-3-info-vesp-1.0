@@ -80,6 +80,14 @@
                     <div class="label">Caixa Madrinha <span class="label-subinfo">(Erivânia)</span></div>
                     <div class="balance-highlight-yellow" id="saldo-erivania">R$ 0,00</div>
                 </div>
+                <div>
+                    <div class="label">Bolsinha Salgados <span class="label-subinfo">(Espécie)</span></div>
+                    <div class="balance-highlight-teal" id="saldo-bolsinha-salgados">R$ 0,00</div>
+                </div>
+                <div>
+                    <div class="label">Conta Francisco <span class="label-subinfo">(Pix)</span></div>
+                    <div class="balance-highlight-indigo" id="saldo-francisco">R$ 0,00</div>
+                </div>
             </div>
 
             <div class="card-section-divider">
@@ -94,6 +102,8 @@
                         <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
                         <button type="button" class="conta-chip" data-value="BOLSINHA_IZABELLY">Bolsinha Izabelly</button>
                         <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
+                        <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados</button>
+                        <button type="button" class="conta-chip" data-value="FRANCISCO">Francisco</button>
                     </div>
                     <div class="input-row">
                         <input type="number" id="valor-aporte" placeholder="R$ Valor">
@@ -139,6 +149,14 @@
                     <span class="student-label"><i class="fas fa-file-invoice-dollar icon-cyan icon-gap"></i>Caixa Pedro (Carnês)</span>
                     <span class="student-value student-value-cyan" id="est-saldo-pedro">R$ 0,00</span>
                 </div>
+                <div class="student-row student-row-border">
+                    <span class="student-label"><i class="fas fa-basket-shopping icon-teal icon-gap"></i>Bolsinha Salgados (Espécie)</span>
+                    <span class="student-value student-value-teal" id="est-saldo-bolsinha-salgados">R$ 0,00</span>
+                </div>
+                <div class="student-row student-row-border">
+                    <span class="student-label"><i class="fas fa-user-tie icon-indigo icon-gap"></i>Conta Francisco (Pix)</span>
+                    <span class="student-value student-value-indigo" id="est-saldo-francisco">R$ 0,00</span>
+                </div>
                 <div class="student-row">
                     <span class="student-label"><i class="fas fa-hand-holding-heart icon-yellow icon-gap"></i>Madrinha (Erivânia)</span>
                     <span class="student-value student-value-yellow" id="est-saldo-erivania">R$ 0,00</span>
@@ -149,6 +167,8 @@
                     <span class="conta-chip conta-chip-static conta-chip-izabelly">Izabelly</span>
                     <span class="conta-chip conta-chip-static conta-chip-bolsinha-izabelly">Bolsinha Izabelly</span>
                     <span class="conta-chip conta-chip-static conta-chip-pedro">Pedro</span>
+                    <span class="conta-chip conta-chip-static conta-chip-bolsinha-salgados">Bolsinha Salgados</span>
+                    <span class="conta-chip conta-chip-static conta-chip-francisco">Francisco</span>
                     <span class="conta-chip conta-chip-static conta-chip-erivania">Erivânia</span>
                 </div>
             </div>
@@ -206,23 +226,29 @@
 
             <div class="input-group">
                 <div class="input-row date-row">
-                    <span>Trufa <small>(R$ 2,50)</small></span>
-                    <input type="date" id="data-trufa" class="date-input-compact">
+                    <span>Venda de item</span>
+                    <input type="date" id="data-venda-item" class="date-input-compact">
                 </div>
                 <div class="input-row">
-                    <input type="number" id="qtd-trufa" placeholder="Quantidade">
-                    <button class="btn-verde" id="btn-vender-trufa">Vender</button>
+                    <select id="venda-item" class="select-modern">
+                        <option value="TRUFA">Trufa (R$ 2,50)</option>
+                        <option value="BOLO">Bolo (R$ 3,50)</option>
+                        <option value="EMPADA">Empada (R$ 4,50)</option>
+                        <option value="ESFIHA">Esfiha (R$ 5,00)</option>
+                    </select>
                 </div>
-            </div>
-
-            <div class="input-group">
-                <div class="input-row date-row">
-                    <span>Bolo <small>(R$ 3,50)</small></span>
-                    <input type="date" id="data-bolo" class="date-input-compact">
+                <div class="helper-line" id="venda-preco-info">Preço unitário: R$ 2,50</div>
+                <div id="venda-conta-salgados-wrapper" class="conta-salgados-wrap hidden-soft">
+                    <div class="conta-segment conta-segment-sm" data-target-input="conta-venda-salgados" role="group" aria-label="Conta da venda de salgado">
+                        <button type="button" class="conta-chip active" data-value="FRANCISCO">Francisco (Pix)</button>
+                        <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados (Espécie)</button>
+                    </div>
+                    <input type="hidden" id="conta-venda-salgados" value="FRANCISCO">
                 </div>
                 <div class="input-row">
-                    <input type="number" id="qtd-bolo" placeholder="Quantidade">
-                    <button class="btn-verde" id="btn-vender-bolo">Vender</button>
+                    <input type="number" id="qtd-venda-item" placeholder="Quantidade" min="1" step="1">
+                    <input type="text" id="total-venda-item" class="input-total" value="R$ 0,00" readonly>
+                    <button class="btn-verde" id="btn-vender-item">Vender</button>
                 </div>
             </div>
 
@@ -245,23 +271,29 @@
 
             <div class="input-group">
                 <div class="input-row date-row">
-                    <span>Repor Trufas <small class="small-red">(- R$ 1,50)</small></span>
-                    <input type="date" id="data-trufa-compra" class="date-input-compact">
+                    <span>Reposição de item</span>
+                    <input type="date" id="data-gasto-item" class="date-input-compact">
                 </div>
                 <div class="input-row">
-                    <input type="number" id="qtd-trufa-compra" placeholder="Qtd Comprada">
-                    <button class="btn-vermelho" id="btn-pagar-trufa">Pagar</button>
+                    <select id="gasto-item" class="select-modern">
+                        <option value="TRUFA">Trufa (Custo R$ 1,50)</option>
+                        <option value="BOLO">Bolo (Custo R$ 2,50)</option>
+                        <option value="EMPADA">Empada (Custo R$ 3,00)</option>
+                        <option value="ESFIHA">Esfiha (Custo R$ 3,00)</option>
+                    </select>
                 </div>
-            </div>
-
-            <div class="input-group">
-                <div class="input-row date-row">
-                    <span>Repor Bolos <small class="small-red">(- R$ 2,50)</small></span>
-                    <input type="date" id="data-bolo-compra" class="date-input-compact">
+                <div class="helper-line" id="gasto-custo-info">Custo unitário: R$ 1,50</div>
+                <div id="gasto-conta-salgados-wrapper" class="conta-salgados-wrap hidden-soft">
+                    <div class="conta-segment conta-segment-sm" data-target-input="conta-gasto-salgados" role="group" aria-label="Conta da compra de salgado">
+                        <button type="button" class="conta-chip active" data-value="FRANCISCO">Francisco (Pix)</button>
+                        <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados (Espécie)</button>
+                    </div>
+                    <input type="hidden" id="conta-gasto-salgados" value="FRANCISCO">
                 </div>
                 <div class="input-row">
-                    <input type="number" id="qtd-bolo-compra" placeholder="Qtd Comprada">
-                    <button class="btn-vermelho" id="btn-pagar-bolo">Pagar</button>
+                    <input type="number" id="qtd-gasto-item" placeholder="Qtd Comprada" min="1" step="1">
+                    <input type="text" id="total-gasto-item" class="input-total" value="R$ 0,00" readonly>
+                    <button class="btn-vermelho" id="btn-pagar-item">Pagar</button>
                 </div>
             </div>
 
@@ -277,6 +309,8 @@
                     <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
                     <button type="button" class="conta-chip" data-value="BOLSINHA_IZABELLY">Bolsinha Izabelly</button>
                     <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
+                    <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados</button>
+                    <button type="button" class="conta-chip" data-value="FRANCISCO">Francisco</button>
                     <button type="button" class="conta-chip" data-value="ERIVANIA">Erivânia</button>
                 </div>
                 <div class="input-row">
