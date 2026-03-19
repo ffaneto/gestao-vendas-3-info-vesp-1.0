@@ -129,8 +129,8 @@ Se quiser configurar via variáveis de ambiente, exemplo:
 
 ```bash
 SPRING_PROFILES_ACTIVE=dev
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=comissao
+ADMIN_USERNAME=usuario
+ADMIN_PASSWORD=senhadousuario
 ```
 
 ### 3) Executar o projeto
