@@ -11,7 +11,10 @@
     --swal-bg: #1a1a1e;
 }
 
-* { box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    -webkit-tap-highlight-color: transparent; }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -763,8 +766,17 @@ body.admin-mode #data-global-wrapper { display: flex !important; }
 .swal2-deny { border-radius: 10px !important; font-weight: 700 !important; }
 .swal2-timer-progress-bar { background: rgba(255,255,255,0.15) !important; }
 
-.projecao-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.projecao-header .label { margin: 0; font-size: 0.85rem; letter-spacing: 2px; }
+.projecao-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.projecao-header .label {
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+}
 .btn-expand-chart {
     width: 38px;
     height: 38px;
