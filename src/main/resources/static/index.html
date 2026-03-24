@@ -57,36 +57,16 @@
 
             <div class="card-balances-row">
                 <div>
-                    <div class="label">Caixa Vendas <span class="label-subinfo">(Ana Thays)</span></div>
-                    <div class="balance-highlight-green" id="saldo">R$ 0,00</div>
+                    <div class="label">Banco <span class="label-subinfo">(PIX / Transferência)</span></div>
+                    <div class="balance-highlight-indigo" id="saldo-banco">R$ 0,00</div>
                 </div>
                 <div>
-                    <div class="label">Bolsinha Ana <span class="label-subinfo">(Notas e moedas)</span></div>
-                    <div class="balance-highlight-orange" id="saldo-bolsinha">R$ 0,00</div>
+                    <div class="label">Espécie <span class="label-subinfo">(Caixa físico consolidado)</span></div>
+                    <div class="balance-highlight-green" id="saldo-especie">R$ 0,00</div>
                 </div>
                 <div>
-                    <div class="label">Caixa Izabelly <span class="label-subinfo">(Pix + Lucro Açaí)</span></div>
-                    <div class="txt-roxo balance-highlight-purple" id="saldo-izabelly">R$ 0,00</div>
-                </div>
-                <div>
-                    <div class="label">Bolsinha Izabelly <span class="label-subinfo">(Espécie do açaí)</span></div>
-                    <div class="balance-highlight-pink" id="saldo-bolsinha-izabelly">R$ 0,00</div>
-                </div>
-                <div>
-                    <div class="label">Caixa Pedro <span class="label-subinfo">(Carnês)</span></div>
-                    <div class="balance-highlight-cyan" id="saldo-pedro">R$ 0,00</div>
-                </div>
-                <div>
-                    <div class="label">Caixa Madrinha <span class="label-subinfo">(Erivânia)</span></div>
+                    <div class="label">Cofre <span class="label-subinfo">(Erivânia)</span></div>
                     <div class="balance-highlight-yellow" id="saldo-erivania">R$ 0,00</div>
-                </div>
-                <div>
-                    <div class="label">Bolsinha Salgados <span class="label-subinfo">(Espécie)</span></div>
-                    <div class="balance-highlight-teal" id="saldo-bolsinha-salgados">R$ 0,00</div>
-                </div>
-                <div>
-                    <div class="label">Conta Francisco <span class="label-subinfo">(Pix)</span></div>
-                    <div class="balance-highlight-indigo" id="saldo-francisco">R$ 0,00</div>
                 </div>
             </div>
 
@@ -130,46 +110,16 @@
 
             <div class="student-breakdown">
                 <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-wallet icon-green icon-gap"></i>Caixa Vendas (Ana Thays)</span>
-                    <span class="student-value student-value-green" id="est-saldo-ana">R$ 0,00</span>
+                    <span class="student-label"><i class="fas fa-building-columns icon-indigo icon-gap"></i>Total no Banco</span>
+                    <span class="student-value student-value-indigo" id="est-saldo-banco">R$ 0,00</span>
                 </div>
                 <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-coins icon-orange icon-gap"></i>Bolsinha Ana</span>
-                    <span class="student-value student-value-orange" id="est-saldo-bolsinha">R$ 0,00</span>
-                </div>
-                <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-user icon-purple icon-gap"></i>Caixa Izabelly (Pix + lucro açaí)</span>
-                    <span class="student-value student-value-purple" id="est-saldo-izabelly">R$ 0,00</span>
-                </div>
-                <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-piggy-bank icon-pink icon-gap"></i>Bolsinha Izabelly</span>
-                    <span class="student-value student-value-pink" id="est-saldo-bolsinha-izabelly">R$ 0,00</span>
-                </div>
-                <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-file-invoice-dollar icon-cyan icon-gap"></i>Caixa Pedro (Carnês)</span>
-                    <span class="student-value student-value-cyan" id="est-saldo-pedro">R$ 0,00</span>
-                </div>
-                <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-basket-shopping icon-teal icon-gap"></i>Bolsinha Salgados (Espécie)</span>
-                    <span class="student-value student-value-teal" id="est-saldo-bolsinha-salgados">R$ 0,00</span>
-                </div>
-                <div class="student-row student-row-border">
-                    <span class="student-label"><i class="fas fa-user-tie icon-indigo icon-gap"></i>Conta Francisco (Pix)</span>
-                    <span class="student-value student-value-indigo" id="est-saldo-francisco">R$ 0,00</span>
+                    <span class="student-label"><i class="fas fa-wallet icon-green icon-gap"></i>Total em Espécie</span>
+                    <span class="student-value student-value-green" id="est-saldo-especie">R$ 0,00</span>
                 </div>
                 <div class="student-row">
-                    <span class="student-label"><i class="fas fa-hand-holding-heart icon-yellow icon-gap"></i>Madrinha (Erivânia)</span>
+                    <span class="student-label"><i class="fas fa-hand-holding-heart icon-yellow icon-gap"></i>Total no Cofre (Erivânia)</span>
                     <span class="student-value student-value-yellow" id="est-saldo-erivania">R$ 0,00</span>
-                </div>
-                <div class="student-contas-legend">
-                    <span class="conta-chip conta-chip-static conta-chip-ana">Ana</span>
-                    <span class="conta-chip conta-chip-static conta-chip-bolsinha">Bolsinha Ana</span>
-                    <span class="conta-chip conta-chip-static conta-chip-izabelly">Izabelly</span>
-                    <span class="conta-chip conta-chip-static conta-chip-bolsinha-izabelly">Bolsinha Izabelly</span>
-                    <span class="conta-chip conta-chip-static conta-chip-pedro">Pedro</span>
-                    <span class="conta-chip conta-chip-static conta-chip-bolsinha-salgados">Bolsinha Salgados</span>
-                    <span class="conta-chip conta-chip-static conta-chip-francisco">Francisco</span>
-                    <span class="conta-chip conta-chip-static conta-chip-erivania">Erivânia</span>
                 </div>
             </div>
         </div>
@@ -230,6 +180,13 @@
                     <input type="date" id="data-venda-item" class="date-input-compact">
                 </div>
                 <div class="input-row">
+                    <select id="conta-pagamento" class="form-control" required>
+                        <option value="" disabled selected>-- Como o cliente pagou? --</option>
+                        <option value="CONTA_DIGITAL">PIX / Transferência (Banco)</option>
+                        <option value="CAIXA_FISICO">Dinheiro em Espécie (Bolsinha)</option>
+                    </select>
+                </div>
+                <div class="input-row">
                     <select id="venda-item" class="select-modern">
                         <option value="TRUFA">Trufa (R$ 2,50)</option>
                         <option value="BOLO">Bolo (R$ 3,50)</option>
@@ -238,13 +195,6 @@
                     </select>
                 </div>
                 <div class="helper-line" id="venda-preco-info">Preço unitário: R$ 2,50</div>
-                <div id="venda-conta-salgados-wrapper" class="conta-salgados-wrap hidden-soft">
-                    <div class="conta-segment conta-segment-sm" data-target-input="conta-venda-salgados" role="group" aria-label="Conta da venda de salgado">
-                        <button type="button" class="conta-chip active" data-value="FRANCISCO">Francisco (Pix)</button>
-                        <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados (Espécie)</button>
-                    </div>
-                    <input type="hidden" id="conta-venda-salgados" value="FRANCISCO">
-                </div>
                 <div class="input-row">
                     <input type="number" id="qtd-venda-item" placeholder="Quantidade" min="1" step="1">
                     <input type="text" id="total-venda-item" class="input-total" value="R$ 0,00" readonly>

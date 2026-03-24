@@ -31,6 +31,8 @@ public class FinanceiroController {
     private static final String CONTA_ERIVANIA = "ERIVANIA";
     private static final String CONTA_BOLSINHA_SALGADOS = "BOLSINHA_SALGADOS";
     private static final String CONTA_FRANCISCO = "FRANCISCO";
+    private static final String CONTA_DIGITAL = "CONTA_DIGITAL";
+    private static final String CONTA_CAIXA_FISICO = "CAIXA_FISICO";
 
     @Autowired
     private LancamentoRepository repository;
@@ -299,6 +301,10 @@ public class FinanceiroController {
         String tipoNormalizado = tipo == null ? "" : tipo.trim().toUpperCase();
         String contaNormalizada = contaInformada == null ? "" : contaInformada.trim().toUpperCase();
 
+        if (CONTA_DIGITAL.equals(contaNormalizada) || CONTA_CAIXA_FISICO.equals(contaNormalizada)) {
+            return contaNormalizada;
+        }
+
         if ("EMPADA".equals(tipoNormalizado) || "ESFIHA".equals(tipoNormalizado)
                 || "EMPADA_COMPRA".equals(tipoNormalizado) || "ESFIHA_COMPRA".equals(tipoNormalizado)) {
             if (contaNormalizada.isBlank()) {
@@ -353,7 +359,9 @@ public class FinanceiroController {
     }
 
     private boolean isContaValida(String conta) {
-        return CONTA_ANA.equals(conta)
+        return CONTA_DIGITAL.equals(conta)
+                || CONTA_CAIXA_FISICO.equals(conta)
+                || CONTA_ANA.equals(conta)
                 || CONTA_BOLSINHA.equals(conta)
                 || CONTA_IZABELLY.equals(conta)
                 || CONTA_BOLSINHA_IZABELLY.equals(conta)

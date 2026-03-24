@@ -175,6 +175,29 @@ input {
 input::placeholder { transition: color 0.2s ease; }
 input:focus::placeholder { color: #555; }
 
+.form-control {
+    width: 100%;
+    background: rgba(15,16,20,0.72);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 12px;
+    color: #f2f4f8;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 11px 12px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.form-control:focus {
+    border-color: rgba(143, 217, 255, 0.65);
+    box-shadow: 0 0 0 3px rgba(41,121,255,0.16);
+    background: rgba(20,22,28,0.86);
+}
+
+.form-control option {
+    background: #111319;
+    color: #f4f6fb;
+}
+
 button {
     border: none; padding: 14px 20px; border-radius: 10px; font-weight: 700;
     cursor: pointer; text-transform: uppercase; font-size: 0.85rem; white-space: nowrap;
