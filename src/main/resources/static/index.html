@@ -65,8 +65,8 @@
                     <div class="balance-highlight-green" id="saldo-especie">R$ 0,00</div>
                 </div>
                 <div>
-                    <div class="label">Cofre <span class="label-subinfo">(Erivânia)</span></div>
-                    <div class="balance-highlight-yellow" id="saldo-erivania">R$ 0,00</div>
+                    <div class="label">Pedro <span class="label-subinfo">(Carnês)</span></div>
+                    <div class="balance-highlight-cyan" id="saldo-pedro-card">R$ 0,00</div>
                 </div>
             </div>
 
@@ -77,29 +77,15 @@
                         <input type="date" id="data-aporte">
                     </div>
                     <div class="conta-segment" data-target-input="conta-aporte" role="group" aria-label="Conta de destino do aporte">
-                        <button type="button" class="conta-chip active" data-value="ANA">Ana</button>
-                        <button type="button" class="conta-chip" data-value="BOLSINHA">Bolsinha Ana</button>
-                        <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
-                        <button type="button" class="conta-chip" data-value="BOLSINHA_IZABELLY">Bolsinha Izabelly</button>
-                        <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
-                        <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados</button>
-                        <button type="button" class="conta-chip" data-value="FRANCISCO">Francisco</button>
+                        <button type="button" class="conta-chip conta-chip-digital active" data-value="CONTA_DIGITAL">PIX/Banco</button>
+                        <button type="button" class="conta-chip conta-chip-fisico" data-value="CAIXA_FISICO">Bolsinha Geral</button>
+                        <button type="button" class="conta-chip conta-chip-pedro" data-value="PEDRO">Pedro (Carnês)</button>
                     </div>
                     <div class="input-row">
                         <input type="number" id="valor-aporte" placeholder="R$ Valor">
                         <button class="btn-verde btn-compact" id="btn-aporte"><i class="fas fa-plus"></i></button>
                     </div>
-                    <input type="hidden" id="conta-aporte" value="ANA">
-                </div>
-                <div class="input-group input-group-erivania">
-                    <div class="row-between-center">
-                        <span class="label label-erivania">Aporte Erivânia</span>
-                        <input type="date" id="data-erivania">
-                    </div>
-                    <div class="input-row">
-                        <input type="number" id="valor-erivania" placeholder="R$ Valor">
-                        <button class="btn-erivania" id="btn-erivania"><i class="fas fa-plus"></i></button>
-                    </div>
+                    <input type="hidden" id="conta-aporte" value="CONTA_DIGITAL">
                 </div>
             </div>
         </div>
@@ -118,8 +104,8 @@
                     <span class="student-value student-value-green" id="est-saldo-especie">R$ 0,00</span>
                 </div>
                 <div class="student-row">
-                    <span class="student-label"><i class="fas fa-hand-holding-heart icon-yellow icon-gap"></i>Total no Cofre (Erivânia)</span>
-                    <span class="student-value student-value-yellow" id="est-saldo-erivania">R$ 0,00</span>
+                    <span class="student-label"><i class="fas fa-file-invoice-dollar icon-cyan icon-gap"></i>Total em Carnês (Pedro)</span>
+                    <span class="student-value student-value-cyan" id="est-saldo-pedro">R$ 0,00</span>
                 </div>
             </div>
         </div>
@@ -156,16 +142,24 @@
     </div>
 
     <div class="admin-only toolbar-floating" id="data-global-wrapper">
-        <button id="btn-importar-backup" class="toolbar-icon-btn toolbar-import" title="Importar Backup JSON">
-            <i class="fas fa-file-import"></i>
+        <button id="btn-toolbar-toggle" class="toolbar-icon-btn toolbar-main" title="Ferramentas">
+            <i class="fas fa-ellipsis-v"></i>
         </button>
-        <button id="btn-baixar-backup" class="toolbar-icon-btn toolbar-download" title="Baixar Backup JSON">
-            <i class="fas fa-download"></i>
-        </button>
-        <button id="btn-data-global" class="toolbar-icon-btn toolbar-calendar" title="Sincronizar datas">
-            <i class="fas fa-calendar-alt"></i>
-        </button>
-        <input type="date" id="data-global" class="toolbar-date-input">
+        <div id="toolbar-dropdown" class="toolbar-dropdown">
+            <button id="btn-importar-backup" class="toolbar-icon-btn toolbar-import" title="Importar Backup JSON">
+                <i class="fas fa-file-import"></i>
+            </button>
+            <button id="btn-baixar-backup" class="toolbar-icon-btn toolbar-download" title="Baixar Backup JSON">
+                <i class="fas fa-download"></i>
+            </button>
+            <button id="btn-data-global" class="toolbar-icon-btn toolbar-calendar toolbar-date-wrap" title="Sincronizar datas">
+                <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="data-global" class="toolbar-date-input">
+            </button>
+            <button id="btn-historico-turnos" class="toolbar-icon-btn toolbar-history" title="Historico de aberturas e fechamentos">
+                <i class="fas fa-history"></i>
+            </button>
+        </div>
     </div>
 
     <div class="main-grid admin-only">
@@ -233,13 +227,12 @@
                     </select>
                 </div>
                 <div class="helper-line" id="gasto-custo-info">Custo unitário: R$ 1,50</div>
-                <div id="gasto-conta-salgados-wrapper" class="conta-salgados-wrap hidden-soft">
-                    <div class="conta-segment conta-segment-sm" data-target-input="conta-gasto-salgados" role="group" aria-label="Conta da compra de salgado">
-                        <button type="button" class="conta-chip active" data-value="FRANCISCO">Francisco (Pix)</button>
-                        <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados (Espécie)</button>
-                    </div>
-                    <input type="hidden" id="conta-gasto-salgados" value="FRANCISCO">
+                <div class="conta-segment conta-segment-sm" data-target-input="conta-gasto-item" role="group" aria-label="Conta da compra de estoque">
+                    <button type="button" class="conta-chip conta-chip-digital active" data-value="CONTA_DIGITAL">PIX/Banco</button>
+                    <button type="button" class="conta-chip conta-chip-fisico" data-value="CAIXA_FISICO">Bolsinha Geral</button>
+                    <button type="button" class="conta-chip conta-chip-pedro" data-value="PEDRO">Pedro (Carnês)</button>
                 </div>
+                <input type="hidden" id="conta-gasto-item" value="CONTA_DIGITAL">
                 <div class="input-row">
                     <input type="number" id="qtd-gasto-item" placeholder="Qtd Comprada" min="1" step="1">
                     <input type="text" id="total-gasto-item" class="input-total" value="R$ 0,00" readonly>
@@ -254,21 +247,32 @@
                 </div>
                 <input type="text" id="desc-outros" placeholder="Descrição do gasto" class="desc-outros-input">
                 <div class="conta-segment conta-segment-sm" data-target-input="conta-outros" role="group" aria-label="Conta afetada pela despesa">
-                    <button type="button" class="conta-chip active" data-value="ANA">Ana</button>
-                    <button type="button" class="conta-chip" data-value="BOLSINHA">Bolsinha Ana</button>
-                    <button type="button" class="conta-chip" data-value="IZABELLY">Izabelly</button>
-                    <button type="button" class="conta-chip" data-value="BOLSINHA_IZABELLY">Bolsinha Izabelly</button>
-                    <button type="button" class="conta-chip" data-value="PEDRO">Pedro</button>
-                    <button type="button" class="conta-chip" data-value="BOLSINHA_SALGADOS">Bolsinha Salgados</button>
-                    <button type="button" class="conta-chip" data-value="FRANCISCO">Francisco</button>
-                    <button type="button" class="conta-chip" data-value="ERIVANIA">Erivânia</button>
+                    <button type="button" class="conta-chip conta-chip-digital active" data-value="CONTA_DIGITAL">PIX/Banco</button>
+                    <button type="button" class="conta-chip conta-chip-fisico" data-value="CAIXA_FISICO">Bolsinha Geral</button>
+                    <button type="button" class="conta-chip conta-chip-pedro" data-value="PEDRO">Pedro (Carnês)</button>
                 </div>
                 <div class="input-row">
                     <input type="number" id="valor-outros" placeholder="R$ Valor Gasto">
                     <button class="btn-vermelho" id="btn-lancar-gasto">Lançar Gasto</button>
                 </div>
-                <input type="hidden" id="conta-outros" value="ANA">
+                <input type="hidden" id="conta-outros" value="CONTA_DIGITAL">
             </div>
+        </div>
+    </div>
+
+    <div class="card admin-only fechamento-card">
+        <div class="label">Auditoria</div>
+        <h3 class="txt-backup section-title fechamento-title">
+            <i class="fas fa-clipboard-check"></i> Fechamento de Caixa Cego
+        </h3>
+        <p class="fechamento-desc">Consolida as 3 bolsinhas, confere o caixa fisico e calcula lucro por setor com base no estoque vendido.</p>
+        <div class="fechamento-actions">
+            <button id="btn-abrir-dia" class="btn-muted btn-abrir-dia">
+                <i class="fas fa-door-open"></i> Abrir Dia
+            </button>
+            <button id="btn-fechar-turno" class="btn-backup btn-fechar-turno">
+                <i class="fas fa-shield-halved"></i> Fechar Turno
+            </button>
         </div>
     </div>
 
