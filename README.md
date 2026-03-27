@@ -70,7 +70,7 @@ O sistema foi desenhado seguindo o padrão arquitetural em camadas do Spring Boo
 
 ### Diagrama de Classe 
 
-<img width="2518" height="1309" alt="Diagrama em branco" src="https://github.com/user-attachments/assets/c7601fa6-0bdd-44c1-9d29-acd140f3d9a1" />
+<img width="2518" height="1309" alt="Diagrama em branco(1)" src="https://github.com/user-attachments/assets/1fbcd5e9-1e3e-4a22-bf2a-41f1aee13d7e" />
 
 ## Estrutura do Projeto
 
