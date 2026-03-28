@@ -149,7 +149,7 @@ ADMIN_PASSWORD=senhadousuario
 http://localhost:8080
 ```
 
-## Deploy (DigitalOcean)
+## Deploy na DigitalOcean
 
 Na parte da produção, o projeto utiliza PostgreSQL e variáveis de ambiente no painel da DigitalOcean.
 
