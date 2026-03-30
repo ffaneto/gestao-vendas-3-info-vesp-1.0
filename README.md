@@ -70,7 +70,7 @@ O sistema foi desenhado seguindo o padrão arquitetural em camadas do Spring Boo
 
 ### Diagrama de Classe 
 
-<img width="6255" height="1926" alt="Untitled diagram-2026-03-17-033833" src="https://github.com/user-attachments/assets/657d7eec-a9ff-465f-9f57-b60e9b7eb870" />
+<img width="2518" height="1309" alt="Diagrama em branco(1)" src="https://github.com/user-attachments/assets/1fbcd5e9-1e3e-4a22-bf2a-41f1aee13d7e" />
 
 ## Estrutura do Projeto
 
@@ -149,7 +149,7 @@ ADMIN_PASSWORD=senhadousuario
 http://localhost:8080
 ```
 
-## Deploy (DigitalOcean)
+## Deploy na DigitalOcean
 
 Na parte da produção, o projeto utiliza PostgreSQL e variáveis de ambiente no painel da DigitalOcean.
 
