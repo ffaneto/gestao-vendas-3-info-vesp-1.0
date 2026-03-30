@@ -123,9 +123,9 @@ CREATE DATABASE financeiro;
 
 ### 2) Configurar ambiente de desenvolvimento
 
-Para executar localmente com MySQL, utilize o profile `dev` em `src/main/resources/application-dev.yml`.
+Para executar localmente com MySQL, use o profile `dev` em `src/main/resources/application-dev.yml`.
 
-Se quiser configurar via variáveis de ambiente, exemplo:
+Se quiser configurar via enviroment variables:
 
 ```bash
 SPRING_PROFILES_ACTIVE=dev
