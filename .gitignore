@@ -9,3 +9,6 @@
 .classpath
 .project
 *.log
+
+http-client.private.env.json
+src/test/http-client.private.env.json
