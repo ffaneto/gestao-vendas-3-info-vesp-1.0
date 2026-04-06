@@ -1,3 +1,4 @@
+
 # Sistema de Gestão Financeira - Formatura 3º Info
 
 <div align="center">
@@ -164,3 +165,6 @@ A autenticação da comissão é validada no backend por sessão HTTP. Dessa for
 - 3º ano - Informática Integrado ao Ensino Médio
 - IFPB Campus Itaporanga
 - Projeto atualmente utilizado como tema de TCC
+=======
+# Sistema de Gestão Financeira - Formatura 3º Info
+
