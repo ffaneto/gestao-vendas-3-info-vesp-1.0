@@ -96,10 +96,14 @@ public class FinanceiroController {
         }
 
         LocalDate dataFinal = LocalDate.now();
-        if (payload.get("dataLancamento") != null && !payload.get("dataLancamento").toString().isEmpty()) {
-            dataFinal = LocalDate.parse(payload.get("dataLancamento").toString());
-        } else if (payload.get("data") != null && !payload.get("data").toString().isEmpty()) {
-            dataFinal = LocalDate.parse(payload.get("data").toString());
+        try {
+            if (payload.get("dataLancamento") != null && !payload.get("dataLancamento").toString().isEmpty()) {
+                dataFinal = LocalDate.parse(payload.get("dataLancamento").toString());
+            } else if (payload.get("data") != null && !payload.get("data").toString().isEmpty()) {
+                dataFinal = LocalDate.parse(payload.get("data").toString());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Data inválida."));
         }
 
         String contaInformada = payload.get("contaDestino") == null ? null : payload.get("contaDestino").toString();
@@ -183,7 +187,11 @@ public class FinanceiroController {
             if (novaData == null || novaData.isBlank()) {
                 return ResponseEntity.badRequest().<Lancamento>build();
             }
-            lancamento.setDataLancamento(LocalDate.parse(novaData));
+            try {
+                lancamento.setDataLancamento(LocalDate.parse(novaData));
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().<Lancamento>build();
+            }
             return ResponseEntity.ok(repository.save(lancamento));
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -595,11 +603,6 @@ public class FinanceiroController {
             return contaForcadaPorTipo;
         }
 
-        if (CONTA_DIGITAL.equals(contaNormalizada)
-                || CONTA_CAIXA_FISICO.equals(contaNormalizada)
-                || CONTA_PEDRO.equals(contaNormalizada)) {
-            return contaNormalizada;
-        }
 
         String descricaoNormalizada = normalizarTexto(descricao);
         if (descricaoNormalizada.contains("erivania")) return CONTA_DIGITAL;
