@@ -13,5 +13,4 @@
 http-client.private.env.json
 src/test/http-client.private.env.json
 
-# Ignorar arquivos de propriedades sensíveis
 src/main/resources/application.yml
